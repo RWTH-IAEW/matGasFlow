@@ -1,17 +1,21 @@
 function [ GN ] = set_fraction_of_gas_mixture_component( GN, gas_mixture_component, x, xVar )
 %SET_FRACTION_OF_GAS_MIXTURE_COMPONENT changes the fraction of a gas type
-%   set_fraction_of_gas_mixture_component(GN.compo,gasType,x,xVar) changes the fraction (x) of one
-%   GN.component (gasType) of the gas GN.composition (GN.compo). The fraction (x)
-%   can be interpreted as mass volume (xVar = 'x_vol'), mass (xVar = 'x_mass')
-%   and mole (xVar = 'x_mol').
 %
-%   gasType options are: 'CH4', 'N2', 'CO2', 'C2H6', 'C3H8', 'n_C4H10',
-%                        'iso_C4H10', 'n_C5H12', 'iso_C5H12', 'neo_C5H12',
-%                        'C6', 'H2', 'H2S'
+%   set_fraction_of_gas_mixture_component(GN, gas_mixture_component, x, xVar)
+%   changes the fraction (x) of one gas mixture component of the gas mixture
+%   (GN.gasMixAndCompoProp). The fraction (x) can be interpreted as volume 
+%   fraction(xVar = 'x_vol'), mass fraction (xVar = 'x_mass') and mole
+%   fraction(xVar = 'x_mol').
 %
-%   For example, updateGN.composition( GN.GN.compo, 'H2', 0.5, 'x_mol' ) sets
-%   the mole content of H2 (hydrogen) to 50 % of the gas network's gas
-%   GN.composition
+%   gas_mixture_component options:
+%       'CH4', 'N2', 'CO2', 'C2H6', 'C3H8', 'n_C4H10', 'iso_C4H10',
+%       'n_C5H12', 'iso_C5H12', 'neo_C5H12', 'C6', 'H2', 'H2S'
+%   
+%   x optins:
+%       0 <= x <= 1
+%
+%   xVar options:
+%       'x_vol', 'x_mass', 'x_mol'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -21,6 +25,7 @@ function [ GN ] = set_fraction_of_gas_mixture_component( GN, gas_mixture_compone
 %   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 if x >= 0 && x < 1
     if strcmp(xVar,'x_mol')

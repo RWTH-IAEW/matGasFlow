@@ -1,6 +1,10 @@
 function [NUMPARAM] = getDefaultNumericalParameters()
-%GETNUMERICALPARAMETERS Numerical parameters for steady-state gas flow calculation
-%   [NUMPARAM] = GETNUMERICALPARAMETERS() returns a struct
+%GETNUMERICALPARAMETERS Numerical parameters for steady-state gas flow
+%   simulation
+%
+%   [NUMPARAM] = GETNUMERICALPARAMETERS() returns a struct with default
+%   numerical paramteres. More information to come...
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),

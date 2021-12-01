@@ -58,4 +58,6 @@ References
         Solved by an Extension of the Simplex Algorithm. Management
         Science 46(11):1454-1465
 
+[Ned17]
 
+[Mar10]

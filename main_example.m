@@ -1,16 +1,19 @@
-%% Setup
+%% SETUP
+
 % Call setup_matGasFlow
 %   - to check MATLAB version requirements, and
 %   - to add necessary pathes.
 setup_matGasFlow
 
-%% Easy access
+%% EASY ACCESS
+
 % Use rungf to run a steady-state gas flow calculation. Choose the name of
 % the network model as input argument. Here are two examples:
-% GN_Cerbe = rungf('Cerbe');
-% GN_Belgium = rungf('Belgium');
+GN_Cerbe = rungf('Cerbe');
+GN_Belgium = rungf('Belgium');
 
-%% Advanced application
+%% ADAVANCED APPLICATION
+
 % To customize the network model or supply task, to change default settings
 % of numerical or physical models, to keep auxiliary variables initialized
 % when loading the network model after simulation, or to reduce the runtime
@@ -27,7 +30,8 @@ GN = load_GN('Belgium');
 % 2) Customize the scenario
 % -------------------------
 
-% Increase the output pressure of the second compressor station up to 65 barg.
+% You can for exaple increase the output pressure of the second compressor
+% station up to 65 barg (bar gauge).
 GN.comp.p_out__barg(2) = 70;
 
 % Change the composition of gas mixture to 'H_Gas_NorthSea'. Call
@@ -57,8 +61,8 @@ NUMPARAM.epsilon_NR_f = 1e-6;
 NUMPARAM.maxIter = 10;
 
 
-% 4 Change default physical models
-% --------------------------------
+% 4) Change default physical models
+% ---------------------------------
 
 % Load default settings of the physical models. Call 'help getDefaultPhysicalModels'
 % for more information.
@@ -68,12 +72,15 @@ PHYMOD = getDefaultPhysicalModels();
 % physical model settings.
 
 
-% 5 
-% 3.c)  rungf
+% 5) Run a steady-state gas flow simulation
+% -----------------------------------------
+
+% Call 'help rungf' for more information.
 GN = rungf(GN, NUMPARAM, PHYMOD);
 
 
-%% 4)   Save results
-%       Call 'help save_GN' for more information
-% save_GN(GN)
+%% SAVE RESULTS
+
+% Call 'help save_GN' for more information
+save_GN(GN)
 

@@ -1,6 +1,16 @@
 function save_GN(GN, FILENAME, directory)
-%SAVE_GN Summary of this function goes here
-%   Detailed explanation goes here
+%SAVE_GN Save gas nework model
+%
+%   save_GN(GN, FILENAME, directory)
+%   Input arguments:
+%       GN (necessarry):        gas network struct
+%
+%       FILENAME (optional):    If input arguments has no FILENMAE,
+%                               [GN.name,'_EXPORT'] is applied as default.
+%
+%       directory (optional):   If input arguments has no directory, a new
+%                               folder is created at the directory of the
+%                               gas network CSV data.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

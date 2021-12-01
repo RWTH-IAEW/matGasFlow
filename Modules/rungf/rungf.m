@@ -1,8 +1,7 @@
 function [GN] = rungf(GN, NUMPARAM, PHYMOD)
-%RUNGF Gas flow calculation
+%RUNGF Steady-state gas flow simulation
+%
 %   [GN] = RUNGF(GN, NUMPARAM, PHYMOD)
-%   
-%   Runs a steady-state gas flow calculation
 %   
 %   Input arguments:
 %       GN (necessarry) : gas network struct
@@ -70,11 +69,11 @@ if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
         end
         
         %% Update nodal equation
-        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD, NUMPARAM.OPTION_get_f_nodal_equation);
+        NUMPARAM.OPTION_get_V_dot_n_ij_pipe = 2;
+        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
         
         %% Check convergence
         GN = set_convergence(GN, ['$$rungf rad. GN (',num2str(iter),')$$']);
-        disp(num2str(norm(GN.bus.f)))
         if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
             break
         elseif iter >= NUMPARAM.maxIter

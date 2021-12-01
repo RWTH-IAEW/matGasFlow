@@ -1,6 +1,20 @@
 function [GN] = get_gasMixAndCompoProp(GN, gasMix)
 %GET_GASMIXANDCOMPOPROP Summary of this function goes here
-%   Detailed explanation goes here
+%   
+%   get_gasMixAndCompoProp(GN, gasMix) initializes the gas mixture in the
+%   gas grid. The gas mixture can be one of 'gasMix_library.csv' or a pure
+%   gas.
+%   gasMix options from gasMix_library.csv:
+%       H_Gas_NorthSea, H_Gas_Mix, H_Gas_Russia, H_Gas_Holland,
+%       H_Gas_GERG2008, L_Gas_Verbund, L_Gas_WeserEms, TENP_North, or
+%       TENP_South
+%
+%   Or choose a pure gas for gasMix:
+%       CH4, C2H6, C3H8, n_C4H10, iso_C4H10, n_C5H12, iso_C5H12, neo_C5H12,
+%       C6H14, CO, H2, H2S, N2 or CO2
+%
+%   matGasFlow allows steady-state gas flow simulation also for non
+%   combustible gases (e.g. N2, CO2).
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
