@@ -1,0 +1,13 @@
+An open source publication is being planned as well as the publication of a
+paper. Until then, we request that publications derived from the use of
+MATGASFLOW explicitly acknowledge that fact by citing the the software as
+follows:
+
+    Marcel Kurth (2021). matGasFlow (Version 0.0.2) [Software]. Institute for
+        High Voltage Equipment and Grids, Digitalization and Energy
+        Economics (IAEW), RWTH Aachen University.
+
+In the interest of facilitating research reproducibility and thereby
+increasing the value of your MATGASFLOW-related research publications, we
+strongly encourage you to also publish, whenever possible, all of the
+code and data required to generate the results you are publishing.
