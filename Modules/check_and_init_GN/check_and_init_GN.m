@@ -61,7 +61,7 @@ if isfield(GN, 'time_series')
     try
         GN = check_GN_time_series(GN);
     catch
-        warning('Check of time_series not available.')
+        warning('Check of time_series not available in this matgasflow distribution.')
     end
 end
 
