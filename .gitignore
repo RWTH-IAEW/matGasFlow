@@ -33,7 +33,6 @@ octave-workspace
 *.shp
 *.dbf
 *.shx
-*RESULT*
 *_EXPORT*
 
 
