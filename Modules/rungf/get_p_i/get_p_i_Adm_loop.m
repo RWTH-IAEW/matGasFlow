@@ -28,7 +28,7 @@ while 1
         p_i_temp = GN.bus.p_i;
         
         %% Calculation of p_i based on general gas flow equation
-        GN = get_p_i_Adm(GN, NUMPARAM, PHYMOD);
+        GN = get_p_i_Adm(GN, PHYMOD);
                 
         %% Calulation of nodal temperature
         if GN.isothermal ~= 1

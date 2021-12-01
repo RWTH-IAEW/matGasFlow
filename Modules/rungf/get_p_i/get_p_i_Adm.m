@@ -1,4 +1,4 @@
-function [GN] = get_p_i_Adm(GN, NUMPARAM, PHYMOD)
+function [GN] = get_p_i_Adm(GN, PHYMOD)
 %GET_P_I_ADM Summary of this function goes here
 %   Detailed explanation goes here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,5 +1,5 @@
 function check_GN_isothermal(GN)
-%CHECKGN_ISOTHERMAL Summary of this function goes here
+%CHECK_GN_ISOTHERMAL Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

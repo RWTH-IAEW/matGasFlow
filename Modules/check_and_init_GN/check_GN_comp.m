@@ -1,5 +1,5 @@
 function GN = check_GN_comp(GN)
-%CHECKGN_COMP Summary of this function goes here
+%CHECK_GN_COMP Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

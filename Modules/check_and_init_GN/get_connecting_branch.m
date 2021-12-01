@@ -1,6 +1,9 @@
 function [GN] = get_connecting_branch(GN)
-%GET_ICONNECTINGBRANCHES Summary of this function goes here
-%   Detailed explanation goes here
+%GET_CONNECTING_BRANCHES
+%
+%   Initializes GN.branch.connecting_branch, identifies connecting in
+%   a meshed grid with the help of a minimum spanning tree algorithm and
+%   sets them to true.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

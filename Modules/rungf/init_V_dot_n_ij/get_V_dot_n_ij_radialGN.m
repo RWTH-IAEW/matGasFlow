@@ -1,6 +1,11 @@
 function [GN] = get_V_dot_n_ij_radialGN(GN)
-%GET_V_DOT_N_IJ_RADIALGN Summary of this function goes here
-%   Detailed explanation goes here
+%GET_V_DOT_N_IJ_RADIALGN solves INC * V_dot_n_ij = V_dot_n_i for radial gas
+%   networks
+%
+%   Algorithm:
+%   1) Ignore parallel pipes
+%   2) Solve INC * V_dot_n_ij = V_dot_n_i 
+%   3) Division of gas flow at parallel pipes
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -32,7 +37,7 @@ A = GN.INC(:,~GN.branch.connecting_branch & ~GN.branch.parallel_branch);
 GN.branch.V_dot_n_ij(~GN.branch.connecting_branch & ~GN.branch.parallel_branch) = A\b;
 GN.branch.V_dot_n_ij(GN.branch.parallel_branch) = 0;
 
-%% Division of the gas flow at parallel pipes
+%% Division of gas flow at parallel pipes
 if isfield(GN,'pipe')
     GN = get_V_dot_n_ij_parallelPipes(GN);
 end

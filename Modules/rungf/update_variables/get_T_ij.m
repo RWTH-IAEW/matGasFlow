@@ -1,6 +1,7 @@
 function [GN] = get_T_ij(GN)
-%GET_T_IJ Summary of this function goes here
-%   Detailed explanation goes here
+%GET_T_IJ
+%
+%   Average temperature of the gas in pipe.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

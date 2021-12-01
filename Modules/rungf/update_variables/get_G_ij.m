@@ -1,5 +1,7 @@
 function [GN] = get_G_ij(GN, OPTION, NUMPARAM)
-%GET_G_IJ Summary of this function goes here
+%GET_G_IJ
+%
+%   "HydraulicSummary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,7 +44,7 @@ if OPTION == 1
     %% Volume flow factor B_ij [1/K]
     B_ij = 1./(GN.pipe.lambda_ij .* GN.pipe.Z_ij / GN.gasMixProp.Z_n_avg .* GN.pipe.T_ij);
     
-    %% Pneumatic conductance
+    %% "Hydraulic conductance"
     GN.pipe.G_ij = sqrt(A_ij.*B_ij);
     
     %% 

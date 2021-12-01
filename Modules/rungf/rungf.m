@@ -4,12 +4,14 @@ function [GN] = rungf(GN, NUMPARAM, PHYMOD)
 %   [GN] = RUNGF(GN, NUMPARAM, PHYMOD)
 %   
 %   Input arguments:
-%       GN (necessarry) : gas network struct
-%       NUMPARAM (optional) : struct of numerical parameter
-%       PHYMOD (optional) : struct with physical model settings
+%       GN (necessarry):        gas network struct ...
+%                               OR file name of the gas network model
+%                               (string)
+%       NUMPARAM (optional):    struct with numerical parameter
+%       PHYMOD (optional):      struct with physical model settings
 %
 %   Output:
-%       GN : gas network struct containing all results
+%       GN: gas network struct containing all results
 %
 %   Calling syntax options:
 %       GN = rungf(GN);
@@ -98,7 +100,7 @@ else
         GN = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD);
         
     elseif NUMPARAM.OPTION_rungf_meshedGN == 4
-        GN = get_p_i_Adm(GN, NUMPARAM, PHYMOD);
+        GN = get_p_i_Adm(GN, PHYMOD);
         
     elseif NUMPARAM.OPTION_rungf_meshedGN == 5
         try

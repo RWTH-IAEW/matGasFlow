@@ -1,6 +1,5 @@
 function [bus_area_ID, pipe_area_ID, station_ID, valveStation_ID] = get_area_ID(GN)
-%GET_AREA_ID Summary of this function goes here
-%   Detailed explanation goes here
+%GET_AREA_ID
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,8 @@
 function [A_ij, B_ij, C_ij] = get_ABC_ij(GN)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%GET_ABC_IJ
+%
+%   Parameters A_ij, B_ij and B_ij to calculate V_dot_n_ij_pipe and
+%   Jacobian Matrix
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,7 @@
 function [GN] = get_reduced_quantities(GN, PHYMOD)
-%GET_REDUCED_QUANTITIES Summary of this function goes here
-%   Detailed explanation goes here
+%GET_REDUCED_QUANTITIES
+%
+%   Reduced quantities: p_r_i, T_r_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

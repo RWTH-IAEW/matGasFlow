@@ -1,5 +1,5 @@
 function GN = check_GN_valve(GN)
-%CHECKGN_VALVE Summary of this function goes here
+%CHECK_GN_VALVE Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

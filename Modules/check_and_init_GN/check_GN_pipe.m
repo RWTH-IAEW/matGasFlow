@@ -1,5 +1,5 @@
 function GN = check_GN_pipe(GN)
-%CHECKGN_PIPE Summary of this function goes here
+%CHECK_GN_PIPE Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

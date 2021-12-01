@@ -40,13 +40,11 @@ if PHYMOD.comp == 1
         GN = get_kappa(GN, PHYMOD);
     end
     kappa_i = GN.bus.kappa_i(i_from_bus);
-    kappa_j = GN.bus.kappa_i(i_to_bus);
-    kappa_ij = (kappa_i + kappa_j)/2; % UNDER CONSTRUCTION
     
     GN.comp.P_mech = ...
-        GN.branch.V_dot_n_ij(GN.branch.comp_branch) .* GN.gasMixProp.rho_n_avg ./ GN.comp.eta_s .* (kappa_ij./(kappa_ij-1)) ...
+        GN.branch.V_dot_n_ij(GN.branch.comp_branch) .* GN.gasMixProp.rho_n_avg ./ GN.comp.eta_s .* (kappa_i./(kappa_i-1)) ...
         .* GN.bus.Z_i(i_from_bus) .* CONST.R_m .* GN.bus.T_i(i_from_bus) ...
-        .* ( (GN.bus.p_i(i_to_bus)./GN.bus.p_i(i_from_bus)).^((kappa_ij-1)./kappa_ij) - 1);
+        .* ( (GN.bus.p_i(i_to_bus)./GN.bus.p_i(i_from_bus)).^((kappa_i-1)./kappa_i) - 1);
     
 elseif PHYMOD.comp == 2
     %% Isothermal compression

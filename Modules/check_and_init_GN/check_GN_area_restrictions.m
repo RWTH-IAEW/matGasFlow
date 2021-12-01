@@ -1,5 +1,5 @@
 function [GN] = check_GN_area_restrictions(GN)
-%CHECKGN_AREA_RESTRICTIONS Summary of this function goes here
+%CHECK_GN_AREA_RESTRICTIONS Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

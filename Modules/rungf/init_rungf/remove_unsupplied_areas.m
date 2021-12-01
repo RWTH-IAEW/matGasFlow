@@ -1,6 +1,5 @@
 function [GN] = remove_unsupplied_areas(GN)
-%REMOVE_UNSUPPLIED_AREAS Summary of this function goes here
-%   Detailed explanation goes here
+%REMOVE_UNSUPPLIED_AREAS
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

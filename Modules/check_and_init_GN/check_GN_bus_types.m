@@ -1,5 +1,5 @@
 function check_GN_bus_types(GN)
-%CHECKGN_BUS_TYPES Summary of this function goes here
+%CHECK_GN_BUS_TYPES Summary of this function goes here
 %   1) Check if there is exactly one p_bus in each area
 %   2) Check if there is exactly one f_0_bus in each area
 %   3) Check if two or more non-pipe_branches feed the same bus

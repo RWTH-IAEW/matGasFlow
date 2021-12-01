@@ -1,6 +1,8 @@
 function [GN] = get_V_dot_n_ij_parallelPipes(GN)
-%GET_V_DOT_N_IJ_PARALLELPIPES Update V_dot_n_ij at parallel pipes
-%   Detailed explanation goes here
+%GET_V_DOT_N_IJ_PARALLELPIPES
+%
+%   Devides V_dot_n_ij at parallel pipes corresponding to their friction
+%   loss
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

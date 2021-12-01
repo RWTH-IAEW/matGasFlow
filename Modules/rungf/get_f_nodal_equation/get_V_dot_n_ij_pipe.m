@@ -1,5 +1,5 @@
 function [GN] = get_V_dot_n_ij_pipe(GN, NUMPARAM)
-%GET_V_DOT_N_IJ Summary of this function goes here
+%GET_V_DOT_N_IJ Gas flow Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

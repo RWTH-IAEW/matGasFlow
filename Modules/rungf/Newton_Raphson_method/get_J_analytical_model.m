@@ -1,14 +1,13 @@
 function [GN] = get_J_analytical_model(GN, NUMPARAM)
-%GET_J_ANALYTICAL_MODEL Summary of this function goes here
-%   Detailed explanation goes here
+%GET_J_ANALYTICAL_MODEL Jacobian Matrix J = df/dp
 %
-%|-----------------------------------|
-%| df_1/dp_1   .   .   .   df_1/dp_N |
-%|     .       .               .     |
-%|     .           .           .     |
-%|     .               .       .     |
-%| df_N/dp_1   .   .   .   df_N/dp_N |
-%|-----------------------------------|
+%   |-----------------------------------|
+%   | df_1/dp_1   .   .   .   df_1/dp_N |
+%   |     .       .               .     |
+%   |     .           .           .     |
+%   |     .               .       .     |
+%   | df_N/dp_1   .   .   .   df_N/dp_N |
+%   |-----------------------------------|
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -19,9 +18,10 @@ function [GN] = get_J_analytical_model(GN, NUMPARAM)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Quantities
 p_i = GN.bus.p_i;
 
-%%
+%% d(V_dot_n_ij)/dp
 if isfield(GN, 'pipe')
     iF_pipe = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT_pipe = GN.branch.i_to_bus(GN.branch.pipe_branch);
@@ -63,7 +63,6 @@ if isfield(GN, 'pipe')
     dV_ij_dp_i(sign(V_dot_n_ij_pipe) == -1) = dV_ij_dp_jOut(sign(V_dot_n_ij_pipe) == -1);
     dV_ij_dp_j = dV_ij_dp_jOut;
     dV_ij_dp_j(sign(V_dot_n_ij_pipe) == -1) = d_V_ij_d_p_iIn(sign(V_dot_n_ij_pipe) == -1);
-    
 end
 
 %% V_dot_n_i demand at compressor inputs
@@ -95,7 +94,7 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
     end
 end
 
-%%
+%% 
 if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equation == 2
     if any(strcmp('station_ID',GN.branch.Properties.VariableNames))
         station_IDs = unique(GN.branch.station_ID(~isnan(GN.branch.station_ID)));
@@ -121,7 +120,6 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
             dV_jk_dp_k( length(dV_jk_dp_k) + 1 : length(dV_jk_dp_k) + nBusses, 1) = ...
                 [dV_ij_dp_j_branch(iBranch_jk); -dV_ij_dp_j_branch(iBranch_kj)];
         end
-        
     else
         iF_Station = [];
         k_bus = [];
@@ -129,7 +127,7 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
     end
 end
 
-%%
+%% Jacobian Matrix (sparse)
 if      NUMPARAM.OPTION_get_f_nodal_equation == 1
     ii = [iF_pipe;          iT_pipe;            iT_pipe;            iF_pipe;        iF_comp;        iF_comp;        iF_Station ];
     jj = [iF_pipe;          iF_pipe;            iT_pipe;            iT_pipe;        iF_comp;        iT_comp;        k_bus      ];
@@ -153,12 +151,9 @@ elseif  NUMPARAM.OPTION_get_f_nodal_equation == 4
 end
 mm = size(GN.bus,1);
 nn = mm;
-J = sparse(ii,jj,vv,mm,nn);
-J(GN.bus.f_0_bus,:) = [];
-J(:,GN.bus.p_bus) = [];
-
-%%
-GN.J = J;
+GN.J = sparse(ii,jj,vv,mm,nn);
+GN.J(GN.bus.f_0_bus,:) = [];
+GN.J(:,GN.bus.p_bus) = [];
 
 end
 

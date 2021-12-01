@@ -1,5 +1,5 @@
 function [GN] = check_GN_islands(GN)
-%CHECKGN_ISLANDS_AREA_ID Summary of this function goes here
+%CHECK_GN_ISLANDS_AREA_ID Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

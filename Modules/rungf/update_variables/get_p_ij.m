@@ -1,6 +1,7 @@
 function [GN] = get_p_ij(GN)
-%GET_P_IJ Summary of this function goes here
-%   Detailed explanation goes here
+%GET_P_IJ
+%
+%   Average pressure p_ij [Pa] in a pipe
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

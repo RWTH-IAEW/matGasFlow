@@ -1,6 +1,7 @@
 function delete_log_files
-%CLEAR_LOG Summary of this function goes here
-%   Detailed explanation goes here
+%DELETE_LOG_FILES
+%
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

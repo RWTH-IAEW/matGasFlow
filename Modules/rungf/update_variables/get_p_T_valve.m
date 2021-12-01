@@ -1,6 +1,7 @@
 function [GN] = get_p_T_valve(GN)
-%GET_P_T_VALVE Summary of this function goes here
-%   Detailed explanation goes here
+%GET_P_T_VALVE
+%
+%   Update p_i and T_i at valve output with p_i and T_i at valve input.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

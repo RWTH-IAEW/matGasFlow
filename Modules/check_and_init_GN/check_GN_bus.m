@@ -1,5 +1,5 @@
 function GN = check_GN_bus(GN)
-%CHECKGN_BUS Summary of this function goes here
+%CHECK_GN_BUS Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

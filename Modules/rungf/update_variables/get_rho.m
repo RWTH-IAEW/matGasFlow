@@ -1,6 +1,7 @@
 function [GN] = get_rho(GN)
-%GET_RHO_IJ Summary of this function goes here
-%   Detailed explanation goes here
+%GET_RHO
+%
+%   Density rho [kg/m^3] of the gas at busses and in pipes.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

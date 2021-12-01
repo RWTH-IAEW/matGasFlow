@@ -1,13 +1,15 @@
 function [GN] = get_J(GN, NUMPARAM, PHYMOD)
-%GET_J Summary of this function goes here
-%   Detailed explanation goes here
-%|-----------------------------------|
-%| df_1/dp_1   .   .   .   df_1/dp_N |
-%|     .       .               .     |
-%|     .           .           .     |
-%|     .               .       .     |
-%| df_N/dp_1   .   .   .   df_N/dp_N |
-%|-----------------------------------|
+%GET_J
+%
+%   Jacobian Matrix J = df/dp
+%
+%   |-----------------------------------|
+%   | df_1/dp_1   .   .   .   df_1/dp_N |
+%   |     .       .               .     |
+%   |     .           .           .     |
+%   |     .               .       .     |
+%   | df_N/dp_1   .   .   .   df_N/dp_N |
+%   |-----------------------------------|
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

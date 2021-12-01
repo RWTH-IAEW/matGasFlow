@@ -1,5 +1,5 @@
 function GN = check_GN_T_env(GN)
-%CHECKGN_T_ENV Summary of this function goes here
+%CHECK_GN_T_ENV Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

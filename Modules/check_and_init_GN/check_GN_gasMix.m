@@ -1,5 +1,5 @@
 function GN = check_GN_gasMix(GN)
-%CHECKGN_GASMIX Summary of this function goes here
+%CHECK_GN_GASMIX Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

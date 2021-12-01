@@ -3,7 +3,7 @@ function [NUMPARAM] = getDefaultNumericalParameters()
 %   simulation
 %
 %   [NUMPARAM] = GETNUMERICALPARAMETERS() returns a struct with default
-%   numerical paramteres. More information to come...
+%   numerical paramteres. More information to come ...
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -53,5 +53,5 @@ NUMPARAM.dp_NR = 1e-6;                      % pressure disturbance dp to build u
 NUMPARAM.OPTION_NR_damping = 1;             % 1 = on ; 2 = no damping;
 NUMPARAM.omega_NR_min = 1e-6;               % minimal damping parameter: must be 0 < omega_NR_min <= 1
 NUMPARAM.omega_adaption_NR = 0.5;           % Reduction speed of omega. Default: 0.5
-NUMPARAM.OPTION_get_J_iter = 1; % Every xth repetition Jacobian Matrix is calculated. speedup_NR_iter >= 1
+NUMPARAM.OPTION_get_J_iter = 1;             % Every xth repetition Jacobian Matrix is calculated. speedup_NR_iter >= 1
 
