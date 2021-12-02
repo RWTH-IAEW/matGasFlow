@@ -10,7 +10,11 @@ function [GN] = get_V_dot_n_ij_pipe(GN, NUMPARAM)
 %       V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -46,6 +50,11 @@ if NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 1
     T_ij    = GN.pipe.T_ij;
     p_i     = GN.bus.p_i;
     
+<<<<<<< HEAD
+=======
+    [A_ij, B_ij, C_ij] = get_ABC_ij(GN);
+    
+>>>>>>> Merge to public repo (#1)
     % Indices
     idx         = p_i(iF) < p_i(iT);
     sign_pipe   = ones(size(GN.pipe,1),1);
@@ -68,8 +77,11 @@ if NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 1
     end
     
     if any(turbolent)
+<<<<<<< HEAD
         [A_ij, B_ij, C_ij] = get_ABC_ij(GN);
         
+=======
+>>>>>>> Merge to public repo (#1)
         V_dot_n_ij_turbolent = ...
             sign_pipe .* A_ij .* sqrt(p_i(iIn).^2 - p_i(iOut).^2) .* log10(B_ij ./ sqrt(p_i(iIn).^2 - p_i(iOut).^2) + C_ij);
         V_dot_n_ij(turbolent)  = V_dot_n_ij_turbolent(turbolent);
@@ -77,7 +89,28 @@ if NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 1
     
 elseif NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 2
     %% V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
+<<<<<<< HEAD
     GN = get_G_ij(GN,1);
+=======
+    
+    CONST = getConstants();
+    
+    %% Volume flow factor  A_ij [(K*m^10)/(N^2*s^2)]
+    A_ij = pi^2 * GN.pipe.D_ij.^5 * CONST.T_n ./ (16 * GN.gasMixProp.rho_n_avg * CONST.p_n * GN.pipe.L_ij);
+    
+    %% Volume flow factor B_ij [1/K]
+    B_ij = 1./(GN.pipe.lambda_ij .* GN.pipe.Z_ij / GN.gasMixProp.Z_n_avg .* GN.pipe.T_ij);
+    
+    %% Pneumatic conductance
+    GN.pipe.G_ij = sqrt(A_ij.*B_ij);
+    
+    %% 
+    if any(GN.pipe.G_ij == 0)
+        GN_temp = get_G_ij(GN, 2);
+        GN.pipe.G_ij(GN.pipe.G_ij == 0) = GN_temp.pipe.G_ij(GN.pipe.G_ij == 0);
+    end
+    
+>>>>>>> Merge to public repo (#1)
     V_dot_n_ij = GN.pipe.G_ij .* sqrt(GN.bus.p_i(iF).^2 - GN.bus.p_i(iT).^2);
     V_dot_n_ij = real(V_dot_n_ij .* exp(1i.*angle(V_dot_n_ij)));
     

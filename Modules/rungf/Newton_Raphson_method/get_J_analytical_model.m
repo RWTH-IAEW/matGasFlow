@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 function [GN] = get_J_analytical_model(GN, NUMPARAM, PHYMOD)
+=======
+function [GN] = get_J_analytical_model(GN, NUMPARAM)
+>>>>>>> Merge to public repo (#1)
 %GET_J_ANALYTICAL_MODEL Jacobian Matrix J = df/dp
 %
 %   |-----------------------------------|
@@ -10,7 +14,11 @@ function [GN] = get_J_analytical_model(GN, NUMPARAM, PHYMOD)
 %   |-----------------------------------|
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -26,17 +34,26 @@ if isfield(GN, 'pipe')
     % Indices
     iF_pipe = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT_pipe = GN.branch.i_to_bus(GN.branch.pipe_branch);
+<<<<<<< HEAD
     is_p_i_greater_than_p_j = p_i(iF_pipe) > p_i(iT_pipe);
     
     iIn = iF_pipe;
     iIn(~is_p_i_greater_than_p_j) = iT_pipe(~is_p_i_greater_than_p_j);
     iOut = iT_pipe;
     iOut(~is_p_i_greater_than_p_j) = iF_pipe(~is_p_i_greater_than_p_j);
+=======
+    idx = p_i(iF_pipe) < p_i(iT_pipe);
+    iIn = iF_pipe;
+    iIn(idx) = iT_pipe(idx);
+    iOut = iT_pipe;
+    iOut(idx) = iF_pipe(idx);
+>>>>>>> Merge to public repo (#1)
     
     % Quantites
     p_i = GN.bus.p_i(iIn);
     p_j = GN.bus.p_i(iOut);
     
+<<<<<<< HEAD
     % laminar or turbolent
     laminar     = GN.pipe.Re_ij <= 2320;
     turbolent   = GN.pipe.Re_ij > 2320;
@@ -110,6 +127,36 @@ else
     iT_pipe = [];
     dV_ij_dp_i = [];
     dV_ij_dp_j = [];
+=======
+    %% turbolent
+    [A_ij, B_ij, C_ij] = get_ABC_ij(GN);
+    V_dot_n_ij_pipe = GN.branch.V_dot_n_ij(GN.branch.pipe_branch);
+    
+    d_V_ij_d_p_iIn = ...
+        sign(V_dot_n_ij_pipe) .* (...
+        A_ij .* p_i ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+        - A_ij .* B_ij .* p_i ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+        );
+    d_V_ij_d_p_iIn(isnan(d_V_ij_d_p_iIn)) = 0;
+    d_V_ij_d_p_iIn(GN.bus.p_bus(iIn)) = 0;
+    
+    dV_ij_dp_jOut = ...
+        sign(V_dot_n_ij_pipe) .* (...
+        - A_ij .* p_j ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+        + A_ij .* B_ij .* p_j ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+        );
+    dV_ij_dp_jOut(isnan(dV_ij_dp_jOut)) = 0;
+    dV_ij_dp_jOut(GN.bus.p_bus(iOut)) = 0;
+    
+    %% laminar
+    
+    
+    %% dV_ij_dp_i, dV_ij_dp_j
+    dV_ij_dp_i = d_V_ij_d_p_iIn;
+    dV_ij_dp_i(sign(V_dot_n_ij_pipe) == -1) = dV_ij_dp_jOut(sign(V_dot_n_ij_pipe) == -1);
+    dV_ij_dp_j = dV_ij_dp_jOut;
+    dV_ij_dp_j(sign(V_dot_n_ij_pipe) == -1) = d_V_ij_d_p_iIn(sign(V_dot_n_ij_pipe) == -1);
+>>>>>>> Merge to public repo (#1)
 end
 
 %% V_dot_n_i demand at compressor inputs
@@ -122,9 +169,12 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
         % Quantities
         p_i = GN.bus.p_i(iF_comp);
         p_j = GN.bus.p_i(iT_comp);
+<<<<<<< HEAD
         if ~ismember('kappa_i',GN.bus.Properties.VariableNames)
             GN = get_kappa(GN, PHYMOD);
         end
+=======
+>>>>>>> Merge to public repo (#1)
         kappa_i = GN.bus.kappa_i(iF_comp);
         
         % Physical constants
@@ -145,6 +195,7 @@ end
 
 %% 
 if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equation == 2
+<<<<<<< HEAD
     dV_ij_dp_j_branch = zeros(size(GN.branch,1),1);
     
     % pipe
@@ -152,11 +203,18 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
         dV_ij_dp_j_branch(GN.branch.pipe_branch) = dV_ij_dp_j;
     end
     
+=======
+>>>>>>> Merge to public repo (#1)
     if any(strcmp('station_ID',GN.branch.Properties.VariableNames))
         station_IDs = unique(GN.branch.station_ID(~isnan(GN.branch.station_ID)));
         iF_Station  = [];
         k_bus       = [];
         dV_jk_dp_k  = [];
+<<<<<<< HEAD
+=======
+        dV_ij_dp_j_branch = zeros(size(GN.branch,1),1);
+        dV_ij_dp_j_branch(GN.branch.pipe_branch) = dV_ij_dp_j;
+>>>>>>> Merge to public repo (#1)
         
         for iii = 1:length(station_IDs)
             station_ID      = station_IDs(iii);
@@ -205,8 +263,14 @@ elseif  NUMPARAM.OPTION_get_f_nodal_equation == 4
 end
 mm = size(GN.bus,1);
 nn = mm;
+<<<<<<< HEAD
 J = sparse(ii,jj,vv,mm,nn);
 GN.J = J(~GN.bus.p_bus,~GN.bus.p_bus);
+=======
+GN.J = sparse(ii,jj,vv,mm,nn);
+GN.J(GN.bus.f_0_bus,:) = [];
+GN.J(:,GN.bus.p_bus) = [];
+>>>>>>> Merge to public repo (#1)
 
 end
 

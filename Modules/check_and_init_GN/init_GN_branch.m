@@ -1,11 +1,18 @@
 function [GN] = init_GN_branch(GN)
 %INIT_GN_BRANCH
+<<<<<<< HEAD
 %   Initialize GN.branch by merging branch information from pipe, comp, prs
 %   and valve.
 %   GN = init_GN_branch(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   GN = init_GN_branch(GN)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -13,6 +20,7 @@ function [GN] = init_GN_branch(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 if ~any(isfield(GN, {'pipe','comp','prs','valve'})) % UNDER CONSTRUCTION
     error('The gas network has no branch.')
 end
@@ -27,6 +35,14 @@ if isfield(GN,'pipe')
         i_nan = isnan(GN.pipe.branch_ID);
         GN.pipe.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
     end
+=======
+%% Outer Join pipe, comp and prs
+branch_ID_max = 0;
+GN.branch = table([]);
+if isfield(GN,'pipe')
+    GN.pipe.branch_ID = (branch_ID_max+1 : branch_ID_max+size(GN.pipe,1))';
+    branch_ID_max = branch_ID_max + size(GN.pipe,1);
+>>>>>>> Merge to public repo (#1)
     GN.pipe = movevars(GN.pipe,'branch_ID','Before',1);
     GN.pipe = movevars(GN.pipe,'from_bus_ID','After','branch_ID');
     GN.pipe = movevars(GN.pipe,'to_bus_ID','After','from_bus_ID');
@@ -36,6 +52,7 @@ if isfield(GN,'pipe')
 end
 
 if isfield(GN,'comp')
+<<<<<<< HEAD
     max_branch_ID = get_max_branch_ID(GN);
     if ~ismember('branch_ID', GN.comp.Properties.VariableNames)
         GN.comp.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.comp,1))';
@@ -43,10 +60,15 @@ if isfield(GN,'comp')
         i_nan = isnan(GN.comp.branch_ID);
         GN.comp.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
     end
+=======
+    GN.comp.branch_ID = (branch_ID_max+1 : branch_ID_max+size(GN.comp,1))';
+    branch_ID_max = branch_ID_max + size(GN.comp,1);
+>>>>>>> Merge to public repo (#1)
     GN.comp = movevars(GN.comp,'branch_ID','Before',1);
     GN.comp = movevars(GN.comp,'from_bus_ID','After','branch_ID');
     GN.comp = movevars(GN.comp,'to_bus_ID','After','from_bus_ID');
     GN.comp = movevars(GN.comp,'in_service','After','to_bus_ID');
+<<<<<<< HEAD
     if any(ismember(GN.comp.Properties.VariableNames,'P_th_ij_preset__MW'))
         comp_to_branch = GN.comp(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'slack_branch', 'comp_ID', 'P_th_ij_preset__MW', 'preset'});
         
@@ -69,6 +91,9 @@ if isfield(GN,'comp')
         comp_to_branch = GN.comp(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'slack_branch', 'comp_ID'});
         
     end
+=======
+    comp_to_branch = GN.comp(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'comp_ID'});
+>>>>>>> Merge to public repo (#1)
     if ~isempty(GN.branch)
         Var = intersect(GN.branch.Properties.VariableNames,GN.comp.Properties.VariableNames);
         GN.branch = outerjoin(GN.branch,comp_to_branch,'Keys',Var,'MergeKeys',true);
@@ -78,6 +103,7 @@ if isfield(GN,'comp')
 end
 
 if isfield(GN,'prs')
+<<<<<<< HEAD
     max_branch_ID = get_max_branch_ID(GN);
     if ~ismember('branch_ID', GN.prs.Properties.VariableNames)
         GN.prs.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.prs,1))';
@@ -85,10 +111,15 @@ if isfield(GN,'prs')
         i_nan = isnan(GN.prs.branch_ID);
         GN.prs.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
     end
+=======
+    GN.prs.branch_ID = (branch_ID_max+1 : branch_ID_max+size(GN.prs,1))';
+    branch_ID_max = branch_ID_max + size(GN.prs,1);
+>>>>>>> Merge to public repo (#1)
     GN.prs = movevars(GN.prs,'branch_ID','Before',1);
     GN.prs = movevars(GN.prs,'from_bus_ID','After','branch_ID');
     GN.prs = movevars(GN.prs,'to_bus_ID','After','from_bus_ID');
     GN.prs = movevars(GN.prs,'in_service','After','to_bus_ID');
+<<<<<<< HEAD
     if any(ismember(GN.prs.Properties.VariableNames,'P_th_ij_preset__MW'))
         prs_to_branch = GN.prs(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'slack_branch', 'prs_ID', 'P_th_ij_preset__MW', 'preset'});
         
@@ -111,6 +142,9 @@ if isfield(GN,'prs')
         prs_to_branch = GN.prs(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'slack_branch', 'prs_ID'});
         
     end
+=======
+    prs_to_branch = GN.prs(:,{'branch_ID', 'from_bus_ID', 'to_bus_ID', 'in_service', 'prs_ID'});
+>>>>>>> Merge to public repo (#1)
     if ~isempty(GN.branch)
         Var = intersect(GN.branch.Properties.VariableNames,GN.prs.Properties.VariableNames);
         GN.branch = outerjoin(GN.branch,prs_to_branch,'Keys',Var,'MergeKeys',true);
@@ -120,6 +154,7 @@ if isfield(GN,'prs')
 end
 
 if isfield(GN,'valve')
+<<<<<<< HEAD
     max_branch_ID = get_max_branch_ID(GN);
     if ~ismember('branch_ID', GN.valve.Properties.VariableNames)
         GN.valve.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.valve,1))';
@@ -127,6 +162,10 @@ if isfield(GN,'valve')
         i_nan = isnan(GN.valve.branch_ID);
         GN.valve.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
     end
+=======
+    GN.valve.branch_ID = (branch_ID_max+1 : branch_ID_max+size(GN.valve,1))';
+%     branch_ID_max = branch_ID_max + size(GN.valve,1);
+>>>>>>> Merge to public repo (#1)
     GN.valve = movevars(GN.valve,'branch_ID','Before',1);
     GN.valve = movevars(GN.valve,'from_bus_ID','After','branch_ID');
     GN.valve = movevars(GN.valve,'to_bus_ID','After','from_bus_ID');
@@ -140,6 +179,7 @@ if isfield(GN,'valve')
     end
 end
 
+<<<<<<< HEAD
 %% Set NaN preset values to zero
 if any(ismember(GN.branch.Properties.VariableNames,'P_th_ij_preset__MW'))
     GN.branch.P_th_ij_preset__MW(isnan(GN.branch.P_th_ij_preset__MW)) = 0;
@@ -175,5 +215,11 @@ end
 %% Sort rows
 GN.branch = sortrows(GN.branch,'branch_ID','ascend');
 
+=======
+if ~isfield(GN, {'pipe','comp','prs','valve'})
+    error('The gas network has no branch.')
+end
+
+>>>>>>> Merge to public repo (#1)
 end
 

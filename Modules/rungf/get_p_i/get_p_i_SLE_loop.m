@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 function [GN, success] = get_p_i_SLE_loop(GN, NUMPARAM, PHYMOD)
+=======
+function [GN] = get_p_i_SLE_loop(GN, NUMPARAM, PHYMOD)
+>>>>>>> Merge to public repo (#1)
 %GET_P_I_SLE_LOOP Start solution for nodal pressure p_i
 %   [GN] = get_p_i_SLE(GN, PHYMOD) solves system of linear equations (SLE)
 %   in a while loop: INC' * p_i^2 = -V^2/G_ij
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -12,9 +20,12 @@ function [GN, success] = get_p_i_SLE_loop(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 %% Success
 success = true;
 
+=======
+>>>>>>> Merge to public repo (#1)
 %% Check if there is any volumen flow and check for pipes
 if all(GN.branch.V_dot_n_ij == 0) || ~isfield(GN, 'pipe')
     return
@@ -32,10 +43,14 @@ while 1
         p_i_temp = GN.bus.p_i;
         
         %% Calculation of p_i
+<<<<<<< HEAD
         [GN, success]  = get_p_i_SLE(GN, PHYMOD);
         if ~success
             return
         end
+=======
+        GN = get_p_i_SLE(GN, PHYMOD);
+>>>>>>> Merge to public repo (#1)
                 
         %% Calulation of nodal temperature
         if GN.isothermal ~= 1
@@ -52,7 +67,11 @@ while 1
     end
     
     %% Update nodal equation
+<<<<<<< HEAD
     GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
+=======
+    GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD, 2);
+>>>>>>> Merge to public repo (#1)
     
     %% Check convergence
     GN = set_convergence(GN, ['$$p_i SLE loop, \dot{V}_{dot,n,ij}, (',num2str(iter_1),')$$']);

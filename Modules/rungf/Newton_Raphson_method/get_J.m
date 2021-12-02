@@ -12,7 +12,11 @@ function [GN] = get_J(GN, NUMPARAM, PHYMOD)
 %   |-----------------------------------|
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -21,6 +25,7 @@ function [GN] = get_J(GN, NUMPARAM, PHYMOD)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if NUMPARAM.OPTION_get_J == 1
+<<<<<<< HEAD
     GN = get_J_analytical_model(GN, NUMPARAM, PHYMOD);
     
 elseif NUMPARAM.OPTION_get_J == 2
@@ -36,6 +41,23 @@ elseif NUMPARAM.OPTION_get_J == 3
 %     catch
 %         error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
 %     end
+=======
+    GN = get_J_analytical_model(GN, NUMPARAM);
+    
+elseif NUMPARAM.OPTION_get_J == 2
+    try
+        GN = get_J_dpModel(GN, NUMPARAM, PHYMOD);
+    catch
+        error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
+    end
+    
+elseif NUMPARAM.OPTION_get_J == 3
+    try
+        GN = get_J_dpForLoopModel(GN, NUMPARAM, PHYMOD);
+    catch
+        error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
+    end
+>>>>>>> Merge to public repo (#1)
     
 end
 end

@@ -26,7 +26,11 @@ function [GN] = load_GN(FILENAME, temp_model, create_log_file)
 %           the network model, they are saved in a log file.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -73,6 +77,7 @@ elseif strcmp(temp_model, 'isothermal')
 end
 
 %% Plausibility check and initialization of the gas network
+<<<<<<< HEAD
 keep_bus_properties = true;
 GN = check_and_init_GN(GN, keep_bus_properties, create_log_file);
 
@@ -81,6 +86,15 @@ GN = check_and_init_GN(GN, keep_bus_properties, create_log_file);
 %     GN.bus.p_i__barg(~GN.bus.p_bus) = NaN;
 %     warning('GN.bus: All pressure values p_i__barg at ~GN.bus.p_bus have been reset to NaN.')
 % end
+=======
+GN = check_and_init_GN(GN, create_log_file);
+
+%% Reset p_i__barg
+if any(~isnan(GN.bus.p_i__barg(~GN.bus.p_bus)))
+    GN.bus.p_i__barg(~GN.bus.p_bus) = NaN;
+    warning('GN.bus: All pressure values p_i__barg at ~GN.bus.p_bus have been reset to NaN.')
+end
+>>>>>>> Merge to public repo (#1)
 
 end
 

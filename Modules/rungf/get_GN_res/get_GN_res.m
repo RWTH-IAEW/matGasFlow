@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 function [GN] = get_GN_res(GN, GN_input, flag_remove_auxiliary_variables, NUMPARAM, PHYMOD)
+=======
+function [GN] = get_GN_res(GN, NUMPARAM, PHYMOD)
+>>>>>>> Merge to public repo (#1)
 %GET_GN_RESULT Result preparation
 %   GN = get_GN_res(GN, NUMPARAM, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -11,6 +19,7 @@ function [GN] = get_GN_res(GN, GN_input, flag_remove_auxiliary_variables, NUMPAR
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 %% Set default input arguments
 if nargin < 3
     PHYMOD = getDefaultPhysicalModels();
@@ -20,10 +29,13 @@ if nargin < 3
     end
 end
 
+=======
+>>>>>>> Merge to public repo (#1)
 if ~any(strcmp('V_dot_n_ij',GN.branch.Properties.VariableNames))
     error('GN is no GN result struct. GN.branch.V_dot_n_ij is missing.')
 end
 
+<<<<<<< HEAD
 %% BUS - megre GN and GN_input
 % GN and GN_input must be merged because unsuuplied busses,
 % out-of-service-branches and valves are not included in GN
@@ -130,32 +142,49 @@ GN = GN_input;
 % 2) Calculate additional results
 % 3) Check results
 
+=======
+>>>>>>> Merge to public repo (#1)
 %% Physical constants
 CONST = getConstants();
 
 %% comp
 if isfield(GN,'comp')
+<<<<<<< HEAD
     
     % 1) Apply results from branch
+=======
+    % GN = get_P_el_comp(GN, PHYMOD); % UNDER CONSTRCUTION
+    
+    % Get V_dot_n_ij from branch
+>>>>>>> Merge to public repo (#1)
     i_comp = GN.branch.i_comp(GN.branch.comp_branch);
     GN.comp.V_dot_n_ij(i_comp) = ...
         GN.branch.V_dot_n_ij(GN.branch.comp_branch);
     
+<<<<<<< HEAD
     % 2) Calculate additional results
     % 2.1) Compressor power
     % GN = get_P_el_comp(GN, PHYMOD); % UNDER CONSTRUCTION
     
     % 3) Check results
     % 3.1) Direction of V_dot_n_ij
+=======
+    % Check V_dot_n_ij
+>>>>>>> Merge to public repo (#1)
     if any(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance)
         comp_ID = GN.comp.comp_ID(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance);
         warning(['The volume flows at these compressors have the wrong direction, comp_ID: ',num2str(comp_ID')])
     end
+<<<<<<< HEAD
     if ~(any(GN.comp.gas_powered))
         GN.comp.V_dot_n_i_comp(:) = 0;
     end
     
     % 3.2) Compare input and output pressure
+=======
+    
+    % Compare input and output pressure
+>>>>>>> Merge to public repo (#1)
     i_from_bus = GN.branch.i_from_bus(GN.branch.comp_branch);
     i_to_bus = GN.branch.i_to_bus(GN.branch.comp_branch);
     p_i = GN.bus.p_i(i_from_bus);
@@ -164,6 +193,7 @@ if isfield(GN,'comp')
     comp_ID = GN.branch.comp_ID(GN.branch.comp_branch);
     if any(delta_p < -NUMPARAM.numericalTolerance)
         comp_ID = comp_ID(delta_p < -NUMPARAM.numericalTolerance);
+<<<<<<< HEAD
         warning(['Output pressure is smaler than input pressure at these compressors, comp_ID: ',num2str(comp_ID')])
     end
     
@@ -226,22 +256,72 @@ if isfield(GN,'comp')
         GN.comp.Power_el_tot = P_el_comp + P_el_cool;
         
     end
+=======
+        warning(['Output pressure is smaler than input pressure at these compressors, comp_ID: ',num2str(comp_ID)])
+    end
+    
+    % Calculate P_th_ij__MW, P_th_ij, V_dot_n_ij__m3_per_day,
+    %   V_dot_n_ij__m3_per_h or m_dot_ij__kg_per_s
+    if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
+        GN.comp.P_th_ij__MW                 = GN.comp.V_dot_n_ij * 1e-6 * GN.gasMixProp.H_s_n_avg;
+%         GN.comp.V_dot_n_ij                  = [];
+        GN.comp.P_th_i_comp__MW             = GN.comp.V_dot_n_i_comp * 1e-6 * GN.gasMixProp.H_s_n_avg;
+%         GN.comp.V_dot_n_i_comp              = [];
+        
+    elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
+        GN.comp.P_th_ij                     = GN.comp.V_dot_n_ij * GN.gasMixProp.H_s_n_avg;
+%         GN.comp.V_dot_n_ij                  = [];
+        GN.comp.P_th_i_comp                 = GN.comp.V_dot_n_i_comp * GN.gasMixProp.H_s_n_avg;
+%         GN.comp.V_dot_n_i_comp              = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames))
+        GN.comp.V_dot_n_ij__m3_per_day      = GN.comp.V_dot_n_ij * 60 * 60 * 24;
+%         GN.comp.V_dot_n_ij                  = [];
+        GN.comp.V_dot_n_i_comp__m3_per_day  = GN.comp.V_dot_n_i_comp * 60 * 60 * 24;
+%         GN.comp.V_dot_n_i_comp              = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames))
+        GN.comp.V_dot_n_ij__m3_per_h        = GN.comp.V_dot_n_ij * 60 * 60;
+%         GN.comp.V_dot_n_ij                  = [];
+        GN.comp.V_dot_n_i_comp__m3_per_h    = GN.comp.V_dot_n_i_comp * 60 * 60;
+%         GN.comp.V_dot_n_i_comp              = [];
+        
+    elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
+        GN.comp.m_dot_ij__kg_per_s          = GN.comp.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
+%         GN.comp.V_dot_n_ij                  = [];
+        GN.comp.m_dot_i_comp__kg_per_s      = GN.comp.V_dot_n_i_comp * GN.gasMixProp.rho_n_avg;
+%         GN.comp.V_dot_n_i_comp              = [];
+    end
+    
+    % UNDER CONSTRUCTION: Q_dot_cooler
+>>>>>>> Merge to public repo (#1)
 end
 
 %% prs
 if isfield(GN,'prs')
+<<<<<<< HEAD
     
     % 1) Apply results from branch
+=======
+    % P_el_exp_turbine
+    GN = get_P_el_exp_turbine(GN, PHYMOD);
+    
+    % Get V_dot_n_ij from branch
+>>>>>>> Merge to public repo (#1)
     i_prs = GN.branch.i_prs(GN.branch.prs_branch);
     GN.prs.V_dot_n_ij(i_prs) = ...
         GN.branch.V_dot_n_ij(GN.branch.prs_branch);
     
+<<<<<<< HEAD
     % 2) Calculate additional results
     % 2.1) Power of expansion turbine
     GN = get_P_el_exp_turbine(GN, PHYMOD);
     
     % 3) Check results
     % 3.1) Direction of V_dot_n_ij
+=======
+    % Check V_dot_n_ij
+>>>>>>> Merge to public repo (#1)
     if any(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance)
         prs_ID = GN.prs.prs_ID(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance);
         warning(['The volume flows at these pressure gegulator stations have the wrong direction, prs_ID: ',num2str(prs_ID')])
@@ -251,6 +331,7 @@ if isfield(GN,'prs')
     %   V_dot_n_ij__m3_per_h or m_dot_ij__kg_per_s
     if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
         GN.prs.P_th_ij__MW              = GN.prs.V_dot_n_ij * 1e-6 * GN.gasMixProp.H_s_n_avg;
+<<<<<<< HEAD
         %         GN.prs.V_dot_n_ij               = [];
         
     elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
@@ -305,6 +386,66 @@ if isfield(GN,'prs')
             catch
             end
         end
+=======
+%         GN.prs.V_dot_n_ij               = [];
+        
+    elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
+        GN.prs.P_th_ij                  = GN.prs.V_dot_n_ij * GN.gasMixProp.H_s_n_avg;
+%         GN.prs.V_dot_n_ij               = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames))
+        GN.prs.V_dot_n_ij__m3_per_day   = GN.prs.V_dot_n_ij * 60 * 60 * 24;
+%         GN.prs.V_dot_n_ij               = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames))
+        GN.prs.V_dot_n_ij__m3_per_h     = GN.prs.V_dot_n_ij * 60 * 60;
+%         GN.prs.V_dot_n_ij               = [];
+        
+    elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
+        GN.prs.m_dot_ij__kg_per_s       = GN.prs.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
+%         GN.prs.V_dot_n_ij               = [];
+        
+    end
+    
+    % UNDER CONSTRUCTION: Q_dot_heater
+end
+
+%% valve
+if isfield(GN,'valve')
+    % V_dot_n_ij
+    i_valve = GN.branch.i_valve(GN.branch.valve_branch);
+    GN.valve.V_dot_n_ij(i_valve) = ...
+        GN.branch.V_dot_n_ij(GN.branch.valve_branch);
+    
+    % Get V_dot_n_ij from branch
+    if any(GN.valve.V_dot_n_ij < -NUMPARAM.numericalTolerance)
+        valve_ID = GN.valve.valve_ID(GN.valve.V_dot_n_ij < -NUMPARAM.numericalTolerance);
+        warning(['The volume flows at these valves have the wrong direction, valve_ID: ',num2str(valve_ID')])
+    end
+    
+    % Calculate P_th_ij__MW, P_th_ij, V_dot_n_ij__m3_per_day,
+    %   V_dot_n_ij__m3_per_h or m_dot_ij__kg_per_s
+    if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
+        GN.valve.P_th_ij__MW                = GN.valve.V_dot_n_ij * 1e-6 * GN.gasMixProp.H_s_n_avg;
+%         GN.valve.V_dot_n_ij                 = [];
+        
+    elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
+        GN.valve.P_th_ij                    = GN.valve.V_dot_n_ij * GN.gasMixProp.H_s_n_avg;
+%         GN.valve.V_dot_n_ij                 = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames))
+        GN.valve.V_dot_n_ij__m3_per_day     = GN.valve.V_dot_n_ij * 60 * 60 * 24;
+%         GN.valve.V_dot_n_ij                 = [];
+        
+    elseif any(strcmp('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames))
+        GN.valve.V_dot_n_ij__m3_per_h       = GN.valve.V_dot_n_ij * 60 * 60;
+%         GN.valve.V_dot_n_ij                 = [];
+        
+    elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
+        GN.valve.m_dot_ij__kg_per_s         = GN.valve.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
+%         GN.valve.V_dot_n_ij                 = [];
+        
+>>>>>>> Merge to public repo (#1)
     end
 end
 
@@ -315,8 +456,13 @@ if isfield(GN,'pipe')
     GN.pipe.V_dot_n_ij(i_pipe) = ...
         GN.branch.V_dot_n_ij(GN.branch.pipe_branch);
     
+<<<<<<< HEAD
     % Get rho_i
     if ~any(strcmp('rho_i',GN.bus.Properties.VariableNames))
+=======
+    % Get rho_ij - UNDER CONSTRCUTION: Necessary?
+    if ~any(strcmp('rho_ij',GN.pipe.Properties.VariableNames))
+>>>>>>> Merge to public repo (#1)
         GN = get_rho(GN);
     end
     
@@ -344,6 +490,7 @@ if isfield(GN,'pipe')
     end
     
     % Calculate P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day,
+<<<<<<< HEAD
     %     %   V_dot_n_i__m3_per_h or m_dot_i__kg_per_s
     %     if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
     %         GN.pipe.P_th_ij__MW = GN.pipe.V_dot_n_ij * 1e-6 * GN.gasMixProp.H_s_n_avg;
@@ -361,6 +508,25 @@ if isfield(GN,'pipe')
     %         GN.pipe.m_dot_ij__kg_per_s      = GN.pipe.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
     % %         GN.pipe.V_dot_n_ij = [];
     %     end
+=======
+    %   V_dot_n_i__m3_per_h or m_dot_i__kg_per_s
+    if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
+        GN.pipe.P_th_ij__MW = GN.pipe.V_dot_n_ij * 1e-6 * GN.gasMixProp.H_s_n_avg;
+%         GN.pipe.V_dot_n_ij = [];
+    elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
+        GN.pipe.P_th_ij = GN.pipe.V_dot_n_ij * GN.gasMixProp.H_s_n_avg;
+%         GN.pipe.V_dot_n_ij = [];
+    elseif any(strcmp('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames))
+        GN.pipe.V_dot_n_ij__m3_per_day  = GN.pipe.V_dot_n_ij * 60 * 60 * 24;
+%         GN.pipe.V_dot_n_ij = [];
+    elseif any(strcmp('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames))
+        GN.pipe.V_dot_n_ij__m3_per_h    = GN.pipe.V_dot_n_ij * 60 * 60;
+%         GN.pipe.V_dot_n_ij = [];
+    elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
+        GN.pipe.m_dot_ij__kg_per_s      = GN.pipe.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
+%         GN.pipe.V_dot_n_ij = [];
+    end
+>>>>>>> Merge to public repo (#1)
 end
 
 %% bus
@@ -370,6 +536,7 @@ if any(strcmp('p_i',GN.bus.Properties.VariableNames))
     GN.bus.p_i = [];
     
     % check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max
+<<<<<<< HEAD
     %     if any(strcmp('p_i_max__barg',GN.bus.Properties.VariableNames))
     %         if any(GN.bus.p_i__barg < GN.bus.p_i_min__barg)
     %             bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg < GN.bus.p_i_min__barg);
@@ -458,5 +625,52 @@ if flag_remove_auxiliary_variables == 1
     GN = remove_auxiliary_variables(GN);
 end
 
+=======
+    if any(strcmp('p_i_max__barg',GN.bus.Properties.VariableNames))
+        if any(GN.bus.p_i__barg < GN.bus.p_i_min__barg)
+            bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg < GN.bus.p_i_min__barg);
+            warning(['Too low pressure at these nodes, bus_ID: ',num2str(bus_ID')])
+        end
+    end
+    if any(strcmp('p_i_min__barg',GN.bus.Properties.VariableNames))
+        if any(GN.bus.p_i__barg > GN.bus.p_i_max__barg)
+            bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg > GN.bus.p_i_max__barg);
+%             warning(['Too high pressure at these nodes, bus_ID:
+%             ',num2str(bus_ID')]) % UNDER CONSTRUCTION
+        end
+    end
+    if any(strcmp('T_i_min',GN.bus.Properties.VariableNames))
+        if any(GN.bus.T_i < GN.bus.T_i_min)
+            bus_ID = GN.bus.bus_ID(GN.bus.T_i < GN.bus.T_i_min);
+            warning(['Too low temperature at these nodes, bus_ID: ',num2str(bus_ID')])
+        end
+    end
+    if any(strcmp('T_i_max',GN.bus.Properties.VariableNames))
+        if any(GN.bus.T_i > GN.bus.T_i_max)
+            bus_ID = GN.bus.bus_ID(GN.bus.T_i > GN.bus.T_i_max);
+            warning(['Too high temperature at these nodes, bus_ID: ',num2str(bus_ID')])
+        end
+    end
+    
+    % Calculate P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day,
+    %   V_dot_n_i__m3_per_h or m_dot_i__kg_per_s
+    if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
+        GN.bus.P_th_i__MW = GN.bus.V_dot_n_i * 1e-6 * GN.gasMixProp.H_s_n_avg;
+%         GN.bus.V_dot_n_i = [];
+    elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
+        GN.bus.P_th_i = GN.bus.V_dot_n_i * GN.gasMixProp.H_s_n_avg;
+%         GN.bus.V_dot_n_i = [];
+    elseif any(strcmp('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames))
+        GN.bus.V_dot_n_i__m3_per_day  = GN.bus.V_dot_n_i * 60 * 60 * 24;
+%         GN.bus.V_dot_n_i = [];
+    elseif any(strcmp('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames))
+        GN.bus.V_dot_n_i__m3_per_h    = GN.bus.V_dot_n_i * 60 * 60;
+%         GN.bus.V_dot_n_i = [];
+    elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
+        GN.bus.m_dot_i__kg_per_s      = GN.bus.V_dot_n_i * GN.gasMixProp.rho_n_avg;
+%         GN.bus.V_dot_n_i = [];
+    end
+end
+>>>>>>> Merge to public repo (#1)
 end
 

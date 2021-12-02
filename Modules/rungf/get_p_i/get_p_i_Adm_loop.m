@@ -1,11 +1,19 @@
+<<<<<<< HEAD
 function [GN, success] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD)
+=======
+function [GN] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD)
+>>>>>>> Merge to public repo (#1)
 %GET_P_I_ADM_LOOP Start solution for nodal pressure
 %   [GN] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD) calls get_p_i_Adm in a
 %   while loop.
 %   V_dot_n_i = G_ij * sqrt(p_i^2 - p_j^2) ~> G * p_i = V_dot_n_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -13,9 +21,12 @@ function [GN, success] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 %% Success
 success = true;
 
+=======
+>>>>>>> Merge to public repo (#1)
 %% Check if there is any volumen flow and check for pipes
 if all(GN.branch.V_dot_n_ij == 0) || ~isfield(GN, 'pipe')
     return
@@ -34,10 +45,14 @@ while 1
         
         %% Calculation of p_i based on general gas flow equation
         GN = get_p_i_Adm(GN, PHYMOD);
+<<<<<<< HEAD
         if ~success
             return
         end
         
+=======
+                
+>>>>>>> Merge to public repo (#1)
         %% Calulation of nodal temperature
         if GN.isothermal ~= 1
             GN = get_T_loop(GN, NUMPARAM, PHYMOD);
@@ -53,7 +68,11 @@ while 1
     end
     
     %% Update nodal equation
+<<<<<<< HEAD
     GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
+=======
+    GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD, 2);
+>>>>>>> Merge to public repo (#1)
     
     %% Check convergence
     GN = set_convergence(GN, ['$$p_i Adm loop, \dot{V}_{dot,n,ij}, (',num2str(iter_1),')$$']);

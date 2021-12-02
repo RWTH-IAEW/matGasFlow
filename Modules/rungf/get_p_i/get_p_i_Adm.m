@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 function [GN, success] = get_p_i_Adm(GN, PHYMOD)
+=======
+function [GN] = get_p_i_Adm(GN, PHYMOD)
+>>>>>>> Merge to public repo (#1)
 %GET_P_I_ADM Start Solution for nodal pressure
 %   GN = get_p_i_Adm(GN, PHYMOD)
 %   V_dot_n_i = G_ij * sqrt(p_i^2 - p_j^2) ~> G * p_i = V_dot_n_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -12,9 +20,12 @@ function [GN, success] = get_p_i_Adm(GN, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 %% Success
 success = true;
 
+=======
+>>>>>>> Merge to public repo (#1)
 %% Check if there is any volumen flow and check for pipes
 if all(GN.branch.V_dot_n_ij == 0) || ~isfield(GN, 'pipe')
     return
@@ -37,7 +48,11 @@ G = sparse(...
 ADM_G_ij = G(:,~GN.bus.p_bus);
 
 %% General gas flow equation
+<<<<<<< HEAD
 % V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
+=======
+% V_dot_n_i = G_ij * sqrt(p_i^2 - p_j^2)
+>>>>>>> Merge to public repo (#1)
 % ~> G * p_i = V_dot_n_i
 
 V_dot_n_i_nonPipes = GN.INC(:,~GN.branch.pipe_branch) * GN.branch.V_dot_n_ij(~GN.branch.pipe_branch);
@@ -54,6 +69,7 @@ GN.bus.p_i(~GN.bus.p_bus) = p_i;
 %% Check p_i result
 CONST = getConstants();
 if any(imag(GN.bus.p_i) ~= 0)
+<<<<<<< HEAD
     warning(['get_p_i_Adm: Nodal pressure became negative: min(p_i) = ',...
         num2str(-max(imag(GN.bus.p_i))),' Pa at bus_ID ', num2str(GN.bus.bus_ID(imag(GN.bus.p_i) == max(imag(GN.bus.p_i)))), '.'])
     success = false;
@@ -66,6 +82,26 @@ end
 
 %% Update p_i dependent quantities
 GN = update_p_i_dependent_quantities(GN, PHYMOD);
+=======
+    error(['get_p_i_Adm: Nodal pressure became negative: min(p_i) = ',...
+        num2str(-max(imag(GN.bus.p_i))),' Pa at bus_ID ', num2str(GN.bus.bus_ID(imag(GN.bus.p_i) == max(imag(GN.bus.p_i)))), '.'])
+elseif any(GN.bus.p_i <= CONST.p_n)
+    error(['get_p_i_Adm: Nodal pressure became less than ',num2str(CONST.p_n),' Pa. min(p_i) = ',num2str(min(GN.bus.p_i)),' Pa at bus_ID ', num2str(GN.bus.bus_ID(GN.bus.p_i == min(GN.bus.p_i))), '.'])
+end
+
+%% Update p_i dependent quantities
+% Update p_i at valve output
+GN = get_p_T_valve(GN);
+
+% Update p_ij
+GN = get_p_ij(GN);
+
+% Compressibility factor
+GN = get_Z(GN, PHYMOD);
+
+% Dynamic viscosity eta_ij(T,rho)
+GN = get_eta(GN,PHYMOD);
+>>>>>>> Merge to public repo (#1)
 
 end
 

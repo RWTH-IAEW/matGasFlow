@@ -1,6 +1,7 @@
 function [GN] = get_p_ij(GN)
 %GET_P_IJ
 %
+<<<<<<< HEAD
 %   Average pressure p_ij [Pa] in a pipe:
 %
 %               p_i^2 + p_i*p_j + p_j^2
@@ -11,6 +12,12 @@ function [GN] = get_p_ij(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+=======
+%   Average pressure p_ij [Pa] in a pipe
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+>>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -18,6 +25,12 @@ function [GN] = get_p_ij(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
+=======
+%% [MIS15] Gl.30.13
+% GN.pipe.p_ij(GN.branch.branchType == 1) = NaN;
+% Reference: [MIS15] S.441 ff.
+>>>>>>> Merge to public repo (#1)
 if isfield(GN,'pipe')
     iF = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT = GN.branch.i_to_bus(GN.branch.pipe_branch);
@@ -27,5 +40,8 @@ if isfield(GN,'pipe')
     GN.pipe.p_ij = p_ij(GN.branch.i_pipe(GN.branch.pipe_branch));
 end
 
+<<<<<<< HEAD
 end
 
+=======
+>>>>>>> Merge to public repo (#1)
