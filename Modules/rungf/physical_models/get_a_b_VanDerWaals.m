@@ -1,6 +1,5 @@
 function [GN] = get_a_b_VanDerWaals(GN)
-%GET_A_B_VANDERWAALS Summary of this function goes here
-%   Internal pressure a and covolume b
+%GET_A_B_VANDERWAALS
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

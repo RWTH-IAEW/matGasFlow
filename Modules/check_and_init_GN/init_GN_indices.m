@@ -1,6 +1,5 @@
 function [GN] = init_GN_indices(GN)
-%INIT_GN_INDICES Summary of this function goes here
-%   Detailed explanation goes here
+%INIT_GN_INDICES
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

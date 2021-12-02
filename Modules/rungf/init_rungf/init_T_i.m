@@ -1,6 +1,6 @@
 function [GN] = init_T_i(GN)
-%INIT_T_I Summary of this function goes here
-%   Detailed explanation goes here
+%INIT_T_I Initialization of nodal temperature T_i
+%   [GN] = init_T_i(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,6 @@
 function [directory] = get_directory(FILENAME)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%GET_DIRECTORY
+%   directory = get_directory(FILENAME)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

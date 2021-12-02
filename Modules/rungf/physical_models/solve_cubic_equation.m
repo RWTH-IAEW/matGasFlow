@@ -1,6 +1,5 @@
 function [result] = solve_cubic_equation(B, C, D)
-%SOLVE_CUBIC_EQUATION Summary of this function goes here
-%   Detailed explanation goes here
+%SOLVE_CUBIC_EQUATION
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

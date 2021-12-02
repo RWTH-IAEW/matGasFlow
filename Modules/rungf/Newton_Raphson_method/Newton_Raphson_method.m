@@ -1,6 +1,7 @@
 function [GN] = Newton_Raphson_method(GN, NUMPARAM, PHYMOD)
 %NEWTON_RAPHSON_METHOD Newton Raphson method
-%   Detailed explanation goes here
+%   GN = Newton_Raphson_method(GN, NUMPARAM, PHYMOD) solves
+%   df_dp\f = delta_p -->  p'' = p' - delta_p
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

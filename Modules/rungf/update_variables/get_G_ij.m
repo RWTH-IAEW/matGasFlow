@@ -1,9 +1,6 @@
 function [GN] = get_G_ij(GN, OPTION, NUMPARAM)
 %GET_G_IJ
 %
-%   "HydraulicSummary of this function goes here
-%   Detailed explanation goes here
-%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
@@ -13,7 +10,7 @@ function [GN] = get_G_ij(GN, OPTION, NUMPARAM)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Return if Gn has no pipe
+%% Return if GN has no pipe
 if ~isfield(GN, 'pipe')
     return
 end

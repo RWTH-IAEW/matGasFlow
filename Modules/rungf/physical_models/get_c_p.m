@@ -1,5 +1,5 @@
 function [GN] = get_c_p(GN, PHYMOD)
-%GET_C_P Calculation of the specific isobaric heat capacity of the pipes and the busses
+%GET_C_P Specific isobaric heat capacity of the pipes and the busses
 %   c_p [J/(kg*K)]
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,7 +12,7 @@ function [GN] = get_c_p(GN, PHYMOD)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if PHYMOD.c_p == 1
-    %% based on Van der Waals equation
+    %% Van der Waals model
     %% Internal pressure a and covolume b
     if ~isfield(GN.gasMixProp,'a') || ~isfield(GN.gasMixProp,'b')
         GN = get_a_b_VanDerWaals(GN);

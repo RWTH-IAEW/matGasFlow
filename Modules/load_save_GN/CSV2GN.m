@@ -1,6 +1,6 @@
 function [GN] = CSV2GN(FILENAME, directory)
-%CSV2GN Summary of this function goes here
-%   Detailed explanation goes here
+%CSV2GN Loads gas network from CSV files
+%   GN = CSV2GN(FILENAME, directory)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

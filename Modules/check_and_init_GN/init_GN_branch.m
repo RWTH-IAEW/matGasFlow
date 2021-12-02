@@ -1,6 +1,6 @@
 function [GN] = init_GN_branch(GN)
-%INIT_GN_BRANCH Summary of this function goes here
-%   Detailed explanation goes here
+%INIT_GN_BRANCH
+%   GN = init_GN_branch(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

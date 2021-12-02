@@ -1,6 +1,6 @@
 function [GN] = get_V_dot_n_ij_nonPipe(GN)
-%GET_V_DOT_N_IJ_NONPIPE Summary of this function goes here
-%   Detailed explanation goes here
+%GET_V_DOT_N_IJ_NONPIPE
+%   [GN] = get_V_dot_n_ij_nonPipe(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

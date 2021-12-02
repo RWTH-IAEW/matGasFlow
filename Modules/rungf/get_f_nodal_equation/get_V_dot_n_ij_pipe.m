@@ -1,6 +1,13 @@
 function [GN] = get_V_dot_n_ij_pipe(GN, NUMPARAM)
-%GET_V_DOT_N_IJ Gas flow Summary of this function goes here
-%   Detailed explanation goes here
+%GET_V_DOT_N_IJ_PIPE Standard volume flow rate V_dot_n_ij in pipes [m^3/s]
+%
+%   [GN] = get_V_dot_n_ij_pipe(GN, NUMPARAM)
+%
+%   NUMPARAM.OPTION_get_V_dot_n_ij_pipe = 1
+%       V_dot_n_ij = A_ij * sqrt(p_i^2 - p_j^2) * log10(B_ij/sqrt(p_i^2 - p_i^2) + C_ij)
+%
+%   NUMPARAM.OPTION_get_V_dot_n_ij_pipe = 2
+%       V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -69,7 +76,7 @@ if NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 1
     end
     
 elseif NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 2
-    %% V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2) - Volume flow rate [m^3/s]
+    %% V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
     
     CONST = getConstants();
     

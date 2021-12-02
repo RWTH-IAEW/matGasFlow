@@ -1,6 +1,8 @@
 function [GN] = get_f_nodal_equation(GN, NUMPARAM, PHYMOD, OPTION)
-%GET_F_NODAL_EQUAION Summary of this function goes here
-%   Detailed explanation goes here
+%GET_F_NODAL_EQUAION
+%   [GN] = get_f_nodal_equation(GN, NUMPARAM, PHYMOD, OPTION)
+%       f = sum(V_dot_n_ij) + V_dot_n_i for every bus i
+%   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),

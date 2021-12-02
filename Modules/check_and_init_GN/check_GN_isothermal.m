@@ -1,6 +1,5 @@
 function check_GN_isothermal(GN)
-%CHECK_GN_ISOTHERMAL Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_ISOTHERMAL Check logical value GN.isothermal (temperature model)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

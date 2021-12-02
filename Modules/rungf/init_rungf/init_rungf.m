@@ -1,6 +1,16 @@
 function [GN] = init_rungf(GN, PHYMOD)
-%INITRUNGFSTARTSOLUTION Summary of this function goes here
-%   Detailed explanation goes here
+%INIT_RUNGF
+%   [GN] = init_rungf(GN, PHYMOD)
+%       - Check if GN is initialized
+%       - Remove branches that are out of service and unsupplied busses
+%       - Remove valves
+%       - Reset CONVERGENCE
+%       - Initialize p_i
+%       - Calculate V_dot_n_i
+%       - Update of the slack bus: flow rate balance to(+)/from(-) the
+%           slack bus
+%       - Initialize p_i, T_i and calculate p_ij, T_ij
+%       - Update p_i dependent quantities (Z, eta)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -31,7 +41,7 @@ if isfield(GN,'CONVERGENCE')
     GN = rmfield(GN,'CONVERGENCE');
 end
 
-%% p_i
+%% Initialize p_i
 % Physical constants
 CONST = getConstants();
 
@@ -39,7 +49,7 @@ CONST = getConstants();
 GN.bus.p_i = GN.bus.p_i__barg*1e5 + CONST.p_n;
 GN.bus = movevars(GN.bus, 'p_i', 'After', 'p_i__barg');
 
-%% V_dot_n_i
+%% Calculate V_dot_n_i
 if any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames))
     GN.bus.V_dot_n_i(~isnan(GN.bus.P_th_i__MW)) = GN.bus.P_th_i__MW(~isnan(GN.bus.P_th_i__MW)) * 1e6 / GN.gasMixProp.H_s_n_avg; % [MW]*1e6/[Ws/m^3] = [m^3/s]
 elseif any(strcmp('P_th_i',GN.bus.Properties.VariableNames))
@@ -52,7 +62,7 @@ elseif any(strcmp('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames))
     GN.bus.V_dot_n_i(~isnan(GN.bus.m_dot_i__kg_per_s)) = GN.bus.m_dot_i__kg_per_s(~isnan(GN.bus.m_dot_i__kg_per_s)) / GN.gasMixProp.rho_n_avg; % [kg/s]/[kg/m^3] = [m^3/s]
 end
 
-%% Update of the slack node: flow rate balance to(+)/from(-) the slack node
+%% Update of the slack bus: flow rate balance to(+)/from(-) the slack bus
 GN.bus.V_dot_n_i(GN.bus.slack_bus) = -sum(GN.bus.V_dot_n_i(~GN.bus.slack_bus));
 if GN.isothermal == 0
     if GN.bus.V_dot_n_i(GN.bus.slack_bus) < 0

@@ -1,6 +1,6 @@
 function [GN] = get_my_JT(GN, PHYMOD)
-%GET_MY_JT Summary of this function goes here
-%   Calculation of the Joule-Thomson Coefficient for mixtures
+%GET_MY_JT Joule-Thomson Coefficient for mixtures
+%   [GN] = get_my_JT(GN, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,5 @@
 function [ GN ] = get_V_dot_n_i_comp(GN, PHYMOD)
-%GET_V_dot_N_I_COMP Summary of this function goes here
-%   Detailed explanation goes here
+%GET_V_dot_N_I_COMP Compressor fuel gas demand
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

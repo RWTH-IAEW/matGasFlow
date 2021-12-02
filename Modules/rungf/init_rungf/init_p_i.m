@@ -1,6 +1,6 @@
 function [GN] = init_p_i(GN)
-%INIT_P_I Summary of this function goes here
-%   Detailed explanation goes here
+%INIT_P_I Initialize p_i
+%   GN = init_p_i(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

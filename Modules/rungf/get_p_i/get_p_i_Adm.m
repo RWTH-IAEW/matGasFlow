@@ -1,6 +1,8 @@
 function [GN] = get_p_i_Adm(GN, PHYMOD)
-%GET_P_I_ADM Summary of this function goes here
-%   Detailed explanation goes here
+%GET_P_I_ADM Start Solution for nodal pressure
+%   GN = get_p_i_Adm(GN, PHYMOD)
+%   V_dot_n_i = G_ij * sqrt(p_i^2 - p_j^2) ~> G * p_i = V_dot_n_i
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),

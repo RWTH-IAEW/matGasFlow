@@ -1,6 +1,10 @@
 function GN2CSV(GN, FILENAME, directory)
-%GN2CSV Summary of this function goes here
-%   Detailed explanation goes here
+%GN2CSV Saves gas network in CSV files
+%   GN2CSV(GN, FILENAME, directory)
+%   Input arguments:
+%       GN(necessary)
+%       FILENAME(optional)
+%       directory(optional)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

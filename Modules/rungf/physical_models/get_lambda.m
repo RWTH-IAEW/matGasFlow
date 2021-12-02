@@ -1,11 +1,12 @@
 function [ lambda_ij ] = get_lambda( Re_ij, k_ij, D_ij, epsilon_lambda)
 %GET_LAMBDA   Calculation of the Darcy friction coefficient
-%   GET_LAMBDA( Re_ij, k_ij, D_ij )
+%   GET_LAMBDA( Re_ij, k_ij, D_ij, epsilon_lambda )
 %   Re_ij, k_ij and D_ij must have same dimensions
 %       INPUT                    UNIT
 %       Reynolds Number (Re_ij)  [-]
 %       Pipe roughness (k_ij)    [m], meter
 %       Pipe diameter (D_ij)     [m], meter
+%       epsilon_lambda           [-]
 %
 %       Re < 2320, laminar flow: [Hagen-Poiseuille]
 %       Re > 2320, turbulent flow: [Colebrook-White]

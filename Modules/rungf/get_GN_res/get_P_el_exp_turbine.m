@@ -1,6 +1,6 @@
-function [ GN ] = get_P_el_exp_turbine(GN, PHYMOD)
-%GETV_P_EL_EXP_TURBINE Summary of this function goes here
-%   Detailed explanation goes here
+function [GN] = get_P_el_exp_turbine(GN, PHYMOD)
+%GETV_P_EL_EXP_TURBINE Electrical power output of expansion turbines
+%   GN = get_P_el_exp_turbine(GN, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

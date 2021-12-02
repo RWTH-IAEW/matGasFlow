@@ -1,5 +1,24 @@
 function [bus_area_ID, pipe_area_ID, station_ID, valveStation_ID] = get_area_ID(GN)
-%GET_AREA_ID
+%GET_AREA_ID Area ID
+%   [bus_area_ID, pipe_area_ID, station_ID, valveStation_ID] = get_area_ID(GN)
+%   Output variables
+%       bus_area_ID:
+%           All busses that are part of a common area have the same
+%           area_ID. An area is a sub-network that consists exclusively of
+%           busses and pipes and is separated from other areas by non-pipe
+%           branches (comp, prs or valve).
+%
+%       pipe_area_ID:
+%           All pipes that are part of a common area have the same area_ID.
+%           An area is a sub-network that consists exclusively of busses
+%           and pipes and is separated from other areas by non-pipe
+%           branches (comp, prs or valve).
+%
+%       station_ID:
+%           UNDER CONSTRUCTION
+%
+%       valveStation_ID:
+%           UNDER CONSTRUCTION
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

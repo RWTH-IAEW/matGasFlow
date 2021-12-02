@@ -1,6 +1,6 @@
 function GN = check_GN_T_env(GN)
-%CHECK_GN_T_ENV Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_T_ENV Check environmental Temperature
+%   GN = check_GN_T_env(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

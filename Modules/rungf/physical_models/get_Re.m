@@ -1,6 +1,5 @@
 function [Re_ij] = get_Re(GN)
-%GET_RE Summary of this function goes here
-%   Detailed explanation goes here
+%GET_RE Reynolds number
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
@@ -11,7 +10,6 @@ function [Re_ij] = get_Re(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Pipeline or Heater_Cooler
 V_dot_n_ij = GN.branch.V_dot_n_ij(GN.pipe.i_branch);
 Re_ij = ...
     4*abs(V_dot_n_ij) .* GN.gasMixProp.rho_n_avg ...

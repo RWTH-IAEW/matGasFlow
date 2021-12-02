@@ -1,6 +1,6 @@
 function GN = check_GN_comp(GN)
-%CHECK_GN_COMP Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_COMP Check compressor table GN.comp
+%   GN = check_GN_comp(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

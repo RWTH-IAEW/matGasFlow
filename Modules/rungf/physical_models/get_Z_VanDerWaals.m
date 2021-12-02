@@ -1,6 +1,6 @@
 function [Z,V_m] = get_Z_VanDerWaals(p, T, a, b)
-%GET_Z_VANDERWAALS Summary of this function goes here
-%   Detailed explanation goes here
+%GET_Z_VANDERWAALS
+%   [Z,V_m] = get_Z_VanDerWaals(p, T, a, b)
 %   Input quantities:
 %       p [Pa] - pressure
 %       T [K] - temperature

@@ -1,6 +1,6 @@
 function [GN] = get_eta(GN, PHYMOD)
-% GET_ETA Dynamic viscosity [Pa*s]
-%   [GN] = GET_ETA(GN, PHYMOD.eta)
+% GET_ETA Dynamic viscosity eta [Pa*s]
+%   [GN] = GET_ETA(GN, PHYMOD)
 %   Dynamic viscosity eta_ij(T,rho)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,7 +25,7 @@ if PHYMOD.eta == 1
     % Quantities
     T_ij        = GN.pipe.T_ij;
     T_n         = CONST.T_n;
-    p_ij__bar   = GN.pipe.p_ij*1e-5;
+    p_ij__bar   = GN.pipe.p_ij*1e-5; % [bar]
     
     % eta_mix at standard conditions
     eta_mix = ...
@@ -38,9 +38,9 @@ if PHYMOD.eta == 1
     
     % Pressure dependency
     z_a = 0.91690348 ...
-        + 0.0004207.*(T_ij-T_n) ...
-        - 0.00002207.*(T_ij-T_n).*p_ij__bar...
-        + 0.00434531.*p_ij__bar;
+        + 0.0004207 .* (T_ij-T_n) ...
+        - 0.00002207 .* (T_ij-T_n) .* p_ij__bar...
+        + 0.00434531 .* p_ij__bar;
     z_a_max = max(1,z_a);
     
     % Dynamic viscosity

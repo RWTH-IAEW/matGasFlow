@@ -1,6 +1,6 @@
 function [GN] = get_GN_res(GN, NUMPARAM, PHYMOD)
-%GET_GN_RESULT Summary of this function goes here
-%   Detailed explanation goes here
+%GET_GN_RESULT Result preparation
+%   GN = get_GN_res(GN, NUMPARAM, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

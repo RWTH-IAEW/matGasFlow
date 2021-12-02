@@ -23,15 +23,16 @@ p_i = GN.bus.p_i;
 
 %% d(V_dot_n_ij)/dp
 if isfield(GN, 'pipe')
+    % Indices
     iF_pipe = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT_pipe = GN.branch.i_to_bus(GN.branch.pipe_branch);
-    
     idx = p_i(iF_pipe) < p_i(iT_pipe);
     iIn = iF_pipe;
     iIn(idx) = iT_pipe(idx);
     iOut = iT_pipe;
     iOut(idx) = iF_pipe(idx);
     
+    % Quantites
     p_i = GN.bus.p_i(iIn);
     p_j = GN.bus.p_i(iOut);
     
@@ -58,7 +59,7 @@ if isfield(GN, 'pipe')
     %% laminar
     
     
-    %%
+    %% dV_ij_dp_i, dV_ij_dp_j
     dV_ij_dp_i = d_V_ij_d_p_iIn;
     dV_ij_dp_i(sign(V_dot_n_ij_pipe) == -1) = dV_ij_dp_jOut(sign(V_dot_n_ij_pipe) == -1);
     dV_ij_dp_j = dV_ij_dp_jOut;
@@ -68,24 +69,23 @@ end
 %% V_dot_n_i demand at compressor inputs
 if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equation == 3
     if isfield(GN,'comp')
+        % Indices
         iF_comp = GN.branch.i_from_bus(GN.branch.comp_branch);
         iT_comp = GN.branch.i_to_bus(GN.branch.comp_branch);
         
+        % Quantities
         p_i = GN.bus.p_i(iF_comp);
         p_j = GN.bus.p_i(iT_comp);
+        kappa_i = GN.bus.kappa_i(iF_comp);
         
         % Physical constants
         CONST = getConstants();
         
-        kappa_i = GN.bus.kappa_i(iF_comp);
-        kappa_j = GN.bus.kappa_i(iT_comp);
-        kappa_ij = (kappa_i + kappa_j)/2;
-        
         D_ij = GN.branch.V_dot_n_ij(GN.branch.comp_branch) .* GN.gasMixProp.rho_n_avg ./ GN.comp.eta_drive ./ GN.comp.eta_s ./ GN.gasMixProp.H_s_n_avg ...
             .* GN.bus.Z_i(iF_comp) .* CONST.R_m .* GN.bus.T_i(iF_comp);
         
-        dV_i_comp_dp_i = D_ij .* (p_j ./ p_i).^(-1./kappa_ij) .* (- p_j ./ p_i.^2);
-        dV_i_comp_dp_j = D_ij .* (p_j ./ p_i).^(-1./kappa_ij) ./ p_i;
+        dV_i_comp_dp_i = D_ij .* (p_j ./ p_i).^(-1./kappa_i) .* (- p_j ./ p_i.^2);
+        dV_i_comp_dp_j = D_ij .* (p_j ./ p_i).^(-1./kappa_i) ./ p_i;
     else
         iF_comp = [];
         iT_comp = [];

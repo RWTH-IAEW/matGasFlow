@@ -1,6 +1,6 @@
 function [GN] = check_and_init_GN(GN, create_log_file)
-%CHECK_AND_INIT_GN Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_AND_INIT_GN
+%   [GN] = check_and_init_GN(GN, create_log_file)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

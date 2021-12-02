@@ -1,6 +1,5 @@
 function [Omega_ij] = get_Omega(GN)
-%GET_OMEGA Summary of this function goes here
-%   Calculation of the Heat transmission coefficient, see MA Longye Zheng p. 48 eqn. 3.42
+%GET_OMEGA Heat transmission coefficient
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,6 @@
 function [Omega] = get_Omega_Newton_Raphson_Damping(GN, delta_p, NUMPARAM, PHYMOD)
-%GET_OMEGA_NEWTON_RAPHSON_DAMPING Summary of this function goes here
-%   Detailed explanation goes here
+%GET_OMEGA_NEWTON_RAPHSON_DAMPING Damping factor for Newton Raphson algorithm
+%   [Omega] = get_Omega_Newton_Raphson_Damping(GN, delta_p, NUMPARAM, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

@@ -1,6 +1,5 @@
 function GN = check_GN_gasMix(GN)
-%CHECK_GN_GASMIX Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_GASMIX Check gasMix string
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

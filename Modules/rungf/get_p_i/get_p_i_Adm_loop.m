@@ -1,6 +1,8 @@
 function [GN] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD)
-%GET_P_I_LOOP Summary of this function goes here
-%   Detailed explanation goes here
+%GET_P_I_ADM_LOOP Start solution for nodal pressure
+%   [GN] = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD) calls get_p_i_Adm in a
+%   while loop.
+%   V_dot_n_i = G_ij * sqrt(p_i^2 - p_j^2) ~> G * p_i = V_dot_n_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

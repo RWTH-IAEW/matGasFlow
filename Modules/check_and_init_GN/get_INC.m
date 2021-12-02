@@ -1,7 +1,7 @@
 function [INC] = get_INC(GN)
 %GET_INC Incidence Matrix of Gas Network
-%   [INC] = GETINCIDENCEMATRIX(GN) returns incedence matrix considering all branches
-%   that are in servcie.
+%   [INC] = GETINCIDENCEMATRIX(GN) returns incedence matrix considering all
+%   branches that are in service.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

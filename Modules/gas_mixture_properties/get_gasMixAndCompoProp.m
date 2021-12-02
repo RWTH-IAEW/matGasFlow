@@ -1,9 +1,8 @@
 function [GN] = get_gasMixAndCompoProp(GN, gasMix)
-%GET_GASMIXANDCOMPOPROP Summary of this function goes here
-%   
+%GET_GASMIXANDCOMPOPROP
 %   get_gasMixAndCompoProp(GN, gasMix) initializes the gas mixture in the
-%   gas grid. The gas mixture can be one of 'gasMix_library.csv' or a pure
-%   gas.
+%   gas network. The gas mixture can be one of 'gasMix_library.csv' or a
+%   pure gas.
 %   gasMix options from gasMix_library.csv:
 %       H_Gas_NorthSea, H_Gas_Mix, H_Gas_Russia, H_Gas_Holland,
 %       H_Gas_GERG2008, L_Gas_Verbund, L_Gas_WeserEms, TENP_North, or

@@ -1,6 +1,7 @@
 function [GN] = get_kappa(GN, PHYMOD)
 %GET_KAPPA Calculation of heat capacity ratio
 %   [GN] = GET_KAPPA(GN, PHYMOD.kappa)
+%       kappa = c_p/c_v
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

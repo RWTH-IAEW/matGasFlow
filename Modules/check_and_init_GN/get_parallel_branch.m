@@ -1,6 +1,5 @@
 function [GN] = get_parallel_branch(GN)
-%GET_PARALLEL_BRANCH Update V_dot_n_ij at parallel pipes
-%   Detailed explanation goes here
+%GET_PARALLEL_BRANCH Identify parallel branches
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

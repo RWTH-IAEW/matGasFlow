@@ -1,6 +1,15 @@
 function [c_p_i, c_p_0_i] = get_c_p_VanDerWaals(p, T, Z, a, b, gasMixProp, gasCompoProp)
-%GET_C_P_VANDERWAALS Summary of this function goes here
-%   Detailed explanation goes here
+%GET_C_P_VANDERWAALS Specific isobaric heat capacity c_p [J/(kg*K)] using
+%   the Van der Waals equation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%       Digitalization and Energy Economics (IAEW),
+%       RWTH Aachen University, Marcel Kurth
+%   All rights reserved.
+%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   This script is part of matGasFlow.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Physical constants
 CONST = getConstants();

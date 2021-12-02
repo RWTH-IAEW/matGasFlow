@@ -1,6 +1,6 @@
 function [GN] = remove_auxiliary_variables(GN)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%REMOVE_AUXILIARY_VARIABLES
+%   GN = remove_auxiliary_variables(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

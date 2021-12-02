@@ -1,6 +1,6 @@
 function GN = check_GN_pipe(GN)
-%CHECK_GN_PIPE Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_PIPE Check pipe table GN.pipe
+%   GN = check_GN_pipe(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

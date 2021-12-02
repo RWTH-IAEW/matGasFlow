@@ -1,6 +1,7 @@
 function [GN] = get_p_i_SLE(GN, PHYMOD)
-%GET_P_I_SLE Summary of this function goes here
-%   Detailed explanation goes here
+%GET_P_I_SLE Start solution for nodal pressure p_i
+%   [GN] = get_p_i_SLE(GN, PHYMOD) solves system of linear equations (SLE)
+%   INC' * p_i^2 = -V^2/G_ij
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

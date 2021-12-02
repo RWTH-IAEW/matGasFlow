@@ -1,6 +1,6 @@
 function GN = check_GN_bus(GN)
-%CHECK_GN_BUS Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_BUS Check bus table (GN.bus)
+%   GN = check_GN_bus(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,

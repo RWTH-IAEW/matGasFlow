@@ -1,6 +1,20 @@
 function [GN] = check_GN_area_restrictions(GN)
-%CHECK_GN_AREA_RESTRICTIONS Summary of this function goes here
-%   Detailed explanation goes here
+%CHECK_GN_AREA_RESTRICTIONS
+%   [GN] = check_GN_area_restrictions(GN)
+%   Checks:
+%       - Check and update bus area_ID
+%       - Check and update pipe area_ID
+%       - Check and update station_ID
+%       - Check and update valveStation_ID
+%       - Set area_ID of unsupplied bussus to NaN
+%       - Busses must not have more than one valve_from_bus AND not more
+%           than one valve_to_bus
+%       - Check for islands
+%       - Initialize Incidence Matrix
+%       - Check bus types
+%           1) Check if there is exactly one p_bus in each area
+%           2) Check if there is exactly one f_0_bus in each area
+%           3) Check if two or more non-pipe_branches feed the same bus
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
