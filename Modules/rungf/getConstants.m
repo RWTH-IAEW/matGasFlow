@@ -2,7 +2,7 @@ function [ CONST ] = getConstants( ~ )
 %GETCONSTANTS Struct of constants and quantities at standard condition
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.

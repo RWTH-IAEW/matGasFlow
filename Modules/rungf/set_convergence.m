@@ -4,7 +4,7 @@ function [GN] = set_convergence(GN, tag)
 %   Saves f, V_dot_n_ij, p_i and  T_i in the struct GN.CONVERGENCE
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.

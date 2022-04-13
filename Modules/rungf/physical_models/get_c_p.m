@@ -3,7 +3,7 @@ function [GN] = get_c_p(GN, PHYMOD)
 %   c_p [J/(kg*K)]
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -58,11 +58,11 @@ if PHYMOD.c_p == 1
     end
     
 else
-    try
+    %try
         GN = get_c_p_addOn(GN, PHYMOD);
-    catch
-        error('Option not available, choose PHYMOD.c_p = 1')
-    end
+    %catch
+%        error('Option not available, choose PHYMOD.c_p = 1')
+    %end
 end
 
 end
