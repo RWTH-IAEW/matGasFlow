@@ -1,4 +1,4 @@
-function [GN] = check_GN_area_restrictions(GN)
+function [GN] = check_GN_area_restrictions(GN, keep_bus_properties)
 %CHECK_GN_AREA_RESTRICTIONS
 %   [GN] = check_GN_area_restrictions(GN)
 %   Checks:
@@ -13,11 +13,10 @@ function [GN] = check_GN_area_restrictions(GN)
 %       - Initialize Incidence Matrix
 %       - Check bus types
 %           1) Check if there is exactly one p_bus in each area
-%           2) Check if there is exactly one f_0_bus in each area
-%           3) Check if two or more non-pipe_branches feed the same bus
+%           2) Check if two or more non-pipe_branches feed the same bus
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -25,81 +24,17 @@ function [GN] = check_GN_area_restrictions(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Get bus and branch area_ID
-[bus_area_ID, pipe_area_ID, station_ID, valveStation_ID] = get_area_ID(GN);
-
-%% Check and update bus area_ID
-if any(strcmp('area_ID',GN.bus.Properties.VariableNames))
-    if any(~isnumeric(GN.bus.area_ID))
-        warning('GN.bus: area_ID must be numeric. Entries have been updated.')
-    elseif any(GN.bus.area_ID(~isnan(bus_area_ID)) ~= bus_area_ID(~isnan(bus_area_ID))) ...
-            || any(isnan(GN.bus.area_ID) ~= isnan(bus_area_ID))
-        warning('GN.bus: area_ID entries have been updated.')
-    end
-end
-GN.bus.area_ID = bus_area_ID;
-GN.bus = movevars(GN.bus,'area_ID','After','bus_ID');
-
-%% Check and update pipe area_ID
-if isfield(GN, 'pipe')
-    if any(strcmp('area_ID',GN.pipe.Properties.VariableNames))
-        if any(~isnumeric(GN.pipe.area_ID))
-            warning('GN.pipe: area_ID must be numeric. Entries have been updated.')
-        elseif any(GN.pipe.area_ID(~isnan(pipe_area_ID)) ~= pipe_area_ID(~isnan(pipe_area_ID))) ...
-                || any(isnan(GN.pipe.area_ID) ~= isnan(pipe_area_ID))
-            warning('GN.pipe: area_ID entries have been updated.')
-        end
-    end
-    GN.pipe.area_ID = pipe_area_ID;
-    GN.pipe = movevars(GN.pipe,'area_ID','After','in_service');
+if nargin < 2
+    keep_bus_properties = true;
 end
 
-%% Check and update station_ID
-if any(~GN.branch.pipe_branch)
-    if any(strcmp('station_ID',GN.branch.Properties.VariableNames))
-        if any(~isnumeric(GN.branch.station_ID))
-            warning('GN.branch: station_ID must be numeric. Entries have been updated.')
-        elseif any(GN.branch.station_ID(~isnan(station_ID)) ~= station_ID(~isnan(station_ID))) ...
-                || any(isnan(GN.branch.station_ID) ~= isnan(station_ID))
-            warning('GN.branch: station_ID entries have been updated.')
-        end
-    end
-    GN.branch.station_ID = station_ID;
-    GN.branch = movevars(GN.branch,'station_ID','After','in_service');
-end
+%% active_bus
+GN.bus.active_bus(:)    = false;
+GN.bus.active_bus       = logical(GN.bus.active_bus);
+GN.bus.active_bus(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)) = true;
 
-%% Check and update valveStation_ID
-if isfield(GN, 'valve')
-    if any(strcmp('valveStation_ID',GN.branch.Properties.VariableNames))
-        if any(~isnumeric(GN.branch.valveStation_ID))
-            warning('GN.branch: valveStation_ID must be numeric. Entries have been updated.')
-        elseif any(GN.branch.valveStation_ID(~isnan(valveStation_ID)) ~= valveStation_ID(~isnan(valveStation_ID))) ...
-                || any(isnan(GN.branch.valveStation_ID) ~= isnan(valveStation_ID))
-            warning('GN.branch: valveStation_ID entries have been updated.')
-        end
-    end
-    GN.branch.valveStation_ID = valveStation_ID;
-    GN.branch = movevars(GN.branch,'valveStation_ID','After','in_service');
-end
-
-%% Unsupplied busses
-% Set area_ID of unsupplied bussus to NaN
-GN_temp = GN;
-GN_temp.branch(~GN_temp.branch.in_service,:) = [];
-GN.bus.supplied = (ismember(1:size(GN_temp.bus,1),[GN_temp.branch.i_from_bus;GN_temp.branch.i_to_bus]))';
-if (any(strcmp('P_i',GN.bus.Properties.VariableNames)) && any(GN.bus.P_i(~GN.bus.supplied) ~= 0)) ...
-        || (any(strcmp('V_dot_n_i',GN.bus.Properties.VariableNames)) && any(GN.bus.V_dot_n_i(~GN.bus.supplied) ~= 0))
-    warning(['GN.bus: bus_ID of unsupplied sinks/sources: ',num2str(GN.bus.bus_ID(GN.bus.V_dot_n_i(~GN.bus.supplied) ~= 0)')])
-end
-
-%% Busses must not have more than one valve_from_bus AND not more than one valve_to_bus
-if isfield(GN,'valve')
-    i_from_bus = GN.branch.i_from_bus(GN.branch.valve_branch & GN.branch.in_service);
-    i_to_bus = GN.branch.i_to_bus(GN.branch.valve_branch & GN.branch.in_service);
-    if ~(length(i_from_bus) == length(unique(i_from_bus)) && length(i_to_bus) == length(unique(i_to_bus)))
-        error('GN.valve: Busses must not have more than one valve from_bus AND not more than one valve to_bus.')
-    end
-end
+%% Check and initialize area_ID
+GN = check_and_init_area_ID(GN);
 
 %% Check for islands
 GN = check_GN_islands(GN);
@@ -107,11 +42,38 @@ GN = check_GN_islands(GN);
 %% Incidence Matrix
 GN.INC = get_INC(GN);
 
-%% Check bus types
-% 1) Check if there is exactly one p_bus in each area
-% 2) Check if there is exactly one f_0_bus in each area
-% 3) Check if two or more non-pipe_branches feed the same bus
-check_GN_bus_types(GN);
+% GN.MAT % UNDER CONSTRUCTION: Include INC
+GN = get_GN_MAT(GN);
+
+%% Set interconnecting active_branches out of service
+GN = set_interconnecting_active_branches_out_of_service(GN);
+
+%% Connecting branches (if-query necessary for NUMPARAM.OPTION_get_J = 2) % UNDER CONSTRUCTION: might be unnecessary
+if ~isfield(GN,'flag_NUMPARAM_OPTION_get_J')
+    GN = get_connecting_branch(GN); % UNDER CONSTRUCTION merge function with check_GN_islands
+end
+
+%% Check and init p_bus
+GN = check_and_init_p_bus(GN, keep_bus_properties);
+
+%% Check and init nodal pressure
+GN = check_and_init_p_i__barg(GN);
+
+%% Check and init slack bus and slack branch % UNDER CONSTRCUTION: rename
+GN = check_and_init_slack(GN, keep_bus_properties);
+
+%% Check output
+area_active_branch_temp = GN.MAT.area_active_branch;
+    area_active_branch_temp(area_active_branch_temp == 1) = 0;
+if any(GN.MAT.area_bus*GN.bus.slack_bus - area_active_branch_temp*GN.branch.slack_branch ~= 1) %sum(GN.bus.slack_bus) + sum(GN.branch.slack_branch) ~= length(unique(GN.bus.area_ID))
+    error('Something went wrong. Each area need one slack_bus or one slack_branch.')
+elseif sum(GN.bus.p_bus) ~= length(unique(GN.bus.area_ID))
+    error('Something went wrong. Each area need one p_bus.')
+elseif sum(GN.bus.active_bus) ~= length(unique(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)))
+    error('Something went wrong. the sum of active_bus must match the number of the to_busses of all active_branches.')
+elseif any(GN.branch.slack_branch & ~GN.branch.active_branch) || any(GN.branch.slack_branch & ~GN.branch.in_service)
+    error('...')
+end
 
 end
 

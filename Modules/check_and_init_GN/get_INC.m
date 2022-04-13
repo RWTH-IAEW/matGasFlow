@@ -4,7 +4,7 @@ function [INC] = get_INC(GN)
 %   branches that are in service.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -19,6 +19,7 @@ if any(~GN.bus.supplied)
     ii(ii == find(~GN.bus.supplied)) = [];
 end
 jj = 1:sum(GN.branch.in_service);
+% jj = find(GN.branch.in_service);
 jj = [jj';jj'];
 vv = [...
     ones(size(GN.branch.i_from_bus(GN.branch.in_service)));...

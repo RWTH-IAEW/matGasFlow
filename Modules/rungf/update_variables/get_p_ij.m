@@ -1,10 +1,16 @@
 function [GN] = get_p_ij(GN)
 %GET_P_IJ
 %
-%   Average pressure p_ij [Pa] in a pipe
+%   Average pressure p_ij [Pa] in a pipe:
+%
+%               p_i^2 + p_i*p_j + p_j^2
+%       p_ij =  -----------------------
+%                  1.5*(p_i + p_j)
+%
+%   Reference: [MIS15] S.441, Gl.30.13
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -12,9 +18,6 @@ function [GN] = get_p_ij(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% [MIS15] Gl.30.13
-% GN.pipe.p_ij(GN.branch.branchType == 1) = NaN;
-% Reference: [MIS15] S.441 ff.
 if isfield(GN,'pipe')
     iF = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT = GN.branch.i_to_bus(GN.branch.pipe_branch);
@@ -22,5 +25,7 @@ if isfield(GN,'pipe')
         (GN.bus.p_i(iF).^2 + GN.bus.p_i(iF).*GN.bus.p_i(iT) + GN.bus.p_i(iT).^2) ...
         ./ (1.5 * (GN.bus.p_i(iF)+GN.bus.p_i(iT)));
     GN.pipe.p_ij = p_ij(GN.branch.i_pipe(GN.branch.pipe_branch));
+end
+
 end
 

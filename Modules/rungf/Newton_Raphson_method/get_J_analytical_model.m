@@ -1,4 +1,4 @@
-function [GN] = get_J_analytical_model(GN, NUMPARAM)
+function [GN] = get_J_analytical_model(GN, NUMPARAM, PHYMOD)
 %GET_J_ANALYTICAL_MODEL Jacobian Matrix J = df/dp
 %
 %   |-----------------------------------|
@@ -10,7 +10,7 @@ function [GN] = get_J_analytical_model(GN, NUMPARAM)
 %   |-----------------------------------|
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -26,44 +26,90 @@ if isfield(GN, 'pipe')
     % Indices
     iF_pipe = GN.branch.i_from_bus(GN.branch.pipe_branch);
     iT_pipe = GN.branch.i_to_bus(GN.branch.pipe_branch);
-    idx = p_i(iF_pipe) < p_i(iT_pipe);
+    is_p_i_greater_than_p_j = p_i(iF_pipe) > p_i(iT_pipe);
+    
     iIn = iF_pipe;
-    iIn(idx) = iT_pipe(idx);
+    iIn(~is_p_i_greater_than_p_j) = iT_pipe(~is_p_i_greater_than_p_j);
     iOut = iT_pipe;
-    iOut(idx) = iF_pipe(idx);
+    iOut(~is_p_i_greater_than_p_j) = iF_pipe(~is_p_i_greater_than_p_j);
     
     % Quantites
     p_i = GN.bus.p_i(iIn);
     p_j = GN.bus.p_i(iOut);
     
-    %% turbolent
-    [A_ij, B_ij, C_ij] = get_ABC_ij(GN);
+    % laminar or turbolent
+    laminar     = GN.pipe.Re_ij <= 2320;
+    turbolent   = GN.pipe.Re_ij > 2320;
     V_dot_n_ij_pipe = GN.branch.V_dot_n_ij(GN.branch.pipe_branch);
+    sign_V_dot_n_ij_pipe = sign(V_dot_n_ij_pipe);
+    sign_V_dot_n_ij_pipe(is_p_i_greater_than_p_j(GN.branch.pipe_branch))  = 1;
+    sign_V_dot_n_ij_pipe(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = -1;
     
-    d_V_ij_d_p_iIn = ...
-        sign(V_dot_n_ij_pipe) .* (...
-        A_ij .* p_i ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
-        - A_ij .* B_ij .* p_i ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
-        );
-    d_V_ij_d_p_iIn(isnan(d_V_ij_d_p_iIn)) = 0;
-    d_V_ij_d_p_iIn(GN.bus.p_bus(iIn)) = 0;
-    
-    dV_ij_dp_jOut = ...
-        sign(V_dot_n_ij_pipe) .* (...
-        - A_ij .* p_j ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
-        + A_ij .* B_ij .* p_j ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
-        );
-    dV_ij_dp_jOut(isnan(dV_ij_dp_jOut)) = 0;
-    dV_ij_dp_jOut(GN.bus.p_bus(iOut)) = 0;
+    d_V_ij_d_p_iIn  = NaN(size(GN.pipe,1),1);
+    dV_ij_dp_iOut   = NaN(size(GN.pipe,1),1);
     
     %% laminar
+    if any(laminar)
+        % Quantities
+        CONST   = getConstants();
+        p_n     = CONST.p_n;
+        T_n     = CONST.T_n;
+        D_ij    = GN.pipe.D_ij;
+        L_ij    = GN.pipe.L_ij;
+        eta_ij  = GN.pipe.eta_ij;
+        K_ij    = GN.pipe.Z_ij / GN.gasMixProp.Z_n_avg;
+        T_ij    = GN.pipe.T_ij;
+        
+        % p_i > p_j, i: flow input, j: flow output
+        d_V_ij_d_p_iIn_laminar = sign_V_dot_n_ij_pipe .* pi .* D_ij.^4 * T_n ./ (128 * p_n * L_ij .* eta_ij .* K_ij .* T_ij) .* p_i;
+        d_V_ij_d_p_iIn_laminar(isnan(d_V_ij_d_p_iIn_laminar)) = 0;
+        d_V_ij_d_p_iIn_laminar(GN.bus.p_bus(iIn)) = 0;
+        d_V_ij_d_p_iIn(laminar) = d_V_ij_d_p_iIn_laminar(laminar);
+        
+        % p_j > p_i, j: flow input, i: flow output
+        dV_ij_dp_iOut_laminar = - sign_V_dot_n_ij_pipe .* pi .* D_ij.^4 * T_n ./ (128 * p_n * L_ij .* eta_ij .* K_ij .* T_ij) .* p_j;
+        dV_ij_dp_iOut_laminar(isnan(dV_ij_dp_iOut_laminar)) = 0;
+        dV_ij_dp_iOut_laminar(GN.bus.p_bus(iOut)) = 0;
+        dV_ij_dp_iOut(laminar) = dV_ij_dp_iOut_laminar(laminar);
+    end
     
+    %% turbolent
+    if any(turbolent)
+        [A_ij, B_ij, C_ij] = get_ABC_ij(GN);
+        
+        % p_i > p_j, i: flow input, j: flow output
+        d_V_ij_d_p_iIn_turbolent = ...
+            sign_V_dot_n_ij_pipe .* (...
+              A_ij .* p_i ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+            - A_ij .* B_ij .* p_i ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+            );
+        d_V_ij_d_p_iIn_turbolent(isnan(d_V_ij_d_p_iIn_turbolent)) = 0;
+        d_V_ij_d_p_iIn_turbolent(GN.bus.p_bus(iIn)) = 0;
+        d_V_ij_d_p_iIn(turbolent) = d_V_ij_d_p_iIn_turbolent(turbolent);
+        
+        % p_j > p_i, j: flow input, i: flow output
+        dV_ij_dp_iOut_turbolent = ...
+            sign_V_dot_n_ij_pipe .* (...
+            - A_ij .* p_j ./ sqrt(p_i.^2 - p_j.^2) .* log10( B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+            + A_ij .* B_ij .* p_j ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
+            );
+        dV_ij_dp_iOut_turbolent(isnan(dV_ij_dp_iOut_turbolent)) = 0;
+        dV_ij_dp_iOut_turbolent(GN.bus.p_bus(iOut)) = 0;
+        dV_ij_dp_iOut(turbolent) = dV_ij_dp_iOut_turbolent(turbolent);
+    end
     
+        
     %% dV_ij_dp_i, dV_ij_dp_j
     dV_ij_dp_i = d_V_ij_d_p_iIn;
-    dV_ij_dp_i(sign(V_dot_n_ij_pipe) == -1) = dV_ij_dp_jOut(sign(V_dot_n_ij_pipe) == -1);
-    dV_ij_dp_j = dV_ij_dp_jOut;
-    dV_ij_dp_j(sign(V_dot_n_ij_pipe) == -1) = d_V_ij_d_p_iIn(sign(V_dot_n_ij_pipe) == -1);
+    dV_ij_dp_i(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = dV_ij_dp_iOut(~is_p_i_greater_than_p_j(GN.branch.pipe_branch));
+    dV_ij_dp_j = dV_ij_dp_iOut;
+    dV_ij_dp_j(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = d_V_ij_d_p_iIn(~is_p_i_greater_than_p_j(GN.branch.pipe_branch));
+    
+else
+    iF_pipe = [];
+    iT_pipe = [];
+    dV_ij_dp_i = [];
+    dV_ij_dp_j = [];
 end
 
 %% V_dot_n_i demand at compressor inputs
@@ -76,6 +122,9 @@ if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equa
         % Quantities
         p_i = GN.bus.p_i(iF_comp);
         p_j = GN.bus.p_i(iT_comp);
+        if ~ismember('kappa_i',GN.bus.Properties.VariableNames)
+            GN = get_kappa(GN, PHYMOD);
+        end
         kappa_i = GN.bus.kappa_i(iF_comp);
         
         % Physical constants
@@ -96,13 +145,18 @@ end
 
 %% 
 if NUMPARAM.OPTION_get_f_nodal_equation == 1 || NUMPARAM.OPTION_get_f_nodal_equation == 2
+    dV_ij_dp_j_branch = zeros(size(GN.branch,1),1);
+    
+    % pipe
+    if any(GN.branch.pipe_branch)
+        dV_ij_dp_j_branch(GN.branch.pipe_branch) = dV_ij_dp_j;
+    end
+    
     if any(strcmp('station_ID',GN.branch.Properties.VariableNames))
         station_IDs = unique(GN.branch.station_ID(~isnan(GN.branch.station_ID)));
         iF_Station  = [];
         k_bus       = [];
         dV_jk_dp_k  = [];
-        dV_ij_dp_j_branch = zeros(size(GN.branch,1),1);
-        dV_ij_dp_j_branch(GN.branch.pipe_branch) = dV_ij_dp_j;
         
         for iii = 1:length(station_IDs)
             station_ID      = station_IDs(iii);
@@ -151,9 +205,8 @@ elseif  NUMPARAM.OPTION_get_f_nodal_equation == 4
 end
 mm = size(GN.bus,1);
 nn = mm;
-GN.J = sparse(ii,jj,vv,mm,nn);
-GN.J(GN.bus.f_0_bus,:) = [];
-GN.J(:,GN.bus.p_bus) = [];
+J = sparse(ii,jj,vv,mm,nn);
+GN.J = J(~GN.bus.p_bus,~GN.bus.p_bus);
 
 end
 

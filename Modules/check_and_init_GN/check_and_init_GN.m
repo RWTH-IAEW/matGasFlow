@@ -1,9 +1,9 @@
-function [GN] = check_and_init_GN(GN, create_log_file)
+function [GN] = check_and_init_GN(GN, keep_bus_properties, create_log_file)
 %CHECK_AND_INIT_GN
 %   [GN] = check_and_init_GN(GN, create_log_file)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -12,8 +12,13 @@ function [GN] = check_and_init_GN(GN, create_log_file)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Set default input arguments
-if nargin < 2
-    create_log_file = 0;
+if nargin < 3
+    create_log_file = false;
+    
+    if nargin < 2
+        keep_bus_properties = true;
+        
+    end
 end
 
 if create_log_file ~= 0 && create_log_file ~= 1
@@ -34,6 +39,12 @@ if create_log_file == 1
     disp(['log file saved at ', currentFolder, '\log\', LOG_FILENAME, '.log'])
     diary([currentFolder,'\log\',LOG_FILENAME,'.log'])
 end
+
+%% Check GN.name
+GN = check_GN_name(GN);
+
+%% Check GN.isothermal
+GN = check_GN_isothermal(GN);
 
 %% Check GN.T_env
 GN = check_GN_T_env(GN);
@@ -57,13 +68,13 @@ GN = check_GN_valve(GN);
 GN = check_GN_gasMix(GN);
 
 %% Check GN.time_series
-if isfield(GN, 'time_series')
-    try
-        GN = check_GN_time_series(GN);
-    catch
-        warning('Check of time_series not available in this matgasflow distribution.')
-    end
-end
+% if isfield(GN, 'time_series')
+%     try
+%         GN = check_GN_time_series(GN);
+%     catch
+%         warning('Check of time_series not available in this matgasflow distribution.')
+%     end
+% end
 
 %% Inititalize GN.branch
 GN = init_GN_branch(GN);
@@ -72,7 +83,7 @@ GN = init_GN_branch(GN);
 GN = init_GN_indices(GN);
 
 %% Check area restrictions
-GN = check_GN_area_restrictions(GN);
+GN = check_GN_area_restrictions(GN,keep_bus_properties);
 
 %% Gas Composition Properties
 GN = get_gasMixAndCompoProp(GN);

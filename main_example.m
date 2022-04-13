@@ -1,3 +1,12 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%       Digitalization and Energy Economics (IAEW),
+%       RWTH Aachen University, Marcel Kurth
+%   All rights reserved.
+%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   This script is part of matGasFlow.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% SETUP
 
 % Call setup_matGasFlow
@@ -29,10 +38,6 @@ GN = load_GN('Belgium');
 
 % 2) Customize the scenario
 % -------------------------
-
-% You can for exaple increase the output pressure of the second compressor
-% station up to 65 barg (bar gauge).
-GN.comp.p_out__barg(2) = 70;
 
 % Change the composition of gas mixture to 'H_Gas_NorthSea'. Call
 % 'help get_gasMixAndCompoProp' for more information.

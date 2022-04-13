@@ -18,7 +18,7 @@ function [ GN ] = set_fraction_of_gas_mixture_component( GN, gas_mixture_compone
 %       'x_vol', 'x_mass', 'x_mol'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -33,16 +33,16 @@ if x >= 0 && x < 1
         GN.gasMixAndCompoProp{:,'x_mol'} = GN.gasMixAndCompoProp{:,xVar}/sum(GN.gasMixAndCompoProp{:,xVar})*(1-x);
         GN.gasMixAndCompoProp{gas_mixture_component,'x_mol'} = x;
         GN.gasMixAndCompoProp{:,'x_vol'}  = GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'V_m_n'} / sum(GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'V_m_n'});
-        GN.gasMixAndCompoProp{:,'x_m'} = GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'M'}     / sum(GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'M'}    );
+        GN.gasMixAndCompoProp{:,'x_mass'} = GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'M'}     / sum(GN.gasMixAndCompoProp{:,'x_mol'} .* GN.gasMixAndCompoProp{:,'M'}    );
     elseif strcmp(xVar,'x_vol')
         GN.gasMixAndCompoProp{gas_mixture_component,'x_vol'} = 0;
         GN.gasMixAndCompoProp{:,'x_vol'} = GN.gasMixAndCompoProp{:,xVar}/sum(GN.gasMixAndCompoProp{:,xVar})*(1-x);
         GN.gasMixAndCompoProp{gas_mixture_component,'x_vol'} = x;
         GN.gasMixAndCompoProp{:,'x_mol'}  = GN.gasMixAndCompoProp{:,'x_vol'}./GN.gasMixAndCompoProp{:,'V_m_n'}/sum(GN.gasMixAndCompoProp{:,'x_vol'}./GN.gasMixAndCompoProp{:,'V_m_n'});
-        GN.gasMixAndCompoProp{:,'x_m'} = GN.gasMixAndCompoProp{:,'x_vol'}.*GN.gasMixAndCompoProp{:,'rho_n'}/sum(GN.gasMixAndCompoProp{:,'x_vol'}.*GN.gasMixAndCompoProp{:,'rho_n'});
+        GN.gasMixAndCompoProp{:,'x_mass'} = GN.gasMixAndCompoProp{:,'x_vol'}.*GN.gasMixAndCompoProp{:,'rho_n'}/sum(GN.gasMixAndCompoProp{:,'x_vol'}.*GN.gasMixAndCompoProp{:,'rho_n'});
     elseif strcmp(xVar,'x_mass')
         GN.gasMixAndCompoProp{gas_mixture_component,'x_mass'} = 0;
-        GN.gasMixAndCompoProp{:,'x_m'} = GN.gasMixAndCompoProp{:,xVar}/sum(GN.gasMixAndCompoProp{:,xVar})*(1-x);
+        GN.gasMixAndCompoProp{:,'x_mass'} = GN.gasMixAndCompoProp{:,xVar}/sum(GN.gasMixAndCompoProp{:,xVar})*(1-x);
         GN.gasMixAndCompoProp{gas_mixture_component,'x_mass'} = x;
         GN.gasMixAndCompoProp{:,'x_mol'}  = GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'M'}/sum(GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'M'});
         GN.gasMixAndCompoProp{:,'x_vol'} = GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'rho_n'}/sum(GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'rho_n'});
@@ -54,7 +54,7 @@ elseif x == 1
     GN.gasMixAndCompoProp{gas_mixture_component,'x_mol'} = x;
     GN.gasMixAndCompoProp{:,'x_vol'} = 0;
     GN.gasMixAndCompoProp{gas_mixture_component,'x_vol'} = x;
-    GN.gasMixAndCompoProp{:,'x_m'} = 0;
+    GN.gasMixAndCompoProp{:,'x_mass'} = 0;
     GN.gasMixAndCompoProp{gas_mixture_component,'x_mass'} = x;
 else
     error('x must have a value between 0 and 1')
