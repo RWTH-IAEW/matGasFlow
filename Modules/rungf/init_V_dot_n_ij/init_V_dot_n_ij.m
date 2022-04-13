@@ -9,11 +9,7 @@ function [GN] = init_V_dot_n_ij(GN)
 %   get_V_dot_n_ij_radialGN is called.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -21,7 +17,6 @@ function [GN] = init_V_dot_n_ij(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<<<<<< HEAD
 %% Apply presets of active branches
 if any(ismember(GN.branch.Properties.VariableNames, 'P_th_ij_preset__MW'))
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
@@ -56,11 +51,6 @@ end
 
 %% Heuristic initialization of connecting branches with no presets
 GN.branch.V_dot_n_ij(GN.branch.connecting_branch & ~GN.branch.preset) = mean(abs(GN.bus.V_dot_n_i)) * (0.9:0.2/(sum(GN.branch.connecting_branch & ~GN.branch.preset)-1):1.1)*0.5;
-=======
-%% Heuristical initialization of V_dot_n_ij
-GN.branch.V_dot_n_ij = zeros(size(GN.branch,1),1);
-GN.branch.V_dot_n_ij(GN.branch.connecting_branch) = mean(abs(GN.bus.V_dot_n_i)) * (0.9:0.2/(sum(GN.branch.connecting_branch)-1):1.1);
->>>>>>> Merge to public repo (#1)
 
 %% Solving system of linear equations
 GN = get_V_dot_n_ij_radialGN(GN);

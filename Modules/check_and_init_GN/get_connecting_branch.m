@@ -1,20 +1,12 @@
 function [GN] = get_connecting_branch(GN)
-<<<<<<< HEAD
 %GET_CONNECTING_BRANCH
-=======
-%GET_CONNECTING_BRANCHES
->>>>>>> Merge to public repo (#1)
 %
 %   Initializes GN.branch.connecting_branch, identifies connecting in
 %   a meshed grid with the help of a minimum spanning tree algorithm and
 %   sets them to true.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -22,7 +14,6 @@ function [GN] = get_connecting_branch(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<<<<<< HEAD
 branch_temp                 = GN.branch;
 branch_temp(branch_temp.parallel_branch,:) = [];
 idx                         = true(size(branch_temp,1),1);
@@ -51,17 +42,6 @@ branch_temp.connecting_branch = ...
 [~,idx] = ismember(branch_temp.branch_ID(branch_temp.connecting_branch), GN.branch.branch_ID);
 GN.branch.connecting_branch(:) = false;
 GN.branch.connecting_branch(idx) = true;
-=======
-g = graph(GN.branch.i_from_bus, GN.branch.i_to_bus);
-t = minspantree(g, 'Root', find(GN.bus.slack_bus));
-g_array = g.Edges.EndNodes;
-t_array = t.Edges.EndNodes;
-iBranch_temp = ismember(g_array,t_array,'row');
-connecting_branch = g_array(~iBranch_temp,:);
-GN.branch.connecting_branch = ...
-    ismember([GN.branch.i_from_bus,GN.branch.i_to_bus],connecting_branch,'rows') | ...
-    ismember([GN.branch.i_to_bus,GN.branch.i_from_bus],connecting_branch,'rows');
->>>>>>> Merge to public repo (#1)
 
 end
 

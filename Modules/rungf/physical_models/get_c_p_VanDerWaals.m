@@ -3,11 +3,7 @@ function [c_p_i, c_p_0_i] = get_c_p_VanDerWaals(p, T, Z, a, b, gasMixProp, gasCo
 %   the Van der Waals equation
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.

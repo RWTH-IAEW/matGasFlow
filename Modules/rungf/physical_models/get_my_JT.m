@@ -3,11 +3,7 @@ function [GN] = get_my_JT(GN, PHYMOD)
 %   [GN] = get_my_JT(GN, PHYMOD)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.

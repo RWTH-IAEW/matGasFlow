@@ -7,11 +7,7 @@ function [GN] = get_reduced_quantities(GN, PHYMOD)
 %       at pipes:   p_r_ij, T_r_ij
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -80,10 +76,7 @@ elseif PHYMOD.reducedQuantities == 3
 end
 
 %% Reduced molar volume - unecessary
-<<<<<<< HEAD
 % CONST = getConstants(); 
-=======
->>>>>>> Merge to public repo (#1)
 % V_m_i = GN.bus.Z_i .* CONST.R_m .* GN.bus.T_i ./ GN.bus.p_i;
 % GN.bus.V_m_r_i = V_m_i / GN.gasMixProp.V_m_pc;
 % V_m_ij = GN.pipe.Z_ij .* CONST.R_m .* GN.pipe.T_ij ./ GN.pipe.p_ij;

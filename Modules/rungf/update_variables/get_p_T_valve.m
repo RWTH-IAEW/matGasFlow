@@ -4,11 +4,7 @@ function [GN] = get_p_T_valve(GN)
 %   Update p_i and T_i at valve output with p_i and T_i at valve input.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -21,7 +17,6 @@ if ~isfield(GN,'valve')
     return
 end
 
-<<<<<<< HEAD
 
 %% Itentify valve groups and reduce valve station to one bus
 valveStation_IDs = unique(GN.branch.valveStation_ID(GN.branch.valve_branch & GN.branch.in_service));
@@ -43,15 +38,6 @@ for ii = 1:length(valveStation_IDs)
     GN.bus.p_bus(       i_bus_delete)   = false;
     GN.bus.active_bus(  i_bus_delete)   = false;
     GN.bus.V_dot_n_i(   i_bus_delete)   = 0;
-=======
-i_from_bus = GN.branch.i_from_bus(GN.branch.valve_branch);
-i_to_bus = GN.branch.i_to_bus(GN.branch.valve_branch);
-
-iter = sum(GN.INC(:,~GN.branch.pipe_branch) * GN.INC(:,~GN.branch.pipe_branch)'==2,'all') - sum(GN.bus.slack_bus) + 2;
-for ii = 1:iter
-    GN.bus.p_i(i_to_bus) = GN.bus.p_i(i_from_bus);
-    GN.bus.T_i(i_to_bus) = GN.bus.T_i(i_from_bus);
->>>>>>> Merge to public repo (#1)
 end
 
 end

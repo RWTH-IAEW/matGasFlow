@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
-=======
-function [GN] = rungf(GN, NUMPARAM, PHYMOD)
->>>>>>> Merge to public repo (#1)
 %RUNGF Steady-state gas flow simulation
 %
 %   [GN] = RUNGF(GN, NUMPARAM, PHYMOD)
@@ -23,11 +19,7 @@ function [GN] = rungf(GN, NUMPARAM, PHYMOD)
 %       GN = rungf(GN, NUMPARAM, PHYMOD);
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -44,12 +36,9 @@ if nargin < 3
     end
 end
 
-<<<<<<< HEAD
 %% Success
 success = true;
 
-=======
->>>>>>> Merge to public repo (#1)
 %% Check GN data type
 flag_remove_auxiliary_variables = 0;
 if ischar(GN)
@@ -63,7 +52,6 @@ if isempty(path) && GN.isothermal ~=1
     error('Non-isothermal model not available, choose GN.isothermal = 1')
 end
 
-<<<<<<< HEAD
 %% Save Input
 GN_input = GN;
 
@@ -80,19 +68,10 @@ end
 %% any(GN.branch.connecting_branch)?
 if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
     %% rungf for radial gas network
-=======
-%% Initialization
-GN = init_rungf(GN, PHYMOD);
-
-%% any(GN.branch.connecting_branch)?
-if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
-    %%
->>>>>>> Merge to public repo (#1)
     iter = 0;
     while 1
         iter = iter + 1;
         
-<<<<<<< HEAD
         % Update slack bus
         GN.bus.V_dot_n_i(GN.bus.slack_bus) = GN.bus.V_dot_n_i(GN.bus.slack_bus) - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
         
@@ -100,20 +79,10 @@ if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
         GN = get_V_dot_n_ij_radialGN(GN);
         
         % Calulation of nodal temperature
-=======
-        %% Update V_dot_n_ij
-        GN = get_V_dot_n_ij_radialGN(GN);
-        
-        %% Calculation of p_i based on general gas flow equation
-        GN = get_p_i_SLE(GN, PHYMOD);
-        
-        %% Calulation of nodal temperature
->>>>>>> Merge to public repo (#1)
         if GN.isothermal ~= 1
             GN = get_T_loop(GN, NUMPARAM, PHYMOD);
         end
         
-<<<<<<< HEAD
         % Calculation of p_i based on general gas flow equation
         [GN, success] = get_p_i_SLE(GN, PHYMOD);
         if ~success
@@ -125,13 +94,6 @@ if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
         GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
         
         % Check convergence
-=======
-        %% Update nodal equation
-        NUMPARAM.OPTION_get_V_dot_n_ij_pipe = 2;
-        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
-        
-        %% Check convergence
->>>>>>> Merge to public repo (#1)
         GN = set_convergence(GN, ['$$rungf rad. GN (',num2str(iter),')$$']);
         if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
             break
@@ -141,7 +103,6 @@ if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
         
     end
 else
-<<<<<<< HEAD
     %% rungf for meshed gas network
     % V_dot_n_ij start solution - Solving a System of Linear Equations
     % UNDER CONSTRUCTION: option to apply start solution and skip init_V_dot_n_ij
@@ -165,53 +126,5 @@ end
 
 %% Prepair results
 GN = get_GN_res(GN, GN_input, flag_remove_auxiliary_variables, NUMPARAM, PHYMOD);
-=======
-    %% V_dot_n_ij Start Solution - Solving a System of Linear Equations
-    if ~any(strcmp('V_dot_n_ij',GN.branch.Properties.VariableNames)) || ~any(isnan(GN.branch.V_dot_n_ij)) 
-        GN = init_V_dot_n_ij(GN);
-    end
-    
-    %% Start solution p_i
-    if NUMPARAM.OPTION_rungf_meshedGN == 1
-        GN = get_p_i_SLE_loop(GN, NUMPARAM, PHYMOD);
-        
-    elseif NUMPARAM.OPTION_rungf_meshedGN == 2
-        GN = get_p_i_SLE(GN, PHYMOD);
-        
-    elseif NUMPARAM.OPTION_rungf_meshedGN == 3
-        GN = get_p_i_Adm_loop(GN, NUMPARAM, PHYMOD);
-        
-    elseif NUMPARAM.OPTION_rungf_meshedGN == 4
-        GN = get_p_i_Adm(GN, PHYMOD);
-        
-    elseif NUMPARAM.OPTION_rungf_meshedGN == 5
-        try
-            GN = get_p_i_DarcyWeisbach_loop(GN, NUMPARAM, PHYMOD);
-        catch
-            error('Option not available, choose NUMPARAM.OPTION_rungf_meshedGN = 1, 2, 3 or 4')
-        end
-        
-    elseif NUMPARAM.OPTION_rungf_meshedGN == 6
-        try
-            GN = get_p_i_DarcyWeisbach(GN, PHYMOD);
-        catch
-            error('Option not available, choose NUMPARAM.OPTION_rungf_meshedGN = 1, 2, 3 or 4')
-        end
-        
-    end
-    
-    %% Newton Raphson
-    GN = Newton_Raphson_method(GN, NUMPARAM, PHYMOD);
-    
-end
-
-%% Additional result
-GN = get_GN_res(GN, NUMPARAM, PHYMOD);
-
-%% Remove auxiliary variables
-if flag_remove_auxiliary_variables == 1
-    GN = remove_auxiliary_variables(GN);
-end
->>>>>>> Merge to public repo (#1)
 
 end

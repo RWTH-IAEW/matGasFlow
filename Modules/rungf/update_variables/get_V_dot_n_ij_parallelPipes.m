@@ -5,11 +5,7 @@ function [GN] = get_V_dot_n_ij_parallelPipes(GN)
 %   loss
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -17,7 +13,6 @@ function [GN] = get_V_dot_n_ij_parallelPipes(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<<<<<< HEAD
 if ~ismember(GN.pipe.Properties.VariableNames, 'G_ij') % UNDER CONSTRUCTION: das war bisher nicht nötig
     GN = get_G_ij(GN);
 end
@@ -35,16 +30,6 @@ G_ij_tot = G_ij_tot_section(section_ID);
 GN.branch.V_dot_n_ij(isnan(GN.branch.V_dot_n_ij)) = 0;
 V_dot_n_ij_tot_section = abs(Matrix_section * GN.branch.V_dot_n_ij(GN.branch.pipe_branch));
 V_dot_n_ij_tot = V_dot_n_ij_tot_section(section_ID);
-=======
-Matrix_section = sparse(GN.pipe.section_ID, 1:size(GN.pipe,1), 1);
-
-G_ij_tot_section = Matrix_section * GN.pipe.G_ij;
-G_ij_tot = G_ij_tot_section(GN.pipe.section_ID);
-
-GN.branch.V_dot_n_ij(isnan(GN.branch.V_dot_n_ij)) = 0;
-V_dot_n_ij_tot_section = Matrix_section * abs(GN.branch.V_dot_n_ij(GN.branch.pipe_branch));
-V_dot_n_ij_tot = V_dot_n_ij_tot_section(GN.pipe.section_ID);
->>>>>>> Merge to public repo (#1)
 
 sign_V_dot_n_ij = sign(GN.branch.V_dot_n_ij(GN.branch.pipe_branch));
 sign_V_dot_n_ij(sign_V_dot_n_ij == 0) = 1;

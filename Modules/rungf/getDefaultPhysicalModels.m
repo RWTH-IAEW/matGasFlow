@@ -90,11 +90,7 @@ function [ PHYMOD ] = getDefaultPhysicalModels()
 %   See README for references.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -102,7 +98,6 @@ function [ PHYMOD ] = getDefaultPhysicalModels()
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<<<<<< HEAD
 PHYMOD.Z                    = 1;
 PHYMOD.c_p                  = 1;
 PHYMOD.my_JT                = 1;
@@ -111,16 +106,6 @@ PHYMOD.kappa                = 1;
 PHYMOD.reducedQuantities    = 1;
 PHYMOD.comp                 = 1;
 PHYMOD.comp_stages          = 1;
-=======
-PHYMOD.Z = 1;
-PHYMOD.c_p = 1;
-PHYMOD.my_JT =1 ;
-PHYMOD.eta = 1;
-PHYMOD.kappa = 1;
-PHYMOD.reducedQuantities = 1;
-PHYMOD.comp = 1;
-PHYMOD.comp_stages = 1;
->>>>>>> Merge to public repo (#1)
 
 end
 

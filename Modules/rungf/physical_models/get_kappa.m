@@ -4,11 +4,7 @@ function [GN] = get_kappa(GN, PHYMOD)
 %       kappa = c_p/c_v
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
-=======
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
->>>>>>> Merge to public repo (#1)
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
@@ -69,18 +65,10 @@ if PHYMOD.kappa == 1 || PHYMOD.kappa == 2
     end
     
 else
-<<<<<<< HEAD
 %     try
         GN = get_kappa_addOn(GN, PHYMOD);
 %     catch
 %         error('Option not available, choose PHYMOD.kappa = 1 OR PHYMOD.kappa = 2')
 %     end
-=======
-    try
-        GN = get_kappa_addOn(GN, PHYMOD);
-    catch
-        error('Option not available, choose PHYMOD.kappa = 1 OR PHYMOD.kappa = 2')
-    end
->>>>>>> Merge to public repo (#1)
 end
 end
