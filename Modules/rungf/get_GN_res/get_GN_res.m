@@ -38,11 +38,9 @@ GN_input.bus(i_row,i_column)    = GN.bus;
 
 % Keep some properties from GN_input.bus
 if any(...
-        GN_input.bus.slack_bus      ~= bus_temp.slack_bus | ...
-        GN_input.bus.p_bus      	~= bus_temp.p_bus | ...
-        GN_input.bus.active_bus     ~= bus_temp.active_bus)
+        GN_input.bus.slack_bus  ~= bus_temp.slack_bus | ...
+        GN_input.bus.active_bus ~= bus_temp.active_bus)
     GN_input.bus.slack_bus      = bus_temp.slack_bus;
-    GN_input.bus.p_bus      	= bus_temp.p_bus;
     GN_input.bus.active_bus     = bus_temp.active_bus;
 end
 

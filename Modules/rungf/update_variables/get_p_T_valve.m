@@ -35,7 +35,6 @@ for ii = 1:length(valveStation_IDs)
     i_column    = ismember(GN.bus.Properties.VariableNames, white_list);
     GN.bus(i_bus_delete, i_column)      = GN.bus(ones(size(i_bus_delete))*i_bus_valveStation_center, i_column);
     GN.bus.slack_bus(   i_bus_delete)   = false;
-    GN.bus.p_bus(       i_bus_delete)   = false;
     GN.bus.active_bus(  i_bus_delete)   = false;
     GN.bus.V_dot_n_i(   i_bus_delete)   = 0;
 end

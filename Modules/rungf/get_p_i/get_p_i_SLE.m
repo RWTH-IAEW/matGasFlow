@@ -34,12 +34,12 @@ INC_Pipes = GN.INC(:,non_parallel_pipe_branch);
 b = sign(GN.branch.V_dot_n_ij(non_parallel_pipe_branch)) ...
     .* GN.branch.V_dot_n_ij(non_parallel_pipe_branch).^2 ...
     ./ GN.pipe.G_ij(non_parallel_pipe_branch(GN.branch.pipe_branch)).^2 ...
-    - INC_Pipes(GN.bus.p_bus,:)' * GN.bus.p_i(GN.bus.p_bus).^2;
+    - INC_Pipes(GN.bus.slack_bus,:)' * GN.bus.p_i(GN.bus.slack_bus).^2;
 b(isnan(b)) = 0;
 
-A = INC_Pipes(~GN.bus.p_bus,:)';
+A = INC_Pipes(~GN.bus.slack_bus,:)';
 
-GN.bus.p_i(~GN.bus.p_bus) = sqrt(A\b);
+GN.bus.p_i(~GN.bus.slack_bus) = sqrt(A\b);
 
 %% Check p_i result
 CONST = getConstants();

@@ -46,11 +46,11 @@ end
 % NUMPARAM = NUMPARAM_input;
 % try
 %     load('p_error','p_error')
-%     GN.bus.p_i(~GN.bus.p_bus) = GN.bus.p_i(~GN.bus.p_bus) .* p_error;
+%     GN.bus.p_i(~GN.bus.slack_bus) = GN.bus.p_i(~GN.bus.slack_bus) .* p_error;
 % catch
-%     p_error = (0.1 + 1.8 * rand(sum(~GN.bus.p_bus),1));
+%     p_error = (0.1 + 1.8 * rand(sum(~GN.bus.slack_bus),1));
 %     save('p_error','p_error')
-%     GN.bus.p_i(~GN.bus.p_bus) = GN.bus.p_i(~GN.bus.p_bus) .* p_error;
+%     GN.bus.p_i(~GN.bus.slack_bus) = GN.bus.p_i(~GN.bus.slack_bus) .* p_error;
 % end
 
 end

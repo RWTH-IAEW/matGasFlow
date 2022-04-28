@@ -17,8 +17,8 @@ Omega = 1;
 while 1
     %% Update p_i
     GN_damp = GN;
-    GN_damp.bus.p_i(~GN.bus.p_bus) ...
-        = GN.bus.p_i(~GN.bus.p_bus) + Omega * delta_p(~GN.bus.p_bus);
+    GN_damp.bus.p_i(~GN.bus.slack_bus) ...
+        = GN.bus.p_i(~GN.bus.slack_bus) + Omega * delta_p(~GN.bus.slack_bus);
     
     %% Update nodal equation
     GN_damp = get_f_nodal_equation(GN_damp, NUMPARAM, PHYMOD);
@@ -27,8 +27,8 @@ while 1
     C_omega = 1-Omega/4;
     
     % Use the euklidian norm (2-norm) for decision
-    if norm(GN_damp.bus.f(~GN.bus.p_bus))...
-            <= C_omega * norm(GN.bus.f(~GN.bus.p_bus))
+    if norm(GN_damp.bus.f(~GN.bus.slack_bus))...
+            <= C_omega * norm(GN.bus.f(~GN.bus.slack_bus))
         break
     end
     

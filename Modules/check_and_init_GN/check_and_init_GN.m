@@ -1,4 +1,4 @@
-function [GN] = check_and_init_GN(GN, keep_bus_properties, create_log_file)
+function [GN] = check_and_init_GN(GN, keep_slack_properties, create_log_file)
 %CHECK_AND_INIT_GN
 %   [GN] = check_and_init_GN(GN, create_log_file)
 %
@@ -16,7 +16,7 @@ if nargin < 3
     create_log_file = false;
     
     if nargin < 2
-        keep_bus_properties = true;
+        keep_slack_properties = true;
         
     end
 end
@@ -83,7 +83,7 @@ GN = init_GN_branch(GN);
 GN = init_GN_indices(GN);
 
 %% Check area restrictions
-GN = check_GN_area_restrictions(GN,keep_bus_properties);
+GN = check_GN_area_restrictions(GN,keep_slack_properties);
 
 %% Gas Composition Properties
 GN = get_gasMixAndCompoProp(GN);

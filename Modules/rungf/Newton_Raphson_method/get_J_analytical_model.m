@@ -63,13 +63,13 @@ if isfield(GN, 'pipe')
         % p_i > p_j, i: flow input, j: flow output
         d_V_ij_d_p_iIn_laminar = sign_V_dot_n_ij_pipe .* pi .* D_ij.^4 * T_n ./ (128 * p_n * L_ij .* eta_ij .* K_ij .* T_ij) .* p_i;
         d_V_ij_d_p_iIn_laminar(isnan(d_V_ij_d_p_iIn_laminar)) = 0;
-        d_V_ij_d_p_iIn_laminar(GN.bus.p_bus(iIn)) = 0;
+        d_V_ij_d_p_iIn_laminar(GN.bus.slack_bus(iIn)) = 0;
         d_V_ij_d_p_iIn(laminar) = d_V_ij_d_p_iIn_laminar(laminar);
         
         % p_j > p_i, j: flow input, i: flow output
         dV_ij_dp_iOut_laminar = - sign_V_dot_n_ij_pipe .* pi .* D_ij.^4 * T_n ./ (128 * p_n * L_ij .* eta_ij .* K_ij .* T_ij) .* p_j;
         dV_ij_dp_iOut_laminar(isnan(dV_ij_dp_iOut_laminar)) = 0;
-        dV_ij_dp_iOut_laminar(GN.bus.p_bus(iOut)) = 0;
+        dV_ij_dp_iOut_laminar(GN.bus.slack_bus(iOut)) = 0;
         dV_ij_dp_iOut(laminar) = dV_ij_dp_iOut_laminar(laminar);
     end
     
@@ -84,7 +84,7 @@ if isfield(GN, 'pipe')
             - A_ij .* B_ij .* p_i ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
             );
         d_V_ij_d_p_iIn_turbolent(isnan(d_V_ij_d_p_iIn_turbolent)) = 0;
-        d_V_ij_d_p_iIn_turbolent(GN.bus.p_bus(iIn)) = 0;
+        d_V_ij_d_p_iIn_turbolent(GN.bus.slack_bus(iIn)) = 0;
         d_V_ij_d_p_iIn(turbolent) = d_V_ij_d_p_iIn_turbolent(turbolent);
         
         % p_j > p_i, j: flow input, i: flow output
@@ -94,7 +94,7 @@ if isfield(GN, 'pipe')
             + A_ij .* B_ij .* p_j ./ log(10) ./ (p_i.^2 - p_j.^2) ./ (B_ij ./ sqrt(p_i.^2 - p_j.^2) + C_ij) ...
             );
         dV_ij_dp_iOut_turbolent(isnan(dV_ij_dp_iOut_turbolent)) = 0;
-        dV_ij_dp_iOut_turbolent(GN.bus.p_bus(iOut)) = 0;
+        dV_ij_dp_iOut_turbolent(GN.bus.slack_bus(iOut)) = 0;
         dV_ij_dp_iOut(turbolent) = dV_ij_dp_iOut_turbolent(turbolent);
     end
     
@@ -206,7 +206,7 @@ end
 mm = size(GN.bus,1);
 nn = mm;
 J = sparse(ii,jj,vv,mm,nn);
-GN.J = J(~GN.bus.p_bus,~GN.bus.p_bus);
+GN.J = J(~GN.bus.slack_bus,~GN.bus.slack_bus);
 
 end
 

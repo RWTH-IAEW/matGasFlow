@@ -73,13 +73,13 @@ elseif strcmp(temp_model, 'isothermal')
 end
 
 %% Plausibility check and initialization of the gas network
-keep_bus_properties = true;
-GN = check_and_init_GN(GN, keep_bus_properties, create_log_file);
+keep_slack_properties = true;
+GN = check_and_init_GN(GN, keep_slack_properties, create_log_file);
 
 %% Reset p_i__barg
-% if any(~isnan(GN.bus.p_i__barg(~GN.bus.p_bus)))
-%     GN.bus.p_i__barg(~GN.bus.p_bus) = NaN;
-%     warning('GN.bus: All pressure values p_i__barg at ~GN.bus.p_bus have been reset to NaN.')
+% if any(~isnan(GN.bus.p_i__barg(~GN.bus.slack_bus)))
+%     GN.bus.p_i__barg(~GN.bus.slack_bus) = NaN;
+%     warning('GN.bus: All pressure values p_i__barg at ~GN.bus.slack_bus have been reset to NaN.')
 % end
 
 end

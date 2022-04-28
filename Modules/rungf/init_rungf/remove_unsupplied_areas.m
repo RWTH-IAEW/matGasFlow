@@ -35,8 +35,8 @@ if any(~GN.branch.in_service)
     GN = init_GN_indices(GN);
     
     % Check area restrictions
-    keep_bus_properties = true;
-    GN = check_GN_area_restrictions(GN,keep_bus_properties);
+    keep_slack_properties = true;
+    GN = check_GN_area_restrictions(GN,keep_slack_properties);
 
 end
 
@@ -48,8 +48,8 @@ if any(~GN.bus.supplied)
     GN = init_GN_indices(GN);
     
     % Check area restrictions
-    keep_bus_properties = true;
-    GN = check_GN_area_restrictions(GN,keep_bus_properties);
+    keep_slack_properties = true;
+    GN = check_GN_area_restrictions(GN,keep_slack_properties);
 end
 
 %%

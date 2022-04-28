@@ -25,7 +25,6 @@ bus_temp        = GN_input.bus;
 GN_input.bus(i_row,i_column) = GN.bus;
 % GN_input.bus.V_dot_n_i      = bus_temp.V_dot_n_i;
 GN_input.bus.slack_bus      = bus_temp.slack_bus;
-GN_input.bus.p_bus      	= bus_temp.p_bus;
 GN_input.bus.active_bus     = bus_temp.active_bus;
 
 %% merge branch
@@ -81,7 +80,6 @@ disp('...')
 % GN.bus = outerjoin(GN.bus,GN_input.bus,'Keys',Var,'MergeKeys',true);
 % GN.bus.slack_bus = GN_input.bus.slack_bus;
 % GN.bus.active_bus = GN_input.bus.active_bus;
-% GN.bus.p_bus = GN_input.bus.p_bus;
 % 
 % 
 % % Valve Gruppen identifizierden

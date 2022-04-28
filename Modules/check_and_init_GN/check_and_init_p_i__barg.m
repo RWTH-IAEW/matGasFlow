@@ -11,6 +11,10 @@ function [GN] = check_and_init_p_i__barg(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if all(~isnan(GN.bus.p_i__barg))
+    return
+end
+
 %% p_i__barg
 if all(ismember({'p_i_min__barg','p_i_max__barg'}, GN.bus.Properties.VariableNames))
     p_max = GN.bus.p_i_max__barg(isnan(GN.bus.p_i__barg));
@@ -26,7 +30,7 @@ elseif ismember('p_i_min__barg', GN.bus.Properties.VariableNames)
     
 end
 
-p_area__barg = GN.MAT.area_bus(:,GN.bus.p_bus) * GN.bus.p_i__barg(GN.bus.p_bus);
+p_area__barg = GN.MAT.area_bus(:,GN.bus.slack_bus) * GN.bus.p_i__barg(GN.bus.slack_bus);
 
 if any(isnan(p_area__barg))
     error(['Areas with no p_i__barg value: ', num2str(find(isnan(p_area__barg))')])

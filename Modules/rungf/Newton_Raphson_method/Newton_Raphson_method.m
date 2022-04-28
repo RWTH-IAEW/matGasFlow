@@ -35,7 +35,7 @@ while 1
     
     %% Check convergence
     GN = set_convergence(GN, ['NR (',num2str(iter_1),')']);
-    % disp({iter_1, norm(GN.bus.f), norm(delta_p), omega}) %- UNDER CONSTRUCTION
+    disp({iter_1, norm(GN.bus.f), norm(delta_p), omega}) %- UNDER CONSTRUCTION
     if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
         if isfield(GN,'J')
             GN = rmfield(GN, 'J');
@@ -51,14 +51,14 @@ while 1
     end
     
     %% Calculation of delta_p, solving linear system of equation
-    delta_p(~GN.bus.p_bus) = GN.J\-GN.bus.f(~GN.bus.p_bus);
+    delta_p(~GN.bus.slack_bus) = GN.J\-GN.bus.f(~GN.bus.slack_bus);
     
     if any(isnan(delta_p)) || any(isinf(delta_p))
         NUMPARAM_temp = NUMPARAM;
         NUMPARAM_temp.OPTION_get_J = 3;
         GN_temp = get_J(GN, NUMPARAM_temp, PHYMOD);
         delta_p_temp = zeros(size(GN.bus,1),1);
-        delta_p_temp(~GN.bus.p_bus) = GN_temp.J\-GN.bus.f(~GN.bus.p_bus);
+        delta_p_temp(~GN.bus.slack_bus) = GN_temp.J\-GN.bus.f(~GN.bus.slack_bus);
         delta_p(isnan(delta_p) | isinf(delta_p)) = delta_p_temp(isnan(delta_p) | isinf(delta_p));
     end
     
@@ -71,8 +71,8 @@ while 1
     end
     
     %% Calculate p_i
-    GN.bus.p_i(~GN.bus.p_bus) ...
-        = GN.bus.p_i(~GN.bus.p_bus) + omega * delta_p(~GN.bus.p_bus);
+    GN.bus.p_i(~GN.bus.slack_bus) ...
+        = GN.bus.p_i(~GN.bus.slack_bus) + omega * delta_p(~GN.bus.slack_bus);
     
     if any(GN.bus.p_i <= CONST.p_n)
         warning(['Newton_Raphson_method: Nodal pressure became less than ',num2str(CONST.p_n),' Pa. min(p_i) = ',num2str(min(GN.bus.p_i)),' Pa'])

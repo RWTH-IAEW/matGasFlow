@@ -93,12 +93,16 @@ if color_p_i
     y = GN.bus.y_coord(idx_bus);
     if ismember('p_i',GN.bus.Properties.VariableNames)
         p = GN.bus.p_i(idx_bus);
+        scatter(x,y,[],p,'filled')
+        c = colorbar;
+        c.Label.String = 'p_{i} [Pa]';
     else
         p = GN.bus.p_i__barg(idx_bus);
+        scatter(x,y,[],p,'filled')
+        c = colorbar;
+        c.Label.String = 'p_{i} [bar_g]';
     end
-    scatter(x,y,[],p,'filled')
-    c = colorbar;
-    c.Label.String = 'p_{i} [bar_g]';
+    
 end
 
 if show_prs && isfield(GN, 'prs')

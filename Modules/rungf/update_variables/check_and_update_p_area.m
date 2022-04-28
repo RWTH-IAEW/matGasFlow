@@ -51,8 +51,8 @@ if any(strcmp(mode, 'p_i_min'))
         min_p_i__barg               = min(GN.bus.p_i__barg(GN.bus.area_ID == area_IDs(ii)));
         i_bus_min_p_i__barg         = GN.bus.p_i__barg == min_p_i__barg & GN.bus.area_ID == area_IDs(ii);
         
-        GN.bus.p_bus(GN.bus.area_ID == area_IDs(ii))    = false;
-        GN.bus.p_bus(i_bus_min_p_i__barg)               = true;
+        GN.bus.slack_bus(GN.bus.area_ID == area_IDs(ii))    = false;
+        GN.bus.slack_bus(i_bus_min_p_i__barg)               = true;
         GN.bus.p_i__barg(i_bus_min_p_i__barg)           = GN.bus.p_i_min__barg(i_bus_min_p_i__barg);
     end
 end
@@ -73,8 +73,8 @@ if any(strcmp(mode, 'p_i_max'))
         max_p_i__barg               = max(GN.bus.p_i__barg(GN.bus.area_ID == area_IDs(ii)));
         i_bus_max_p_i__barg         = GN.bus.p_i__barg == max_p_i__barg & GN.bus.area_ID == area_IDs(ii);
         
-        GN.bus.p_bus(GN.bus.area_ID == area_IDs(ii))    = false;
-        GN.bus.p_bus(i_bus_max_p_i__barg)               = true;
+        GN.bus.slack_bus(GN.bus.area_ID == area_IDs(ii))    = false;
+        GN.bus.slack_bus(i_bus_max_p_i__barg)               = true;
         GN.bus.p_i__barg(i_bus_max_p_i__barg)           = GN.bus.p_i_max__barg(i_bus_max_p_i__barg);
     end
 end
@@ -83,9 +83,9 @@ end
 GN = init_p_i(GN);
 
 
-% p_p_bus_input = GN_input.bus.p_i__barg(GN.bus.p_bus);
-% [p_p_bus_input,idx] = sort(p_p_bus_input);
-% area_ID_input = GN_input.bus.area_ID(GN.bus.p_bus);
+% p_slack_bus_input = GN_input.bus.p_i__barg(GN.bus.slack_bus);
+% [p_slack_bus_input,idx] = sort(p_slack_bus_input);
+% area_ID_input = GN_input.bus.area_ID(GN.bus.slack_bus);
 % area_ID_input = area_ID_input(idx);
 % 
 % area_ID_min = unique(GN_input.bus.area_ID);
@@ -97,17 +97,17 @@ GN = init_p_i(GN);
 % p_min(idx) = p_min;
 % area_ID_min(idx) = area_ID_min;
 % 
-% p_p_bus_new = GN.bus.p_i__barg(GN.bus.p_bus);
-% area_ID_new = GN.bus.area_ID(GN.bus.p_bus);
+% p_slack_bus_new = GN.bus.p_i__barg(GN.bus.slack_bus);
+% area_ID_new = GN.bus.area_ID(GN.bus.slack_bus);
 % [~,idx] = ismember(area_ID_new,area_ID_input);
-% p_p_bus_new(idx) = p_p_bus_new;
+% p_slack_bus_new(idx) = p_slack_bus_new;
 % area_ID_new(idx) = area_ID_new;
 % 
 % figure
 % hold on
-% stairs(p_p_bus_new)
+% stairs(p_slack_bus_new)
 % stairs(p_min)
-% stairs(p_p_bus_input)
+% stairs(p_slack_bus_input)
 % xticks(1:length(area_ID_new))
 % xticklabels({area_ID_new})
 % xlabel('area ID')

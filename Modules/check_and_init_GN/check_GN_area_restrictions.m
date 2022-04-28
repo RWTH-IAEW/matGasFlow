@@ -1,4 +1,4 @@
-function [GN] = check_GN_area_restrictions(GN, keep_bus_properties)
+function [GN] = check_GN_area_restrictions(GN, keep_slack_properties)
 %CHECK_GN_AREA_RESTRICTIONS
 %   [GN] = check_GN_area_restrictions(GN)
 %   Checks:
@@ -12,7 +12,7 @@ function [GN] = check_GN_area_restrictions(GN, keep_bus_properties)
 %       - Check for islands
 %       - Initialize Incidence Matrix
 %       - Check bus types
-%           1) Check if there is exactly one p_bus in each area
+%           1) Check if there is exactly one slack_bus in each area
 %           2) Check if two or more non-pipe_branches feed the same bus
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,7 +25,7 @@ function [GN] = check_GN_area_restrictions(GN, keep_bus_properties)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin < 2
-    keep_bus_properties = true;
+    keep_slack_properties = true;
 end
 
 %% active_bus
@@ -53,27 +53,39 @@ if ~isfield(GN,'flag_NUMPARAM_OPTION_get_J')
     GN = get_connecting_branch(GN); % UNDER CONSTRUCTION merge function with check_GN_islands
 end
 
-%% Check and init p_bus
-GN = check_and_init_p_bus(GN, keep_bus_properties);
+%% Check and init slack bus and slack branch % UNDER CONSTRCUTION: rename
+GN = check_and_init_slack(GN, keep_slack_properties);
 
 %% Check and init nodal pressure
 GN = check_and_init_p_i__barg(GN);
 
-%% Check and init slack bus and slack branch % UNDER CONSTRCUTION: rename
-GN = check_and_init_slack(GN, keep_bus_properties);
-
 %% Check output
-area_active_branch_temp = GN.MAT.area_active_branch;
-    area_active_branch_temp(area_active_branch_temp == 1) = 0;
-if any(GN.MAT.area_bus*GN.bus.slack_bus - area_active_branch_temp*GN.branch.slack_branch ~= 1) %sum(GN.bus.slack_bus) + sum(GN.branch.slack_branch) ~= length(unique(GN.bus.area_ID))
-    error('Something went wrong. Each area need one slack_bus or one slack_branch.')
-elseif sum(GN.bus.p_bus) ~= length(unique(GN.bus.area_ID))
-    error('Something went wrong. Each area need one p_bus.')
-elseif sum(GN.bus.active_bus) ~= length(unique(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)))
-    error('Something went wrong. the sum of active_bus must match the number of the to_busses of all active_branches.')
-elseif any(GN.branch.slack_branch & ~GN.branch.active_branch) || any(GN.branch.slack_branch & ~GN.branch.in_service)
-    error('...')
+% Each area must have one slack_bus
+number_of_slack_busses_in_each_area = GN.MAT.area_bus * GN.bus.slack_bus;
+if any(number_of_slack_busses_in_each_area ~= 1)
+    error('Something went wrong. Each area need one slack_bus.')
 end
+
+% to_bus of slack_branch must be slack_bus
+if any(~GN.bus.slack_bus(GN.branch.i_to_bus(GN.branch.slack_branch)))
+    error('Something went wrong. The to_bus of a slack_branch must be a slack_bus.')
+end
+
+% All slack_branches must be in_service
+if any(GN.branch.slack_branch & ~GN.branch.in_service)
+    error('All slack_branches must be in_service.')
+end
+
+% All slack_branches must be active_branches
+if any(GN.branch.slack_branch & ~GN.branch.active_branch)
+    error('All slack_branches must be active_branches.')
+end
+
+% Number of active_busses
+if sum(GN.bus.active_bus) ~= length(unique(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)))
+    error('Something went wrong. the sum of active_bus must match the number of the to_busses of all active_branches.')
+end
+
 
 end
 

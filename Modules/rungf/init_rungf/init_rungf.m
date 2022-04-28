@@ -21,7 +21,7 @@ function [GN] = init_rungf(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Check if GN is initialized
+%% Check if GN is initialized (If GN.INC is missing, GN might not be initialized)
 if ~isfield(GN,'INC')
     GN = check_and_init_GN(GN);
 end
@@ -50,21 +50,21 @@ if ~any(ismember(GN.branch.Properties.VariableNames,'V_dot_n_ij'))
 end
 
 %% Update of the slack bus: flow rate balance to(+)/from(-) the slack bus
-if abs(sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0)) > NUMPARAM.numericalTolerance
-    %     GN.bus.V_dot_n_i(GN.bus.slack_bus) = GN.bus.V_dot_n_i(GN.bus.slack_bus) - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
-    if any(GN.bus.V_dot_n_i(GN.bus.slack_bus) ~= 0)
-        GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) = ...
-            GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) ...
-            - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0);
-    else
-        GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
-            GN.bus.V_dot_n_i(GN.bus.slack_bus) ...
-            - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
-    end
-    %     warning('Entries and exits are not balanced. V_dot_n_ij of the slack busses have been updated.')
+GN = get_V_dot_n_slack(GN, 'GN', NUMPARAM);
+if abs(sum(GN.bus.V_dot_n_i)) > NUMPARAM.numericalTolerance
+    warning('Entries and exits are not balanced. V_dot_n_ij of the slack busses have been updated.')
+end
+if any(GN.bus.V_dot_n_i(GN.bus.slack_bus) ~= 0)
+    GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) = ...
+        GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) ...
+        - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0);
+else
+    GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
+        GN.bus.V_dot_n_i(GN.bus.slack_bus) ...
+        - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
 end
 
-% Upadte GN.bus.source_bus
+%% Update GN.bus.source_bus
 if GN.isothermal == 0
     if GN.bus.V_dot_n_i(GN.bus.slack_bus) < 0
         GN.bus.source_bus(GN.bus.slack_bus) = true;
@@ -76,17 +76,10 @@ end
 %% Initialize pressure and temperature
 GN = init_p_i(GN);
 GN = init_T_i(GN);
-GN = get_p_ij(GN);
 GN = get_T_ij(GN);
 
-%% Update p_i dependent quantities 
-% Compressibility factor
-GN = get_Z(GN, PHYMOD);
-
-% Dynamic viscosity eta_ij(T,rho)
-if isfield(GN, 'pipe')
-    GN = get_eta(GN,PHYMOD);
-end
+% Update p_i dependent quantities 
+GN = update_p_i_dependent_quantities(GN, PHYMOD);
 
 end
 

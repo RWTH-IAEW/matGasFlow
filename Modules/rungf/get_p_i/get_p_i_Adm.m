@@ -27,14 +27,14 @@ G_ij = GN.pipe.G_ij;
 INC_Pipes = GN.INC(:,GN.branch.pipe_branch);
 G_ij_diag = abs(INC_Pipes)*abs(G_ij);
 
-i_from_bus = GN.branch.i_from_bus(GN.branch.pipe_branch);
-i_to_bus = GN.branch.i_to_bus(GN.branch.pipe_branch);
+i_from_bus  = GN.branch.i_from_bus(GN.branch.pipe_branch);
+i_to_bus    = GN.branch.i_to_bus(GN.branch.pipe_branch);
 G = sparse(...
     [i_from_bus', i_to_bus',1:length(G_ij_diag)],...
     [i_to_bus', i_from_bus',1:length(G_ij_diag)],...
     [-G_ij',-G_ij',G_ij_diag']);
 
-ADM_G_ij = G(:,~GN.bus.p_bus);
+ADM_G_ij = G(:,~GN.bus.slack_bus);
 
 %% General gas flow equation
 % V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
@@ -44,12 +44,12 @@ V_dot_n_i_nonPipes = GN.INC(:,~GN.branch.pipe_branch) * GN.branch.V_dot_n_ij(~GN
 if isempty(V_dot_n_i_nonPipes)
     V_dot_n_i_nonPipes = zeros(size(GN.bus.V_dot_n_i));
 end
-b = -(GN.bus.V_dot_n_i + V_dot_n_i_nonPipes) - G(:, GN.bus.p_bus) * GN.bus.p_i(GN.bus.p_bus);
+b = -(GN.bus.V_dot_n_i + V_dot_n_i_nonPipes) - G(:, GN.bus.slack_bus) * GN.bus.p_i(GN.bus.slack_bus);
 
 p_i = ADM_G_ij\b;
 
 %% p_i
-GN.bus.p_i(~GN.bus.p_bus) = p_i;
+GN.bus.p_i(~GN.bus.slack_bus) = p_i;
 
 %% Check p_i result
 CONST = getConstants();

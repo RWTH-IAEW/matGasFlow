@@ -18,16 +18,15 @@ end
 for jj = 1:length(area_IDs)
     i_bus_res               = find(GN_res.bus.area_ID == area_IDs(jj));
     p_geo_diff              = GN_res.bus.p_i__barg(i_bus_res).^2 - GN_res.bus.p_i_max__barg(i_bus_res).^2;
-    i_new_p_bus_res         = i_bus_res(p_geo_diff == max(p_geo_diff));
+    i_new_slack_bus_res     = i_bus_res(p_geo_diff == max(p_geo_diff));
     
     [~,i_bus]               = ismember(GN_res.bus.bus_ID(i_bus_res), GN.bus.bus_ID);
-    [~,i_new_p_bus]         = ismember(GN_res.bus.bus_ID(i_new_p_bus_res), GN.bus.bus_ID);
-    GN.bus.p_bus(i_bus)                 = false;
-    GN.bus.slack_bus(i_bus)             = false;
-    GN.bus.p_bus(i_new_p_bus(1))        = true;
-    GN.bus.slack_bus(i_new_p_bus(1))    = true;
-    % GN.bus.p_i__barg(i_new_p_bus(1))    = GN.bus.p_i_min__barg(i_new_p_bus(1));
-    GN.bus.p_i__barg(i_bus) = GN.bus.p_i_max__barg(i_new_p_bus(1));
+    [~,i_new_slack_bus]     = ismember(GN_res.bus.bus_ID(i_new_slack_bus_res), GN.bus.bus_ID);
+    GN.bus.slack_bus(i_bus) = false;
+    GN.bus.slack_bus(i_new_slack_bus(1))    = true;
+    % GN.bus.p_i__barg(i_new_slack_bus(1))    = GN.bus.p_i_min__barg(i_new_slack_bus(1));
+    GN.bus.p_i__barg(i_bus) = GN.bus.p_i_max__barg(i_new_slack_bus(1));
+    % UNDER CONSTRUCTION: Reset slack_branch?!
 end
 
 GN = check_and_init_GN(GN);

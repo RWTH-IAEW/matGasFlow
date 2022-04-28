@@ -27,8 +27,7 @@ for ii = 1:length(i_prs_to_bus)
         & GN.branch.in_service);
     GN.bus.p_i__barg(i_prs_to_bus(ii))      = min(GN.bus.p_i__barg(i_prs_from_bus_temp));
     GN.bus.p_i_min__barg(i_prs_to_bus(ii))  = min(GN.bus.p_i_min__barg(i_prs_from_bus_temp));
-    GN.bus.p_i_0__barg(i_prs_to_bus(ii))    = min(GN.bus.p_i_0__barg(i_prs_from_bus_temp));
-    GN.bus.p_i_max__barg(i_prs_to_bus(ii))  = min(GN.bus.p_i_max__barg(i_prs_from_bus_temp));
+    GN.bus.p_i_max__barg(i_prs_to_bus(ii))  = max(GN.bus.p_i_max__barg(i_prs_from_bus_temp));
 end
 
 
@@ -46,8 +45,7 @@ for ii = 1:length(i_prs_from_bus)
         & GN.branch.prs_branch ...
         & GN.branch.in_service);
     GN.bus.p_i__barg(i_prs_from_bus(ii))        = max(GN.bus.p_i__barg(i_prs_to_bus_temp));
-    GN.bus.p_i_min__barg(i_prs_from_bus(ii))    = max(GN.bus.p_i_min__barg(i_prs_to_bus_temp));
-    GN.bus.p_i_0__barg(i_prs_from_bus(ii))      = max(GN.bus.p_i_0__barg(i_prs_to_bus_temp));
+    GN.bus.p_i_min__barg(i_prs_from_bus(ii))    = min(GN.bus.p_i_min__barg(i_prs_to_bus_temp));
     GN.bus.p_i_max__barg(i_prs_from_bus(ii))    = max(GN.bus.p_i_max__barg(i_prs_to_bus_temp));
 end
 

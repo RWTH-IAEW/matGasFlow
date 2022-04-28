@@ -18,14 +18,16 @@ function [GN] = get_p_ij(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if isfield(GN,'pipe')
-    iF = GN.branch.i_from_bus(GN.branch.pipe_branch);
-    iT = GN.branch.i_to_bus(GN.branch.pipe_branch);
-    p_ij = ...
-        (GN.bus.p_i(iF).^2 + GN.bus.p_i(iF).*GN.bus.p_i(iT) + GN.bus.p_i(iT).^2) ...
-        ./ (1.5 * (GN.bus.p_i(iF)+GN.bus.p_i(iT)));
-    GN.pipe.p_ij = p_ij(GN.branch.i_pipe(GN.branch.pipe_branch));
+if ~isfield(GN,'pipe')
+    return
 end
+
+iF = GN.branch.i_from_bus(GN.branch.pipe_branch);
+iT = GN.branch.i_to_bus(GN.branch.pipe_branch);
+p_ij = ...
+    (GN.bus.p_i(iF).^2 + GN.bus.p_i(iF).*GN.bus.p_i(iT) + GN.bus.p_i(iT).^2) ...
+    ./ (1.5 * (GN.bus.p_i(iF)+GN.bus.p_i(iT)));
+GN.pipe.p_ij = p_ij(GN.branch.i_pipe(GN.branch.pipe_branch));
 
 end
 

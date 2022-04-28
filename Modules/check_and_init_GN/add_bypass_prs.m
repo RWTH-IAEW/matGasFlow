@@ -57,8 +57,8 @@ if apply_check_and_init_GN
     GN = init_GN_indices(GN);
     
     % Check area restrictions
-    keep_bus_properties = true;
-    GN = check_GN_area_restrictions(GN,keep_bus_properties);
+    keep_slack_properties = true;
+    GN = check_GN_area_restrictions(GN,keep_slack_properties);
 end
 
 end

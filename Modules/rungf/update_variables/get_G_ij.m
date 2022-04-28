@@ -64,10 +64,22 @@ elseif OPTION == 2
     eta_ij          = GN.pipe.eta_ij;
     
     %% Pneumatic conductance
-    G_ij            = zeros(size(GN.pipe,1),1);
-    G_ij(Re_ij==0)  = (D_ij(Re_ij==0).^4.*pi.*rho_ij(Re_ij==0)) ./ (2.*64                                .*eta_ij(Re_ij==0).*rho_n_avg.*L_ij(Re_ij==0));
-    G_ij(Re_ij>0)   = (D_ij(Re_ij>0).^4 .*pi.*rho_ij(Re_ij>0))  ./ (2.*lambda_ij(Re_ij>0).*Re_ij(Re_ij>0).*eta_ij(Re_ij>0) .*rho_n_avg.*L_ij(Re_ij>0));
-    GN.pipe.G_ij = G_ij;
+    GN.pipe.G_ij            = zeros(size(GN.pipe,1),1);
+    GN.pipe.G_ij(Re_ij==0)  = (D_ij(Re_ij==0).^4.*pi.*rho_ij(Re_ij==0)) ./ (2.*64                                .*eta_ij(Re_ij==0).*rho_n_avg.*L_ij(Re_ij==0));
+    GN.pipe.G_ij(Re_ij>0)   = (D_ij(Re_ij>0).^4 .*pi.*rho_ij(Re_ij>0))  ./ (2.*lambda_ij(Re_ij>0).*Re_ij(Re_ij>0).*eta_ij(Re_ij>0) .*rho_n_avg.*L_ij(Re_ij>0));
+    
+elseif OPTION == 3
+    %              sqrt(p_i^2 - p_j^2)
+    % V_dot_n_ij = ------------------ * sqrt(A_ij * B_ij) * (p_i - p_j)
+    %                   p_i - p_j
+    OPTION = 1;
+    GN = get_G_ij(GN, OPTION, NUMPARAM);
+    p_i = GN.bus.p_i(GN.branch.i_from_bus(GN.branch.pipe_branch));
+    p_i = p_i(GN.branch.i_pipe(GN.branch.pipe_branch));
+    p_j = GN.bus.p_i(GN.branch.i_to_bus(GN.branch.pipe_branch));
+    p_j = p_j(GN.branch.i_pipe(GN.branch.pipe_branch));
+    
+    GN.pipe.G_ij = abs(sqrt(p_i.^2 - p_j.^2)./(p_i - p_j)) .* GN.pipe.G_ij;
     
 else
     error('Invalid option.')
