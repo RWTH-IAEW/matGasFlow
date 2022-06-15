@@ -1,2 +1,2 @@
-comp_ID;comp_name;from_bus_ID;to_bus_ID;in_service;p_out__barg;gas_powered;eta_s;eta_drive;P_max;V_dot_n_i_comp;P_el_comp;T_controlled;Q_dot_cooler;T_to_bus;V_dot_n_i_cooler
-2;"Sinsin";18;19;1;63;0;0.6856;0.34;3356000;NaN;NaN;1;NaN;350;NaN
+comp_ID;name;from_bus_ID;to_bus_ID;eta_s;eta_drive;T_controlled;T_ij_out;Q_dot_cooler;eta_cooler;in_service;slack_branch;gas_powered
+2;"Sinsin";18;19;0.6856;0.34;1;300;NaN;0.5;1;1;0

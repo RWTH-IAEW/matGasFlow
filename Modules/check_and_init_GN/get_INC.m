@@ -1,4 +1,4 @@
-function [INC] = get_INC(GN)
+function GN = get_INC(GN)
 %GET_INC Incidence Matrix of Gas Network
 %   [INC] = GETINCIDENCEMATRIX(GN) returns incedence matrix considering all
 %   branches that are in service.
@@ -15,8 +15,8 @@ function [INC] = get_INC(GN)
 ii = [...
     GN.branch.i_from_bus(GN.branch.in_service);...
     GN.branch.i_to_bus(GN.branch.in_service)];
-if any(~GN.bus.supplied)
-    ii(ii == find(~GN.bus.supplied)) = [];
+if any(~GN.bus.supplied) % UNDER CONSTRUCTION
+    ii(ismember(ii,find(~GN.bus.supplied))) = [];
 end
 jj = 1:sum(GN.branch.in_service);
 % jj = find(GN.branch.in_service);
@@ -24,7 +24,7 @@ jj = [jj';jj'];
 vv = [...
     ones(size(GN.branch.i_from_bus(GN.branch.in_service)));...
     -ones(size(GN.branch.i_to_bus(GN.branch.in_service)))];
-INC = sparse(ii,jj,vv);
+GN.INC = sparse(ii,jj,vv);
 
 end
 

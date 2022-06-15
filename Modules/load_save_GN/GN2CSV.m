@@ -55,8 +55,12 @@ end
 %% Write CSV table
 GN_cell = struct2cell(GN);
 fields = fieldnames(GN,'-full');
+fields_whilte_list = {'bus', 'pipe', 'comp', 'prs', 'time_series', 'valve', 'isothermal', 'T_env', 'gasMix'};
 
 for ii = 1:length(fields)
+    if ~ismember(fields{ii},fields_whilte_list)
+        continue
+    end
     if istable(GN_cell{ii})
         writetable(GN_cell{ii}, [directory,'\',FILENAME,'_',fields{ii},'.csv'],'Delimiter',';','QuoteStrings',true)
     elseif ischar(GN_cell{ii}) || isnumeric(GN_cell{ii})

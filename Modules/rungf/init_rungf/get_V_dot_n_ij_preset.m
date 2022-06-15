@@ -12,19 +12,19 @@ function [GN] = get_V_dot_n_ij_preset(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-if any(strcmp('P_th_ij_preset__MW',GN.branch.Properties.VariableNames))
+if ismember('P_th_ij_preset__MW',GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.P_th_ij_preset__MW))             = GN.branch.P_th_ij_preset__MW(~isnan(GN.branch.P_th_ij_preset__MW)) * 1e6 / GN.gasMixProp.H_s_n_avg; % [MW]*1e6/[Ws/m^3] = [m^3/s]
     
-elseif any(strcmp('P_th_ij_preset',GN.branch.Properties.VariableNames))
+elseif ismember('P_th_ij_preset',GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.P_th_ij_preset))                 = GN.branch.P_th_ij_preset(~isnan(GN.branch.P_th_ij_preset)) / GN.gasMixProp.H_s_n_avg; % [W]/[Ws/m^3] = [m^3/s]
     
-elseif any(strcmp('V_dot_n_ij_preset__m3_per_day',GN.branch.Properties.VariableNames))
+elseif ismember('V_dot_n_ij_preset__m3_per_day',GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_day))  = GN.branch.V_dot_n_ij_preset__m3_per_day(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_day)) / (60 * 60 * 24);
     
-elseif any(strcmp('V_dot_n_ij_preset__m3_per_h',GN.branch.Properties.VariableNames))
+elseif ismember('V_dot_n_ij_preset__m3_per_h',GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_h))    = GN.branch.V_dot_n_ij_preset__m3_per_h(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_h)) * 60 * 60;
     
-elseif any(strcmp('m_dot_ij_preset__kg_per_s',GN.branch.Properties.VariableNames))
+elseif ismember('m_dot_ij_preset__kg_per_s',GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.m_dot_ij_preset__kg_per_s))      = GN.branch.m_dot_ij_preset__kg_per_s(~isnan(GN.branch.m_dot_ij_preset__kg_per_s)) / GN.gasMixProp.rho_n_avg; % [kg/s]/[kg/m^3] = [m^3/s]
     
 end

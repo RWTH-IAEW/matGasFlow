@@ -11,11 +11,13 @@ function [GN] = get_V_dot_n_slack(GN, f_mode, NUMPARAM)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if abs(sum(GN.bus.V_dot_n_i)) > NUMPARAM.numericalTolerance
-    warning('Entries and exits are not balanced. V_dot_n_ij of the slack busses have been updated.')
-end
-
 if strcmp(f_mode,'GN')
+    % Check balance
+    if abs(sum(GN.bus.V_dot_n_i)) > NUMPARAM.epsilon_NR_f
+        warning('Entries and exits are not balanced. V_dot_n_i of the slack busses have been updated.')
+    end
+    
+    % Devide missing demand/feed-in among all busses with demand/feed-in ~= 0
     if any(GN.bus.V_dot_n_i(GN.bus.slack_bus) ~= 0)
         GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) = ...
             GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) ...
@@ -27,6 +29,12 @@ if strcmp(f_mode,'GN')
     end
     
 elseif strcmp(f_mode,'area')
+    % Check balance
+    if abs(sum(GN.bus.V_dot_n_i)) > NUMPARAM.epsilon_NR_f
+        warning('Entries and exits are not balanced. V_dot_n_i of the slack busses have been updated.')
+    end
+    
+    % Update slack busses accoridning to the missing demand/feed-in in the area
     GN.bus.f    = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
     f_area      = GN.MAT.area_bus * GN.bus.f;
     
@@ -37,15 +45,16 @@ elseif strcmp(f_mode,'area')
     GN.branch.V_dot_n_ij(GN.branch.slack_branch) = GN.branch.V_dot_n_ij(GN.branch.slack_branch) + V_dot_n_ij(GN.branch.slack_branch);
     
 elseif strcmp(f_mode,'bus')
-    if any(GN.bus.V_dot_n_i(GN.bus.slack_bus) ~= 0)
-        GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) = ...
-            GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) ...
-            - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0);
-    else
-        GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
-            GN.bus.V_dot_n_i(GN.bus.slack_bus) ...
-            - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
-    end
+    % Update V_dot_n_i at salck bus to get f=0 at slack bus
+    GN.bus.f    = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+    
+    GN.branch.V_dot_n_ij(GN.branch.slack_branch) = ...
+        GN.branch.V_dot_n_ij(GN.branch.slack_branch) + GN.bus.f(GN.branch.i_to_bus(GN.branch.slack_branch));
+
+    GN.bus.f    = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+    
+    GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
+        GN.bus.V_dot_n_i(GN.bus.slack_bus) - GN.bus.f(GN.bus.slack_bus);
     
 else
     error('get_V_dot_n_slack: Choose ''area'' or ''bus'' for f_mode')

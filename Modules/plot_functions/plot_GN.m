@@ -12,7 +12,7 @@ function [ h ] = plot_GN( GN )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Check y_coord and x_coord
-if ~any(strcmp('y_coord',GN.bus.Properties.VariableNames)) || ~any(strcmp('x_coord',GN.bus.Properties.VariableNames))
+if ~ismember('y_coord',GN.bus.Properties.VariableNames) || ~ismember('x_coord',GN.bus.Properties.VariableNames)
     disp('GN.bus: x_coord and/or y_coord are missing')
     return
 end
@@ -43,7 +43,7 @@ GN.bus.x_coord(indexToDupes) = GN.bus.x_coord(indexToDupes) + offset*sin(randAlp
 %% EdgeLabel
 edgelabel = strings(size(GN.branch,1),1);
 
-if any(strcmp('V_dot_n_ij',GN.branch.Properties.VariableNames))
+if ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
     V_dot_n_ij_str = string(abs(round(GN.branch.V_dot_n_ij*100)/100));
     if isfield(GN,'pipe')
         Delta_p_ij__barg_str = string(round((GN.bus.p_i__barg(GN.branch.i_from_bus) - GN.bus.p_i__barg(GN.branch.i_to_bus))*1e2)/1e2); % [bar_gauge]
@@ -150,7 +150,7 @@ for ii = 1: size(GN.bus.p_i__barg,1)
 end
 
 %% Initialize Graphe
-if any(strcmp('V_dot_n_ij',GN.branch.Properties.VariableNames))
+if ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
     i_from_bus = NaN(size(GN.branch,1),1);
     i_from_bus(GN.branch.V_dot_n_ij >= 0) = GN.branch.i_from_bus(GN.branch.V_dot_n_ij >= 0);
     i_from_bus(GN.branch.V_dot_n_ij < 0) = GN.branch.i_to_bus(GN.branch.V_dot_n_ij < 0);

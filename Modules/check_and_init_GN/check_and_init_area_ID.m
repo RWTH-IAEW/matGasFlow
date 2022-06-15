@@ -11,10 +11,10 @@ function [GN] = check_and_init_area_ID(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Get bus and branch area_ID
-[bus_area_ID, pipe_area_ID, station_ID, valveStation_ID, valve_area_ID] = get_area_ID(GN); % UNDER CONSTRUCTION
+[bus_area_ID, pipe_area_ID, valve_area_ID, valve_group_ID] = get_area_ID(GN);
 
 %% Check and update bus area_ID
-if any(strcmp('area_ID',GN.bus.Properties.VariableNames))
+if ismember('area_ID',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.area_ID))
         warning('GN.bus: area_ID must be numeric. Entries have been updated.')
     elseif any(GN.bus.area_ID(~isnan(bus_area_ID)) ~= bus_area_ID(~isnan(bus_area_ID))) ...
@@ -26,7 +26,7 @@ GN.bus = movevars(GN.bus,'area_ID','After','bus_ID');
 
 %% Check and update pipe area_ID
 if isfield(GN, 'pipe')
-    if any(strcmp('area_ID',GN.pipe.Properties.VariableNames))
+    if ismember('area_ID',GN.pipe.Properties.VariableNames)
         if any(~isnumeric(GN.pipe.area_ID))
             warning('GN.pipe: area_ID must be numeric. Entries have been updated.')
         elseif any(GN.pipe.area_ID(~isnan(pipe_area_ID)) ~= pipe_area_ID(~isnan(pipe_area_ID))) ...
@@ -39,7 +39,7 @@ end
 
 %% Check and update valve area_ID
 if isfield(GN, 'valve')
-    if any(strcmp('area_ID',GN.valve.Properties.VariableNames))
+    if ismember('area_ID',GN.valve.Properties.VariableNames)
         if any(~isnumeric(GN.valve.area_ID))
             warning('GN.valve: area_ID must be numeric. Entries have been updated.')
         elseif any(GN.valve.area_ID(~isnan(valve_area_ID)) ~= valve_area_ID(~isnan(valve_area_ID))) ...
@@ -50,32 +50,18 @@ if isfield(GN, 'valve')
     GN.valve = movevars(GN.valve,'area_ID','After','in_service');
 end
 
-%% Check and update station_ID
-if any(~GN.branch.pipe_branch)
-    if any(strcmp('station_ID',GN.branch.Properties.VariableNames))
-        if any(~isnumeric(GN.branch.station_ID))
-            warning('GN.branch: station_ID must be numeric. Entries have been updated.')
-        elseif any(GN.branch.station_ID(~isnan(station_ID)) ~= station_ID(~isnan(station_ID))) ...
-                || any(isnan(GN.branch.station_ID) ~= isnan(station_ID))
-            warning('GN.branch: station_ID entries have been updated.')
-        end
-    end
-    GN.branch.station_ID = station_ID;
-    GN.branch = movevars(GN.branch,'station_ID','After','in_service');
-end
-
-%% Check and update valveStation_ID
+%% Check and update valve_group_ID
 if isfield(GN, 'valve')
-    if any(strcmp('valveStation_ID',GN.branch.Properties.VariableNames))
-        if any(~isnumeric(GN.branch.valveStation_ID))
-            warning('GN.branch: valveStation_ID must be numeric. Entries have been updated.')
-        elseif any(GN.branch.valveStation_ID(~isnan(valveStation_ID)) ~= valveStation_ID(~isnan(valveStation_ID))) ...
-                || any(isnan(GN.branch.valveStation_ID) ~= isnan(valveStation_ID))
-            warning('GN.branch: valveStation_ID entries have been updated.')
+    if ismember('valve_group_ID',GN.branch.Properties.VariableNames)
+        if any(~isnumeric(GN.branch.valve_group_ID))
+            warning('GN.branch: valve_group_ID must be numeric. Entries have been updated.')
+        elseif any(GN.branch.valve_group_ID(~isnan(valve_group_ID)) ~= valve_group_ID(~isnan(valve_group_ID))) ...
+                || any(isnan(GN.branch.valve_group_ID) ~= isnan(valve_group_ID))
+            warning('GN.branch: valve_group_ID entries have been updated.')
         end
     end
-    GN.branch.valveStation_ID = valveStation_ID;
-    GN.branch = movevars(GN.branch,'valveStation_ID','After','in_service');
+    GN.branch.valve_group_ID = valve_group_ID;
+    GN.branch = movevars(GN.branch,'valve_group_ID','After','in_service');
 end
 
 end

@@ -24,18 +24,18 @@ if NUMPARAM.OPTION_get_J == 1
     GN = get_J_analytical_model(GN, NUMPARAM, PHYMOD);
     
 elseif NUMPARAM.OPTION_get_J == 2
-%     try
-        GN = get_J_dpModel(GN, NUMPARAM, PHYMOD);
-%     catch
-%         error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
-%     end
+    path = which('get_J_dpModel.m');
+    if isempty(path)
+        error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
+    end
+    GN = get_J_dpModel(GN, NUMPARAM, PHYMOD);
     
 elseif NUMPARAM.OPTION_get_J == 3
-%     try
-        GN = get_J_dpForLoopModel(GN, NUMPARAM, PHYMOD);
-%     catch
-%         error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
-%     end
+    path = which('get_J_dpForLoopModel.m');
+    if isempty(path)
+        error('Option not available, choose NUMPARAM.OPTION_get_J = 1')
+    end
+    GN = get_J_dpForLoopModel(GN, NUMPARAM, PHYMOD);
     
 end
 end

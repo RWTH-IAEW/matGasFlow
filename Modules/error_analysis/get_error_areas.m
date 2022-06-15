@@ -24,12 +24,8 @@ area_IDs    = unique(GN.bus.area_ID);
 SUCCESS     = true(length(area_IDs),1);
 
 for ii = 1:length(area_IDs)
-    try
-        GN_area = get_GN_area(GN, ii);
-        rungf(GN_area, NUMPARAM, PHYMOD);
-    catch
-        SUCCESS(ii) = false;
-    end
+    GN_area = get_GN_area(GN, ii);
+    [~,SUCCESS(ii)] = rungf(GN_area, NUMPARAM, PHYMOD);
 end
 
 end

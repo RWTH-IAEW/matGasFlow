@@ -45,11 +45,12 @@ if PHYMOD.my_JT == 1
     GN.bus.my_JT_i  = - V_m_i ./ c_p_i ./M_avg .* numerator./denominator;
     
 else
-    try
-        GN = get_my_JT_addOn(GN, PHYMOD);
-    catch
+    path = which('get_my_JT_addOn.m');
+    if isempty(path)
         error('Option not available, choose PHYMOD.my_JT = 1')
     end
+    GN = get_my_JT_addOn(GN, PHYMOD);
+    
 end
 
 end

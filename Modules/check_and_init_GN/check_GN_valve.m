@@ -1,6 +1,14 @@
 function GN = check_GN_valve(GN)
-%CHECK_GN_VALVE Check valve model GN.valve
+%CHECK_GN_VALVE
 %   GN = check_GN_valve(GN)
+%   Check and initialization of GN.valve and its variables (valve table)
+%   list of variabels:
+%       INPUT DATA
+%           valve_ID
+%           from_bus_ID
+%           to_bus_ID
+%       INPUT DATA - OPTIONAL
+%           in_service
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -21,10 +29,10 @@ elseif isempty(GN.valve)
 end
 
 %% #######################################################################
-%  R E Q U I R E D
+%  I N P U T   D A T A   -   R E Q U I R E D
 %  #######################################################################
 %% valve_ID
-if any(strcmp('valve_ID',GN.valve.Properties.VariableNames))
+if ismember('valve_ID',GN.valve.Properties.VariableNames)
     if any(~isnumeric(GN.valve.valve_ID))
         error('GN.valve: valve_ID must be numeric.')
     elseif any(GN.valve.valve_ID <= 0 | round(GN.valve.valve_ID) ~= GN.valve.valve_ID | isinf(GN.valve.valve_ID))
@@ -39,7 +47,7 @@ else
 end
 
 %% from_bus_ID
-if any(strcmp('from_bus_ID',GN.valve.Properties.VariableNames))
+if ismember('from_bus_ID',GN.valve.Properties.VariableNames)
     if any(~isnumeric(GN.valve.from_bus_ID))
         error('GN.valve: from_bus_ID must be numeric.')
     end
@@ -53,7 +61,7 @@ else
 end
 
 %% to_bus_ID
-if any(strcmp('to_bus_ID',GN.valve.Properties.VariableNames))
+if ismember('to_bus_ID',GN.valve.Properties.VariableNames)
     if any(~isnumeric(GN.valve.to_bus_ID))
         error('GN.valve: to_bus_ID must be numeric.')
     end
@@ -72,8 +80,11 @@ if any(GN.valve.from_bus_ID == GN.valve.to_bus_ID)
         num2str(GN.valve.valve_ID(GN.valve.from_bus_ID == GN.valve.to_bus_ID)')])
 end
 
+%% #######################################################################
+%  I N P U T   D A T A   -   O P T I O N A L
+%  #######################################################################
 %% in_service
-if any(strcmp('in_service',GN.valve.Properties.VariableNames))
+if ismember('in_service',GN.valve.Properties.VariableNames)
     if any(~islogical(GN.valve.in_service) & ~isnumeric(GN.valve.in_service))
         error('GN.valve: in_service must be a logical value.')
     elseif any(GN.valve.in_service ~= 0 & GN.valve.in_service ~= 1 & ~isnan(GN.valve.in_service))
@@ -88,7 +99,7 @@ if any(strcmp('in_service',GN.valve.Properties.VariableNames))
     GN.valve.in_service = logical(GN.valve.in_service);
 else
     % No error message necessary
-    GN.valve.in_service = true(size(GN.valve,1),1);
+    GN.valve.in_service(:) = true;
 end
 
 end

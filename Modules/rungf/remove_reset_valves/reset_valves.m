@@ -22,18 +22,16 @@ GN_input.bus    = [GN_input.bus, table_temp];
 [~,i_column]    = ismember(GN.bus.Properties.VariableNames, GN_input.bus.Properties.VariableNames);
 [~,i_row]       = ismember(GN.bus.bus_ID, GN_input.bus.bus_ID);
 bus_temp        = GN_input.bus;
-GN_input.bus(i_row,i_column) = GN.bus;
-% GN_input.bus.V_dot_n_i      = bus_temp.V_dot_n_i;
-GN_input.bus.slack_bus      = bus_temp.slack_bus;
-GN_input.bus.active_bus     = bus_temp.active_bus;
+GN_input.bus(i_row,i_column)    = GN.bus;
+GN_input.bus.slack_bus          = bus_temp.slack_bus;
 
 %% merge branch
 new_colums      = GN.branch.Properties.VariableNames(~ismember(GN.branch.Properties.VariableNames, GN_input.branch.Properties.VariableNames));
 table_temp      = array2table(NaN(size(GN_input.branch,1),length(new_colums)),"VariableNames",new_colums);
-GN_input.branch    = [GN_input.branch, table_temp];
-% [~,i_column]    = ismember(GN.branch.Properties.VariableNames, GN_input.branch.Properties.VariableNames);
+GN_input.branch = [GN_input.branch, table_temp];
+% [~,i_column]  = ismember(GN.branch.Properties.VariableNames, GN_input.branch.Properties.VariableNames);
 [~,i_row]       = ismember(GN.branch.branch_ID, GN_input.branch.branch_ID);
-% branch_temp        = GN_input.branch;
+% branch_temp   = GN_input.branch;
 GN_input.branch.V_dot_n_ij(i_row)   = GN.branch.V_dot_n_ij;
 % GN_input.branch.slack_branch      = branch_temp.slack_branch;
 % GN_input.branch.slack_branch      = branch_temp.slack_branch;
@@ -41,7 +39,7 @@ GN_input.branch.V_dot_n_ij(i_row)   = GN.branch.V_dot_n_ij;
 % GN_input.branch.connecting_branch = branch_temp.connecting_branch;
 % GN_input.branch.parallel_branch   = branch_temp.parallel_branch;
 
-%%
+%% UNDER CONSTRUCTION
 GN = get_V_dot_n_ij_valves(GN_input);
 disp('...')
 
@@ -79,16 +77,15 @@ disp('...')
 % Var = intersect(GN.bus.Properties.VariableNames,GN_input.bus.Properties.VariableNames);
 % GN.bus = outerjoin(GN.bus,GN_input.bus,'Keys',Var,'MergeKeys',true);
 % GN.bus.slack_bus = GN_input.bus.slack_bus;
-% GN.bus.active_bus = GN_input.bus.active_bus;
 % 
 % 
 % % Valve Gruppen identifizierden
-% valveStation_IDs = unique(GN_input.branch.valveStation_ID(GN_input.branch.valve_branch & GN_input.branch.in_service));
+% valve_group_IDs = unique(GN_input.branch.valve_group_ID(GN_input.branch.valve_branch & GN_input.branch.in_service));
 % 
-% for ii = 1:length(valveStation_IDs)
+% for ii = 1:length(valve_group_IDs)
 %     
-%     valveStation_ID = valveStation_IDs(ii);
-%     ii_valveStation = GN_input.branch.valveStation_ID == valveStation_ID & GN_input.branch.in_service;
+%     valve_group_ID = valve_group_IDs(ii);
+%     ii_valveStation = GN_input.branch.valve_group_ID == valve_group_ID & GN_input.branch.in_service;
 %     
 %     bus_IDs_valveStation        = unique( [ GN_input.branch.from_bus_ID(ii_valveStation & GN_input.branch.in_service); GN_input.branch.to_bus_ID(ii_valveStation & GN_input.branch.in_service) ] );
 % %     bus_IDs_valveStation_inOut  = bus_IDs_valveStation(ismember(bus_IDs_valveStation, [GN_input.branch.from_bus_ID(~ii_valveStation), GN_input.branch.to_bus_ID(~ii_valveStation)]));
@@ -112,7 +109,7 @@ disp('...')
 % [~,idx] = ismember(GN_input.bus.bus_ID, GN.bus.bus_ID);
 % GN.bus = GN.bus(idx,:);
 % 
-% %% branch UNDER CONSTRUCTION
+% %% branch 
 % GN.branch = GN_input.branch;
 % if isfield(GN, 'pipe')
 %     if ~ismember('V_dot_n_ij', GN.branch.Properties.VariableNames)

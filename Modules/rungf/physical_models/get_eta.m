@@ -38,7 +38,7 @@ if PHYMOD.eta == 1
     
     % Pressure dependency
     z_a = 0.91690348 ...
-        + 0.0004207 .* (T_ij-T_n) ...
+        + 0.0004207  .* (T_ij-T_n) ...
         - 0.00002207 .* (T_ij-T_n) .* p_ij__bar...
         + 0.00434531 .* p_ij__bar;
     z_a_max = max(1,z_a);
@@ -47,11 +47,13 @@ if PHYMOD.eta == 1
     GN.pipe.eta_ij = eta_temp .* z_a_max;
     
 else
-    try
-        GN = get_eta_addOn(GN, PHYMOD);
-    catch
+    path = which('get_eta_addOn.m');
+    if isempty(path)
         error('Option not available, choose PHYMOD.eta = 1')
     end
+    GN = get_eta_addOn(GN, PHYMOD);
+    
 end
+
 end
 

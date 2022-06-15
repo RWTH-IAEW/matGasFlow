@@ -10,14 +10,6 @@ function [GN] = init_GN_indices(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Get numerical tolerance
-NUMPARAM = getDefaultNumericalParameters;
-
-%% Initialize active_bus
-GN.bus.active_bus(:)            = false;
-GN.bus.active_bus = logical(GN.bus.active_bus);
-GN.bus = movevars(GN.bus,'active_bus','After','slack_bus');
-
 %% branch
 % from/to
 [~,GN.branch.i_from_bus] = ismember(GN.branch.from_bus_ID,GN.bus.bus_ID);
@@ -46,12 +38,6 @@ if isfield(GN,'comp')
     
     % active_branch
     GN.branch.active_branch = GN.branch.active_branch | GN.branch.comp_branch;
-    
-    % T_i - UNDER CONSTRCUTION
-    if GN.isothermal == 0 && any(GN.comp.T_controlled) && any(isnan(GN.bus.T_i(GN.comp.i_out_bus(GN.comp.T_controlled))))
-        i_branch = GN.branch.comp_branch & GN.comp.T_controlled(GN.branch.i_comp(GN.branch.comp_branch));
-        GN.bus.T_i(GN.branch.i_to_bus(i_branch)) = GN.comp.T_ij_out(GN.comp.T_controlled);
-    end
 end
 
 %% prs
@@ -62,12 +48,6 @@ if isfield(GN,'prs')
         
     % active_branch
     GN.branch.active_branch = GN.branch.active_branch | GN.branch.prs_branch;
-    
-    % T_i - UNDER CONSTRCUTION
-    if GN.isothermal == 0 && any(GN.prs.T_controlled) && any(isnan(GN.bus.T_i(GN.prs.i_out_bus(GN.prs.T_controlled))))
-        i_branch = GN.branch.prs_branch & GN.prs.T_controlled(GN.branch.i_prs(GN.branch.prs_branch));
-        GN.bus.T_i(GN.branch.i_to_bus(i_branch)) = GN.prs.T_ij_out(GN.prs.T_controlled);
-    end
 end
 
 %% valve
@@ -120,9 +100,13 @@ if isfield(GN,'prs') && ismember('bypass_prs_ID', GN.prs.Properties.VariableName
         GN.branch.bypass_prs_ID(i_has_bypass_prs(idx))      = bypass_prs_ID(idx);
         GN.branch.i_bypass_prs(i_has_bypass_prs(idx))       = i_bypass_prs(idx);
     end
+    i_bypass_prs_branch_out_of_service = GN.prs.i_branch(~isnan(GN.prs.bypass_prs_ID) & ~GN.prs.in_service);
+    i_bypass_prs_branch_out_of_service(isnan(i_bypass_prs_branch_out_of_service)) = [];
+    GN.branch.bypass_prs_ID(i_bypass_prs_branch_out_of_service) = NaN;
+    GN.branch.i_bypass_prs(i_bypass_prs_branch_out_of_service) = NaN;
 end
 
-%% Associate bypass prs
+%% Associate prs
 if isfield(GN,'prs') && ismember('associate_prs_ID', GN.prs.Properties.VariableNames)
     GN.branch.associate_prs_ID(:)  = NaN;
     GN.branch.i_associate_prs(:)   = NaN;
@@ -135,6 +119,10 @@ if isfield(GN,'prs') && ismember('associate_prs_ID', GN.prs.Properties.VariableN
         GN.branch.associate_prs_ID(i_has_associate_prs(idx))  = associate_prs_ID(idx);
         GN.branch.i_associate_prs(i_has_associate_prs(idx))   = i_associate_prs(idx);
     end
+    i_associate_prs_branch_out_of_service = GN.prs.i_branch(~isnan(GN.prs.associate_prs_ID) & ~GN.prs.in_service);
+    i_associate_prs_branch_out_of_service(isnan(i_associate_prs_branch_out_of_service)) = [];
+    GN.branch.associate_prs_ID(i_associate_prs_branch_out_of_service) = NaN;
+    GN.branch.i_associate_prs(i_associate_prs_branch_out_of_service) = NaN;
 end
 
 end

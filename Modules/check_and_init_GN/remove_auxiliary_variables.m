@@ -22,7 +22,7 @@ GN.bus(:,idx) = [];
 
 %% pipe
 if isfield(GN,'pipe')
-    varNames = {'branch_ID', 'i_branch', 'area_ID', 'section_ID'};
+    varNames = {'branch_ID', 'i_branch', 'area_ID'};
     idx = ismember(GN.pipe.Properties.VariableNames,varNames);
     GN.pipe(:,idx) = [];
 end

@@ -1,4 +1,4 @@
-function [Re_ij] = get_Re(GN)
+function GN = get_Re(GN)
 %GET_RE Reynolds number
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,7 +11,7 @@ function [Re_ij] = get_Re(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 V_dot_n_ij = GN.branch.V_dot_n_ij(GN.pipe.i_branch);
-Re_ij = ...
+GN.pipe.Re_ij = ...
     4*abs(V_dot_n_ij) .* GN.gasMixProp.rho_n_avg ...
     ./(pi*GN.pipe.D_ij.*GN.pipe.eta_ij);
 

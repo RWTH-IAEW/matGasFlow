@@ -63,6 +63,24 @@ if any(strfind([listing.name],'_valve.csv'))
     end
 end
 
+%% ISOTHERMAL
+if any(strfind([listing.name],'_isothermal.csv'))
+    GN.T_env = readmatrix([directory_file,'_isothermal.csv']);
+    if isempty(GN.isothermal)
+        GN = rmfield(GN,'isothermal');
+        delete([directory_file,'_isothermal.csv'])
+    end
+end
+
+%% T_ENV
+if any(strfind([listing.name],'_T_env.csv'))
+    GN.T_env = readmatrix([directory_file,'_T_env.csv']);
+    if isempty(GN.T_env)
+        GN = rmfield(GN,'T_env');
+        delete([directory_file,'_T_env.csv'])
+    end
+end
+
 %% GASMIX
 if any(strfind([listing.name],'_gasMix.csv'))
     % Setup the Import Options and import the data
@@ -80,15 +98,6 @@ if any(strfind([listing.name],'_gasMix.csv'))
         GN.gasMix = convertStringsToChars(gasMix{1});
     else
         delete([directory_file,'_gasMix.csv'])
-    end
-end
-
-%% T_ENV
-if any(strfind([listing.name],'_T_env.csv'))
-    GN.T_env = readmatrix([directory_file,'_T_env.csv']);
-    if isempty(GN.T_env)
-        GN = rmfield(GN,'T_env');
-        delete([directory_file,'_T_env.csv'])
     end
 end
 

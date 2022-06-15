@@ -27,7 +27,7 @@ if PHYMOD.c_p == 1
     [GN.bus.c_p_i, GN.bus.c_p_0_i] = get_c_p_VanDerWaals(p_i, T_i, Z_i, a, b, GN.gasMixProp, GN.gasMixAndCompoProp);
     
     %% Non-isothermal model
-    if GN.isothermal == 0
+    if ~GN.isothermal
         %% pipe
         if isfield(GN, 'pipe')
             p_ij    = GN.pipe.p_ij;
@@ -47,10 +47,10 @@ if PHYMOD.c_p == 1
         i_bus_out = GN.branch.i_to_bus;
         i_bus_out(GN.branch.V_dot_n_ij < 0) = GN.branch.i_from_bus(GN.branch.V_dot_n_ij < 0);
         p_ij_out = GN.bus.p_i(i_bus_out);
-        try
+        if all(ismember({'T_ij_out','Z_ij_out'}, GN.branch.Properties.VariableNames))
             T_ij_out = GN.branch.T_ij_out;
             Z_ij_out = GN.branch.Z_ij_out;
-        catch
+        else
             T_ij_out = GN.bus.T_i(i_bus_out);
             Z_ij_out = GN.bus.Z_i(i_bus_out);
         end
@@ -58,11 +58,12 @@ if PHYMOD.c_p == 1
     end
     
 else
-    %try
-        GN = get_c_p_addOn(GN, PHYMOD);
-    %catch
-%        error('Option not available, choose PHYMOD.c_p = 1')
-    %end
+    path = which('get_c_p_addOn.m');
+    if isempty(path)
+        error('Option not available, choose PHYMOD.c_p = 1')
+    end
+    GN = get_c_p_addOn(GN, PHYMOD);
+
 end
 
 end

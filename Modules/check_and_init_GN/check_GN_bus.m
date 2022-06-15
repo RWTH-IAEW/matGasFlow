@@ -1,6 +1,25 @@
 function GN = check_GN_bus(GN)
-%CHECK_GN_BUS Check bus table (GN.bus)
+%CHECK_GN_BUS
 %   GN = check_GN_bus(GN)
+%   Check and initialization of GN.bus and its variables (bus table)
+%   list of variabels:
+%       INPUT DATA
+%           bus_ID
+%           p_i__barg
+%           P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h,
+%               m_dot_i__kg_per_s, V_dot_n_i
+%       INPUT DATA - OPTIONAL
+%           slack_bus
+%           p_i_min__barg
+%           p_i_max__barg
+%           T_i_min
+%           T_i_max
+%           x_coord
+%           y_coord
+%       TEMPORARY DATA
+%           source_bus
+%       INPUT DATA - OPTIONAL FOR NON-ISOTHERMAL SIMULATION
+%           T_i_source
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -19,7 +38,7 @@ elseif isempty(GN.bus)
 end
 
 %% #######################################################################
-%  R E Q U I R E D
+%  I N P U T   D A T A   -   R E Q U I R E D
 %  #######################################################################
 %% bus_ID
 if ismember('bus_ID',GN.bus.Properties.VariableNames)
@@ -45,65 +64,6 @@ if ismember('p_i__barg',GN.bus.Properties.VariableNames)
     end
 else
     error('GN.bus: p_i__barg column is missing.')
-end
-
-%% p_i_min__barg
-if ismember('p_i_min__barg',GN.bus.Properties.VariableNames)
-    if any(~isnumeric(GN.bus.p_i_min__barg))
-        error('GN.bus: p_i_min__barg must be numeric.')
-    elseif any(GN.bus.p_i_min__barg < 0 | isinf(GN.bus.p_i_min__barg))
-        error('GN.bus: Pressure values p_i_min__barg must be positive numeric value.')
-    elseif any(isnan(GN.bus.p_i_min__barg))
-        error('GN.bus: If any p_i_min__barg values are available, all busses need p_i_min__barg values.')
-    end
-elseif any(ismember({'p_i_0__barg','p_i_max__barg'},GN.bus.Properties.VariableNames))
-    error('GN.bus: p_i_0__barg and p_i_max__barg values are available but p_i_min__barg values are missing.')
-end
-
-%% p_i_max__barg
-if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
-    if any(~isnumeric(GN.bus.p_i_max__barg))
-        error('GN.bus: p_i_max__barg must be numeric.')
-    elseif any(GN.bus.p_i_max__barg < 0 | isinf(GN.bus.p_i_max__barg))
-        error('GN.bus: Pressure values p_i_max__barg must be positive numeric value.')
-    elseif any(isnan(GN.bus.p_i_max__barg))
-        error('GN.bus: If any p_i_max__barg values are available, all busses need p_i_max__barg values.')
-    end
-elseif any(ismember({'p_i_min__barg','p_i_0__barg'},GN.bus.Properties.VariableNames))
-    error('GN.bus: p_i_min__barg and p_i_0__barg values are available but p_i_max__barg values are missing.')
-end
-
-%% p_i_min__barg and p_i_max__barg
-if all(ismember({'p_i_min__barg','p_i_max__barg'},GN.bus.Properties.VariableNames))
-    if any(GN.bus.p_i_min__barg > GN.bus.p_i_max__barg)
-        error('GN.bus: All p_i_min__barg values must be less than or equal to p_i_max__barg.')
-    end
-end
-
-%% slack_bus
-if ismember('slack_bus',GN.bus.Properties.VariableNames)
-    if any(~islogical(GN.bus.slack_bus) & ~isnumeric(GN.bus.slack_bus))
-        error('GN.bus: slack_bus must be a logical value.')
-    elseif any(GN.bus.slack_bus ~= 0 & GN.bus.slack_bus ~= 1 & ~isnan(GN.bus.slack_bus))
-        error('GN.bus: slack_bus must be ''1'' (true), ''0'' (false) or ''NaN''(false).')
-    end
-    GN.bus.slack_bus(isnan(GN.bus.slack_bus)) = false;
-    GN.bus.slack_bus(GN.bus.slack_bus == 0) = false;
-    GN.bus.slack_bus(GN.bus.slack_bus == 1) = true;
-    GN.bus.slack_bus = logical(GN.bus.slack_bus);
-    if ~any(GN.bus.slack_bus) && any(isnan(GN.bus.p_i__barg)) && all(~isnan(GN.bus.p_i__barg))
-        GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
-        warning('GN.bus: There must be at least one slack bus. All busses with p_i__barg values have been choosen to be slack busses.')
-    end
-    if any(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))
-        error(['GN.bus: p_i__barg entries at slack busses are missing. Check theses bus_IDs: ',...
-            num2str(find(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))')])
-    end
-else
-    % Initialize slack_bus if not existing
-    GN.bus.slack_bus(:) = false;
-    GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
-    GN.bus = movevars(GN.bus,'slack_bus','Before','p_i__barg');
 end
 
 %% P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h, m_dot_i__kg_per_s, V_dot_n_i
@@ -190,25 +150,130 @@ if isempty(bus_demand_feed_in) && ~time_series_bus_demand_feed_in
         'P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h, m_dot_i__kg_per_s or V_dot_n_i.'])
 end
 
-%% T_i
-if ismember('T_i',GN.bus.Properties.VariableNames)
-    if any(~isnumeric(GN.bus.T_i))
-        error('GN.bus: T_i must be numeric.')
-    elseif any(GN.bus.T_i <= 0 | isinf(GN.bus.T_i))
-        error('GN.bus: T_i [K] must be positive numeric value.')
-    elseif all(isnan(GN.bus.T_i))
-        GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
+%% #######################################################################
+%  I N P U T   D A T A   -   O P T I O N A L
+%  #######################################################################
+%% slack_bus
+if ismember('slack_bus',GN.bus.Properties.VariableNames)
+    if any(~islogical(GN.bus.slack_bus) & ~isnumeric(GN.bus.slack_bus))
+        error('GN.bus: slack_bus must be a logical value.')
+    elseif any(GN.bus.slack_bus ~= 0 & GN.bus.slack_bus ~= 1 & ~isnan(GN.bus.slack_bus))
+        error('GN.bus: slack_bus must be ''1'' (true), ''0'' (false) or ''NaN''(false).')
+    end
+    GN.bus.slack_bus(isnan(GN.bus.slack_bus)) = false;
+    GN.bus.slack_bus(GN.bus.slack_bus == 0) = false;
+    GN.bus.slack_bus(GN.bus.slack_bus == 1) = true;
+    GN.bus.slack_bus = logical(GN.bus.slack_bus);
+    % UNDER CONSTRUCTION
+    %     if ~any(GN.bus.slack_bus) && any(isnan(GN.bus.p_i__barg)) && all(~isnan(GN.bus.p_i__barg))
+    %         GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
+    %         warning('GN.bus: There must be at least one slack bus. All busses with p_i__barg values have been choosen to be slack busses.')
+    %     end
+    %     if any(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))
+    %         error(['GN.bus: p_i__barg entries at slack busses are missing. Check theses bus_IDs: ',...
+    %             num2str(find(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))')])
+    %     end
+else
+    % Initialize slack_bus if not existing
+    GN.bus.slack_bus(:) = false;
+    GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
+    GN.bus = movevars(GN.bus,'slack_bus','After','p_i__barg');
+end
+
+%% p_i_min__barg and p_i_max__barg
+% p_i_min__barg
+if ismember('p_i_min__barg',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.p_i_min__barg))
+        error('GN.bus: p_i_min__barg must be numeric.')
+    elseif any(GN.bus.p_i_min__barg < 0 | isinf(GN.bus.p_i_min__barg))
+        error('GN.bus: Pressure values p_i_min__barg must be positive numeric value.')
+    elseif any(isnan(GN.bus.p_i_min__barg))
+        error('GN.bus: If any p_i_min__barg values are available, all busses need p_i_min__barg values.')
+    end
+elseif any(ismember({'p_i_0__barg','p_i_max__barg'},GN.bus.Properties.VariableNames))
+    error('GN.bus: p_i_0__barg and p_i_max__barg values are available but p_i_min__barg values are missing.')
+end
+
+% p_i_max__barg
+if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.p_i_max__barg))
+        error('GN.bus: p_i_max__barg must be numeric.')
+    elseif any(GN.bus.p_i_max__barg < 0 | isinf(GN.bus.p_i_max__barg))
+        error('GN.bus: Pressure values p_i_max__barg must be positive numeric value.')
+    elseif any(isnan(GN.bus.p_i_max__barg))
+        error('GN.bus: If any p_i_max__barg values are available, all busses need p_i_max__barg values.')
+    end
+elseif any(ismember({'p_i_min__barg','p_i_0__barg'},GN.bus.Properties.VariableNames))
+    error('GN.bus: p_i_min__barg and p_i_0__barg values are available but p_i_max__barg values are missing.')
+end
+
+% p_i_min__barg and p_i_max__barg
+if all(ismember({'p_i_min__barg','p_i_max__barg'},GN.bus.Properties.VariableNames))
+    if any(GN.bus.p_i_min__barg > GN.bus.p_i_max__barg)
+        warning('GN.bus: All p_i_min__barg values must be less than or equal to p_i_max__barg.')
+    end
+end
+
+%% T_i_min and T_i_max
+% T_i_min
+if ismember('T_i_min',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.T_i_min))
+        error('GN.bus: T_i_min must be numeric.')
+    elseif any(GN.bus.T_i_min < 0 | isinf(GN.bus.T_i_min))
+        error('GN.bus: T_i_min [K] must be positive numeric value.')
+    elseif all(isnan(GN.bus.T_i_min))
+        GN.bus.T_i_min(isnan(GN.bus.T_i_min)) = GN.T_env;
     end
 else
-    GN.bus.T_i(:) = GN.T_env;
+    GN.bus.T_i_min(:) = 0;
+end
+
+% T_i_max
+if ismember('T_i_max',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.T_i_max))
+        error('GN.bus: T_i_max must be numeric.')
+    elseif any(GN.bus.T_i_max <= 0 | isinf(GN.bus.T_i_max))
+        error('GN.bus: T_i_max [K] must be positive numeric value.')
+    elseif all(isnan(GN.bus.T_i_max))
+        GN.bus.T_i_max(isnan(GN.bus.T_i_max)) = GN.T_env;
+    end
+else
+    GN.bus.T_i_max(:) = 1000;
+end
+
+% T_i_min and T_i_max
+if all(ismember({'T_i_min','T_i_max'},GN.bus.Properties.VariableNames))
+    if any(GN.bus.T_i_min > GN.bus.T_i_max)
+        warning('GN.bus: All T_i_min values must be less than or equal to T_i_max.')
+    end
+end
+
+%% x_coord and y_coord
+if ismember('x_coord',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.x_coord))
+        error('GN.bus: x_coord must be numeric.')
+    elseif any(isinf(GN.bus.x_coord))
+        error('GN.bus: x_coord must not be infinity.')
+    elseif any(isnan(GN.bus.x_coord)) && any(~isnan(GN.bus.x_coord))
+        warning('GN.bus: Some x_coord values are NaN.')
+    end
+end
+
+if ismember('y_coord',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.y_coord))
+        error('GN.bus: y_coord must be numeric.')
+    elseif any(isinf(GN.bus.y_coord))
+        error('GN.bus: y_coord must not be infinity.')
+    elseif any(isnan(GN.bus.y_coord)) && any(~isnan(GN.bus.y_coord))
+        warning('GN.bus: Some y_coord values are NaN.')
+    end
 end
 
 %% #######################################################################
-%  A U X I L I A R Y   V A R I A B L E S
+%  T E M P O R A R Y   D A T A
 %  #######################################################################
-
 %% source_bus
-if GN.isothermal == 0
+if ~GN.isothermal
     %% source_bus
     if ismember('P_th_i__MW',GN.bus.Properties.VariableNames)
         GN.bus.source_bus = GN.bus.P_th_i__MW < 0;
@@ -224,14 +289,16 @@ if GN.isothermal == 0
         GN.bus.source_bus = GN.bus.V_dot_n_i < 0;
     end
     
-    % slack_bus => source_bus
+    % Set source_bus of slack_bus true, to initalize T_i_source if
+    % necessary
     GN.bus.source_bus(GN.bus.slack_bus) = true;
 end
 
 %% #######################################################################
-%  R E Q U I R E D   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
+%  I N P U T   D A T A   -
+%  O P T I O N A L   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
 %  #######################################################################
-if GN.isothermal == 0
+if ~GN.isothermal
     %% T_i_source
     if ismember('T_i_source',GN.bus.Properties.VariableNames)
         if any(~isnumeric(GN.bus.T_i_source))
@@ -247,9 +314,23 @@ if GN.isothermal == 0
         GN.bus.T_i_source(GN.bus.source_bus) = GN.T_env;
         warning(['GN.bus: T_i_source column for non-isothermal simulation is missing. All T_i_source entries are set to ' num2str(GN.T_env(1,1)) ' K.'])
     end
-    % Initialize T_i - UNDER CONSTRUCTION
-    GN.bus.T_i(~isnan(GN.bus.T_i_source)) = GN.bus.T_i_source(~isnan(GN.bus.T_i_source));
     
 end
+
+%% #######################################################################
+%  R E S U L T   D A T A
+%  #######################################################################
+%% T_i
+% if ismember('T_i',GN.bus.Properties.VariableNames)
+%     if any(~isnumeric(GN.bus.T_i))
+%         error('GN.bus: T_i must be numeric.')
+%     elseif any(GN.bus.T_i <= 0 | isinf(GN.bus.T_i))
+%         error('GN.bus: T_i [K] must be positive numeric value.')
+%     elseif all(isnan(GN.bus.T_i))
+%         GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
+%     end
+% else
+%     GN.bus.T_i(:) = GN.T_env;
+% end
 
 end

@@ -1,5 +1,9 @@
 function GN = check_GN_isothermal(GN)
-%CHECK_GN_ISOTHERMAL Check logical value GN.isothermal (temperature model)
+%CHECK_GN_ISOTHERMAL
+%   GN = check_GN_isothermal(GN)
+%   Check and initialization GN.isothermal (temperature model)
+%       GN.isothermal must be logical
+%       default value: GN.isothermal = 'true'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -18,7 +22,6 @@ if isfield(GN,'isothermal')
     GN.isothermal(GN.isothermal == 0) = false;
     GN.isothermal(GN.isothermal == 1) = true;
     GN.isothermal = logical(GN.isothermal);
-    
 else
     GN.isothermal = true;
 end

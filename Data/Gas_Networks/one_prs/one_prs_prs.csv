@@ -1,0 +1,2 @@
+prs_ID;from_bus_ID;to_bus_ID;in_service;slack_branch;exp_turbine;eta_s;eta_drive;T_controlled;T_ij_out;Q_dot_heater_cooler;gas_powered_heater;eta_heater;eta_cooler
+1;1;2;1;1;0;NaN;NaN;1;283;NaN;1;0.65;0.65

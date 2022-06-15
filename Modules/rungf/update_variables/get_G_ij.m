@@ -24,22 +24,36 @@ if nargin < 3
     end
 end
 
-%% Transport Quantities
-% Reynolds number Re_ij(V_dot_n_ij, eta_ij)
-GN.pipe.Re_ij = get_Re(GN);
-
-% Pipe friction coefficient lambda(Re, k, D)
-GN.pipe.lambda_ij = get_lambda(GN.pipe.Re_ij, GN.pipe.k_ij, GN.pipe.D_ij, NUMPARAM.epsilon_lambda);
-
 %% Physical constants
 if OPTION == 1
     CONST = getConstants();
     
+    %% Transport Quantities
+    % Reynolds number Re_ij(V_dot_n_ij, eta_ij)
+    GN = get_Re(GN);
+    
+    % Pipe friction coefficient lambda(Re, k, D)
+    GN = get_lambda(GN, NUMPARAM);
+    
+    %% Quantities
+    p_n             = CONST.p_n;
+    T_n             = CONST.T_n;
+    rho_n_avg       = GN.gasMixProp.rho_n_avg;
+    Z_n_avg         = GN.gasMixProp.Z_n_avg;
+    
+    T_ij            = GN.pipe.T_ij;
+    Z_ij            = GN.pipe.Z_ij;
+    
+    D_ij            = GN.pipe.D_ij;
+    L_ij            = GN.pipe.L_ij;
+        
+    lambda_ij       = GN.pipe.lambda_ij;
+        
     %% Volume flow factor  A_ij [(K*m^10)/(N^2*s^2)]
-    A_ij = pi^2 * GN.pipe.D_ij.^5 * CONST.T_n ./ (16 * GN.gasMixProp.rho_n_avg * CONST.p_n * GN.pipe.L_ij);
+    A_ij = pi^2 * D_ij.^5 * T_n ./ (16 * rho_n_avg * p_n * L_ij);
     
     %% Volume flow factor B_ij [1/K]
-    B_ij = 1./(GN.pipe.lambda_ij .* GN.pipe.Z_ij / GN.gasMixProp.Z_n_avg .* GN.pipe.T_ij);
+    B_ij = 1./(lambda_ij .* Z_ij / Z_n_avg .* T_ij);
     
     %% "Hydraulic conductance"
     GN.pipe.G_ij = sqrt(A_ij.*B_ij);
@@ -53,6 +67,13 @@ if OPTION == 1
 elseif OPTION == 2
     %% rho
     GN = get_rho(GN);
+    
+    %% Transport Quantities
+    % Reynolds number Re_ij(V_dot_n_ij, eta_ij)
+    GN = get_Re(GN);
+    
+    % Pipe friction coefficient lambda(Re, k, D)
+    GN = get_lambda(GN, NUMPARAM);
     
     %% Quantities
     D_ij            = GN.pipe.D_ij;
@@ -70,7 +91,7 @@ elseif OPTION == 2
     
 elseif OPTION == 3
     %              sqrt(p_i^2 - p_j^2)
-    % V_dot_n_ij = ------------------ * sqrt(A_ij * B_ij) * (p_i - p_j)
+    % V_dot_n_ij = ------------------- * sqrt(A_ij * B_ij) * (p_i - p_j)
     %                   p_i - p_j
     OPTION = 1;
     GN = get_G_ij(GN, OPTION, NUMPARAM);
@@ -80,6 +101,19 @@ elseif OPTION == 3
     p_j = p_j(GN.branch.i_pipe(GN.branch.pipe_branch));
     
     GN.pipe.G_ij = abs(sqrt(p_i.^2 - p_j.^2)./(p_i - p_j)) .* GN.pipe.G_ij;
+    
+elseif OPTION == 4
+    %              sqrt(p_i^2 - p_j^2)
+    % V_dot_n_ij = ------------------- * sqrt(A_ij * B_ij) * (p_i^2 - p_j^2)
+    %                 p_i^2 - p_j^2
+    OPTION = 1;
+    GN = get_G_ij(GN, OPTION, NUMPARAM);
+    p_i = GN.bus.p_i(GN.branch.i_from_bus(GN.branch.pipe_branch));
+    p_i = p_i(GN.branch.i_pipe(GN.branch.pipe_branch));
+    p_j = GN.bus.p_i(GN.branch.i_to_bus(GN.branch.pipe_branch));
+    p_j = p_j(GN.branch.i_pipe(GN.branch.pipe_branch));
+    
+    GN.pipe.G_ij = abs(sqrt(p_i.^2 - p_j.^2)./(p_i.^2 - p_j.^2)) .* GN.pipe.G_ij;
     
 else
     error('Invalid option.')

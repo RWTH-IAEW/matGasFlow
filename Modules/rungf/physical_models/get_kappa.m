@@ -41,15 +41,15 @@ if PHYMOD.kappa == 1 || PHYMOD.kappa == 2
     b = GN.gasMixProp.b;
     
     % Specific isochoric heat capacity
-    try
+    if ismember('c_p_0_i', GN.bus.Properties.VariableNames)
         c_v_i = GN.bus.c_p_0_i - R_m/M_avg; % [J/(kg*mol)]
-    catch
-        GN_temp = GN;
-        PHYMOD_temp = PHYMOD;
+    else
+        GN_temp         = GN;
+        PHYMOD_temp     = PHYMOD;
         PHYMOD_temp.c_p = 1;
-        GN_temp = get_c_p(GN_temp, PHYMOD_temp);
-        GN.bus.c_p_0_i = GN_temp.bus.c_p_0_i;
-        c_v_i = GN.bus.c_p_0_i - R_m/M_avg; % [J/(kg*mol)]
+        GN_temp         = get_c_p(GN_temp, PHYMOD_temp);
+        GN.bus.c_p_0_i  = GN_temp.bus.c_p_0_i;
+        c_v_i           = GN.bus.c_p_0_i - R_m/M_avg; % [J/(kg*mol)]
     end
     
     if PHYMOD.kappa == 1
@@ -65,10 +65,12 @@ if PHYMOD.kappa == 1 || PHYMOD.kappa == 2
     end
     
 else
-%     try
-        GN = get_kappa_addOn(GN, PHYMOD);
-%     catch
-%         error('Option not available, choose PHYMOD.kappa = 1 OR PHYMOD.kappa = 2')
-%     end
+    path = which('get_kappa_addOn.m');
+    if isempty(path)
+        error('Option not available, choose PHYMOD.kappa = 1 OR PHYMOD.kappa = 2')
+    end
+    GN = get_kappa_addOn(GN, PHYMOD);
+    
 end
+
 end

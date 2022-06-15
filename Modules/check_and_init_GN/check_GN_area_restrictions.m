@@ -4,8 +4,7 @@ function [GN] = check_GN_area_restrictions(GN, keep_slack_properties)
 %   Checks:
 %       - Check and update bus area_ID
 %       - Check and update pipe area_ID
-%       - Check and update station_ID
-%       - Check and update valveStation_ID
+%       - Check and update valve_group_ID
 %       - Set area_ID of unsupplied bussus to NaN
 %       - Busses must not have more than one valve_from_bus AND not more
 %           than one valve_to_bus
@@ -28,11 +27,6 @@ if nargin < 2
     keep_slack_properties = true;
 end
 
-%% active_bus
-GN.bus.active_bus(:)    = false;
-GN.bus.active_bus       = logical(GN.bus.active_bus);
-GN.bus.active_bus(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)) = true;
-
 %% Check and initialize area_ID
 GN = check_and_init_area_ID(GN);
 
@@ -40,7 +34,7 @@ GN = check_and_init_area_ID(GN);
 GN = check_GN_islands(GN);
 
 %% Incidence Matrix
-GN.INC = get_INC(GN);
+GN = get_INC(GN);
 
 % GN.MAT % UNDER CONSTRUCTION: Include INC
 GN = get_GN_MAT(GN);
@@ -48,12 +42,10 @@ GN = get_GN_MAT(GN);
 %% Set interconnecting active_branches out of service
 GN = set_interconnecting_active_branches_out_of_service(GN);
 
-%% Connecting branches (if-query necessary for NUMPARAM.OPTION_get_J = 2) % UNDER CONSTRUCTION: might be unnecessary
-if ~isfield(GN,'flag_NUMPARAM_OPTION_get_J')
-    GN = get_connecting_branch(GN); % UNDER CONSTRUCTION merge function with check_GN_islands
-end
+%% Connecting branches
+GN = get_connecting_branch(GN);
 
-%% Check and init slack bus and slack branch % UNDER CONSTRCUTION: rename
+%% Check and init slack bus and slack branch % UNDER CONSTRUCTION: rename
 GN = check_and_init_slack(GN, keep_slack_properties);
 
 %% Check and init nodal pressure
@@ -80,12 +72,6 @@ end
 if any(GN.branch.slack_branch & ~GN.branch.active_branch)
     error('All slack_branches must be active_branches.')
 end
-
-% Number of active_busses
-if sum(GN.bus.active_bus) ~= length(unique(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)))
-    error('Something went wrong. the sum of active_bus must match the number of the to_busses of all active_branches.')
-end
-
 
 end
 

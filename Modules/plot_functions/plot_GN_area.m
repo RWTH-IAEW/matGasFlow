@@ -34,9 +34,9 @@ if nargin < 7
     end
 end
 
-% if isempty(area_IDs)
-%     area_IDs = unique(GN.bus.area_ID);
-% end
+if isempty(area_IDs)
+    area_IDs = unique(GN.bus.area_ID);
+end
 
 col = rwthcolor;
 fns = fieldnames(col);
@@ -91,16 +91,16 @@ if color_p_i
     idx_bus = ismember(GN.bus.area_ID,area_IDs);
     x = GN.bus.x_coord(idx_bus);
     y = GN.bus.y_coord(idx_bus);
-    if ismember('p_i',GN.bus.Properties.VariableNames)
-        p = GN.bus.p_i(idx_bus);
-        scatter(x,y,[],p,'filled')
-        c = colorbar;
-        c.Label.String = 'p_{i} [Pa]';
-    else
+    if ismember('p_i__barg',GN.bus.Properties.VariableNames)
         p = GN.bus.p_i__barg(idx_bus);
         scatter(x,y,[],p,'filled')
         c = colorbar;
         c.Label.String = 'p_{i} [bar_g]';
+    else
+        p = GN.bus.p_i(idx_bus);
+        scatter(x,y,[],p,'filled')
+        c = colorbar;
+        c.Label.String = 'p_{i} [Pa]';
     end
     
 end

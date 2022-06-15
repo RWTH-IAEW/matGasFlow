@@ -26,7 +26,8 @@ while 1
     iter_1 = iter_1 + 1;
     
     %% Calulation of nodal temperature
-    if GN.isothermal ~= 1
+    if ~GN.isothermal
+        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
         GN = get_T_loop(GN, NUMPARAM, PHYMOD);
     end
     
@@ -38,7 +39,7 @@ while 1
     % disp({iter_1, norm(GN.bus.f), norm(delta_p), omega}) %- UNDER CONSTRUCTION
     if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
         if isfield(GN,'J')
-            GN = rmfield(GN, 'J');
+            GN = rmfield(GN,'J');
         end
         break
     elseif iter_1 >= NUMPARAM.maxIter
@@ -54,14 +55,14 @@ while 1
     delta_p(~GN.bus.slack_bus) = GN.J\-GN.bus.f(~GN.bus.slack_bus);
     
     if any(isnan(delta_p)) || any(isinf(delta_p))
-        NUMPARAM_temp = NUMPARAM;
-        NUMPARAM_temp.OPTION_get_J = 3;
-        GN_temp = get_J(GN, NUMPARAM_temp, PHYMOD);
-        delta_p_temp = zeros(size(GN.bus,1),1);
-        delta_p_temp(~GN.bus.slack_bus) = GN_temp.J\-GN.bus.f(~GN.bus.slack_bus);
-        delta_p(isnan(delta_p) | isinf(delta_p)) = delta_p_temp(isnan(delta_p) | isinf(delta_p));
+        % switch to NUMPARAM_temp.OPTION_get_J == 3
+        NUMPARAM_temp                           = NUMPARAM;
+        NUMPARAM_temp.OPTION_get_J              = 3;
+        GN_temp                                 = get_J(GN, NUMPARAM_temp, PHYMOD);
+        delta_p_temp                            = zeros(size(GN.bus,1),1);
+        delta_p_temp(~GN.bus.slack_bus)         = GN_temp.J\-GN.bus.f(~GN.bus.slack_bus);
+        delta_p(isnan(delta_p)|isinf(delta_p))  = delta_p_temp(isnan(delta_p) | isinf(delta_p));
     end
-    
     
     %% Newton-Raphson Damping
     if NUMPARAM.OPTION_NR_damping
@@ -85,11 +86,6 @@ while 1
     % Update p_i dependent quantities
     if rem(iter_1-1, NUMPARAM.OPTION_update_p_i_dependent_quantities_iter) == 0
         GN = update_p_i_dependent_quantities(GN, PHYMOD);
-    end
-    
-    %% Update nodal equation - UNDER CONSTRUCTION
-    if GN.isothermal == 0
-        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
     end
     
 end

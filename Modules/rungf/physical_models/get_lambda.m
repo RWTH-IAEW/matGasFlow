@@ -1,4 +1,4 @@
-function [ lambda_ij ] = get_lambda( Re_ij, k_ij, D_ij, epsilon_lambda)
+function GN = get_lambda(GN, NUMPARAM)
 %GET_LAMBDA   Calculation of the Darcy friction coefficient
 %   GET_LAMBDA( Re_ij, k_ij, D_ij, epsilon_lambda )
 %   Re_ij, k_ij and D_ij must have same dimensions
@@ -21,14 +21,14 @@ function [ lambda_ij ] = get_lambda( Re_ij, k_ij, D_ij, epsilon_lambda)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Set default input arguments
-if nargin == 3
+if nargin < 2
     NUMPARAM = getDefaultNumericalParameters;
-    epsilon_lambda = NUMPARAM.epsilon_lambda;
 end
 
-if ~isequal(size(Re_ij),size(k_ij),size(D_ij))
-    error('Re, k and D must have same dimensions.')
-end
+%% Quantities
+Re_ij   = GN.pipe.Re_ij;
+k_ij    = GN.pipe.k_ij;
+D_ij    = GN.pipe.D_ij;
 
 %% Init
 lambda_ij = NaN(size(Re_ij));
@@ -39,10 +39,13 @@ lambda_ij(Re_ij<=2320) = 64./Re_ij(Re_ij<2320);
 %% Re > 2320  --> turbulent, [Colebrook-White]
 lambda_temp_1 = 0.0032+0.221*Re_ij(Re_ij>2320).^-0.237;
 lambda_temp_2 = 1./(-2.*log10( 2.51./Re_ij(Re_ij>2320)./sqrt(lambda_temp_1) + k_ij(Re_ij>2320)./3.71./D_ij(Re_ij>2320))).^2;
-while norm((lambda_temp_1-lambda_temp_2) ./ lambda_temp_1) > epsilon_lambda
+while norm((lambda_temp_1-lambda_temp_2) ./ lambda_temp_1) > NUMPARAM.epsilon_lambda
     lambda_temp_1 = lambda_temp_2;
     lambda_temp_2 = 1./(-2.*log10( 2.51./Re_ij(Re_ij>2320)./sqrt(lambda_temp_1) + k_ij(Re_ij>2320)./3.71./D_ij(Re_ij>2320))).^2;
 end
 lambda_ij(Re_ij>2320) = lambda_temp_2;
+
+%% Result
+GN.pipe.lambda_ij = lambda_ij;
 
 end

@@ -1,4 +1,4 @@
-function [GN] = set_p_i_min_as_lower_bound(GN, GN_res, area_IDs)
+function [GN] = set_p_i_min_as_lower_bound(GN, GN_res, area_IDs, scaling_factor)
 %SET_P_I_MIN_AS_LOWER_BOUND Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -10,9 +10,11 @@ function [GN] = set_p_i_min_as_lower_bound(GN, GN_res, area_IDs)
 %   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if nargin < 3
-    area_IDs = unique(GN_res.bus.area_ID(GN_res.bus.p_i__barg < GN.bus.p_i_min__barg));
+if nargin < 4
+    scaling_factor = 1;
+    if nargin < 3
+        area_IDs = unique(GN_res.bus.area_ID(GN_res.bus.p_i__barg < GN.bus.p_i_min__barg));
+    end
 end
 
 for jj = 1:length(area_IDs)
@@ -25,7 +27,7 @@ for jj = 1:length(area_IDs)
     GN.bus.slack_bus(i_bus) = false;
     GN.bus.slack_bus(i_new_slack_bus(1))    = true;
     % GN.bus.p_i__barg(i_new_slack_bus(1))    = GN.bus.p_i_min__barg(i_new_slack_bus(1));
-    GN.bus.p_i__barg(i_bus) = GN.bus.p_i_min__barg(i_new_slack_bus(1));
+    GN.bus.p_i__barg(i_bus) = scaling_factor * GN.bus.p_i_min__barg(i_new_slack_bus(1));
     % UNDER CONSTRUCTION: Reset slack_branch?!
 end
 

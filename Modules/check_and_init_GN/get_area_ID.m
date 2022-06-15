@@ -1,24 +1,15 @@
-function [bus_area_ID, pipe_area_ID, station_ID, valveStation_ID, valve_area_ID] = get_area_ID(GN)
+function [bus_area_ID, pipe_area_ID, valve_area_ID, valve_group_ID] = get_area_ID(GN)
 %GET_AREA_ID Area ID
-%   [bus_area_ID, pipe_area_ID, station_ID, valveStation_ID] = get_area_ID(GN)
-%   Output variables
-%       bus_area_ID:
-%           All busses that are part of a common area have the same
-%           area_ID. An area is a sub-network that consists exclusively of
-%           busses and pipes and is separated from other areas by non-pipe
-%           branches (comp, prs or valve).
-%
-%       pipe_area_ID:
-%           All pipes that are part of a common area have the same area_ID.
-%           An area is a sub-network that consists exclusively of busses
-%           and pipes and is separated from other areas by non-pipe
-%           branches (comp, prs or valve).
-%
-%       station_ID:
-%           UNDER CONSTRUCTION
-%
-%       valveStation_ID:
-%           UNDER CONSTRUCTION
+%   [bus_area_ID, pipe_area_ID, valve_area_ID, valve_group_ID] = get_area_ID(GN)
+%   Busses, pipes, and valves that are hydraulically connected via pipes or
+%   valves form an area with the same area_ID. Areas are seperated by
+%   active branches (comp and prs).
+%   Output variables:
+%       bus_area_ID: area_ID of each bus
+%       pipe_area_ID: area_ID of each pipe
+%       valve_area_ID: area_ID of each valve
+%       valve_group_ID: All valves that are connected to each other and are
+%           in service get the same valve_group_ID
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -67,24 +58,8 @@ else
     valve_area_ID = NaN;
 end
 
-%% station_ID % UNDER CONSTRUCTION: Anpassung des valve Modells
-station_ID = NaN(size(GN.branch,1),1);
-% if any(GN.branch.active_branch & GN.branch.in_service)
-%     GN_temp_2               = GN;
-%     GN_temp_2.branch        = GN_temp_2.branch(GN.branch.active_branch & GN.branch.in_service,:);
-%     i_from_bus_actBranch    = GN_temp_2.branch.i_from_bus;
-%     i_to_bus_actBranch      = GN_temp_2.branch.i_to_bus;
-%     ADJACENY_compORprs      = sparse(...
-%         [i_from_bus_actBranch', i_to_bus_actBranch'],...
-%         [i_to_bus_actBranch', i_from_bus_actBranch'],...
-%         1);
-%     g               = graph(ADJACENY_compORprs);
-%     bus_station_ID  = conncomp(g)';
-%     station_ID(GN.branch.active_branch) = bus_station_ID(i_from_bus_actBranch);
-% end
-
-%% valveStation_ID
-valveStation_ID = NaN(size(GN.branch,1),1);
+%% valve_group_ID
+valve_group_ID = NaN(size(GN.branch,1),1);
 if isfield(GN, 'valve')
     branch_temp         = GN.branch(GN.branch.valve_branch & GN.branch.in_service,:);
     i_from_bus_valve    = branch_temp.i_from_bus;
@@ -94,8 +69,8 @@ if isfield(GN, 'valve')
         [i_to_bus_valve', i_from_bus_valve'],...
         1);
     g                   = graph(ADJACENY_valve);
-    bus_valveStation_ID = conncomp(g)';
-    valveStation_ID(GN.branch.valve_branch & GN.branch.in_service) = bus_valveStation_ID(i_from_bus_valve);
+    bus_valve_group_ID = conncomp(g)';
+    valve_group_ID(GN.branch.valve_branch & GN.branch.in_service) = bus_valve_group_ID(i_from_bus_valve);
 end
 
 

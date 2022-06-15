@@ -39,7 +39,7 @@ while 1
         end
         
         %% Calulation of nodal temperature
-        if GN.isothermal ~= 1
+        if ~GN.isothermal
             GN = get_T_loop(GN, NUMPARAM, PHYMOD);
         end
         
@@ -52,8 +52,8 @@ while 1
         end
     end
     
-    %% Update nodal equation
-    GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
+    %% Update nodal equation UNDER CONSTRUCTION
+    % GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
     
     %% Check convergence
     GN = set_convergence(GN, ['$$p_i Adm loop, \dot{V}_{dot,n,ij}, (',num2str(iter_1),')$$']);

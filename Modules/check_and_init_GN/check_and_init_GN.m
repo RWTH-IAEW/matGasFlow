@@ -21,12 +21,8 @@ if nargin < 3
     end
 end
 
-if create_log_file ~= 0 && create_log_file ~= 1
-    error('The variable create_log_file must be 0 or 1.')
-end
-
 %% Diary
-if create_log_file == 1
+if create_log_file
     if isfield(GN,'name')
         LOG_FILENAME = [datestr(datetime('now'),'yyyymmddTHHMMSS'),'_',GN.name];
     else
@@ -49,6 +45,9 @@ GN = check_GN_isothermal(GN);
 %% Check GN.T_env
 GN = check_GN_T_env(GN);
 
+%% Check GN.gasMix
+GN = check_GN_gasMix(GN);
+
 %% Check GN.bus
 GN = check_GN_bus(GN);
 
@@ -64,32 +63,31 @@ GN = check_GN_prs(GN);
 %% Check GN.valve
 GN = check_GN_valve(GN);
 
-%% Check GN.gasMix
-GN = check_GN_gasMix(GN);
+%% Gas Composition Properties
+if isfield(GN,'gasMix')
+    GN = get_gasMixAndCompoProp(GN,GN.gasMix);
+end
 
 %% Check GN.time_series
-% if isfield(GN, 'time_series')
-%     try
-%         GN = check_GN_time_series(GN);
-%     catch
-%         warning('Check of time_series not available in this matgasflow distribution.')
-%     end
-% end
+if isfield(GN, 'time_series')
+    GN = check_GN_time_series(GN);
+end
 
-%% Inititalize GN.branch
-GN = init_GN_branch(GN);
-
-%% Inititialize indecies
-GN = init_GN_indices(GN);
-
-%% Check area restrictions
-GN = check_GN_area_restrictions(GN,keep_slack_properties);
-
-%% Gas Composition Properties
-GN = get_gasMixAndCompoProp(GN);
+%% Branches
+if any(isfield(GN, {'pipe','comp','prs','valve'}))
+    %% Inititalize GN.branch
+    GN = init_GN_branch(GN);
+    
+    %% Inititialize indecies
+    GN = init_GN_indices(GN);
+    
+    %% Check area restrictions
+    GN = check_GN_area_restrictions(GN,keep_slack_properties);
+    
+end
 
 %% Diary off
-if create_log_file == 1
+if create_log_file
     diary off
 end
 end

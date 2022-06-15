@@ -142,7 +142,7 @@ GN.branch.V_dot_n_ij_preset(GN.branch.V_dot_n_ij_preset < 0 & (~isnan(GN.branch.
 
 GN.bus.f = INC_all_branches * GN.branch.V_dot_n_ij_preset + GN.bus.V_dot_n_i;
 if norm(GN.bus.f) > 1 % UNDER CONSTRUCTION
-    error('...')
+    error('Something went wrong.')
 end
     
 if isfield(GN, 'comp')

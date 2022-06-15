@@ -9,6 +9,10 @@ function [GN] = update_p_i_dependent_quantities(GN, PHYMOD)
 %   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if nargin < 2
+    PHYMOD = getDefaultPhysicalModels;
+end
+
 %% Update p_i dependent quantities
 % Update p_ij
 GN = get_p_ij(GN);

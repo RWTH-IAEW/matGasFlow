@@ -46,7 +46,7 @@ if isfield(GN,'prs')
         i_valve_branch_in_of_service                                        = GN.valve.i_branch(GN.valve.in_service);
         GN.branch.in_service(i_valve_branch_in_of_service)                  = true;
         
-        %% UNDER CONSTRCUTION: unsightly solution ...
+        %% UNDER CONSTRUCTION: unsightly solution ...
         % Check and initialize area_ID
         GN = check_and_init_area_ID(GN);
         
@@ -54,7 +54,7 @@ if isfield(GN,'prs')
         GN = check_GN_islands(GN);
         
         % Incidence Matrix
-        GN.INC = get_INC(GN);
+        GN = get_INC(GN);
         
         % GN.MAT % UNDER CONSTRUCTION: Include INC
         GN = get_GN_MAT(GN);
@@ -62,14 +62,10 @@ if isfield(GN,'prs')
 end
 
 %% Incidence Matrix
-GN.INC = get_INC(GN);
+GN = get_INC(GN);
 
 % GN.MAT % UNDER CONSTRUCTION: Include INC
 GN = get_GN_MAT(GN);
-
-%% Reset active_bus
-GN.bus.active_bus(:)                                                                    = false;
-GN.bus.active_bus(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service))   = true;
 
 end
 

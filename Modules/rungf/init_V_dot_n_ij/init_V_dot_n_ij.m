@@ -50,6 +50,10 @@ elseif any(ismember(GN.branch.Properties.VariableNames, 'V_dot_n_ij_preset'))
 end
 
 %% Heuristic initialization of connecting branches with no presets
+% Parallel active branches need preset values
+if any(GN.branch.connecting_branch & ~GN.branch.preset & GN.branch.active_branch)
+    warning('rungf might fail due to missing presets.')
+end
 GN.branch.V_dot_n_ij(GN.branch.connecting_branch & ~GN.branch.preset) = mean(abs(GN.bus.V_dot_n_i)) * (0.9:0.2/(sum(GN.branch.connecting_branch & ~GN.branch.preset)-1):1.1)*0.5;
 
 %% Solving system of linear equations

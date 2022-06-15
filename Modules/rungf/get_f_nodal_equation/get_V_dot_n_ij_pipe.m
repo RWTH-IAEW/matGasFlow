@@ -56,7 +56,7 @@ if NUMPARAM.OPTION_get_V_dot_n_ij_pipe == 1
     iOut(idx)   = iF(idx);
     
     % Reynolds number Re_ij(V_dot_n_ij, eta_ij)
-    GN.pipe.Re_ij = get_Re(GN);
+    GN          = get_Re(GN);
     laminar     = GN.pipe.Re_ij <= 2320;
     turbolent   = GN.pipe.Re_ij > 2320;
     

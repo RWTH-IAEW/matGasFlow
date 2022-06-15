@@ -38,10 +38,13 @@ while 1
         end
                 
         %% Calulation of nodal temperature
-        if GN.isothermal ~= 1
+        if ~GN.isothermal
             GN = get_T_loop(GN, NUMPARAM, PHYMOD);
         end
         
+        %% Division of gas flow at parallel pipes
+        GN = get_V_dot_n_ij_parallelPipes(GN);
+
         %% Check convergence
         GN = set_convergence(GN, ['$$p_i SLE loop, p_i, (',num2str(iter_2),')$$']);
         if norm((p_i_temp - GN.bus.p_i) ./ p_i_temp) < NUMPARAM.epsilon_p_i_loop
@@ -50,9 +53,6 @@ while 1
             error(['get_p_i_loop: Non-converging while-loop. Number of interation: ',num2str(iter_2)])
         end
     end
-    
-    %% Update nodal equation
-    GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
     
     %% Check convergence
     GN = set_convergence(GN, ['$$p_i SLE loop, \dot{V}_{dot,n,ij}, (',num2str(iter_1),')$$']);

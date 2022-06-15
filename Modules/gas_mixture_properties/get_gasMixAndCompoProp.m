@@ -53,16 +53,16 @@ if any(abs(sum(table2array(gasMix_library(:,2:end)))-1) > NUMPARAM.numericalTole
 end
 
 % Percentage of amount of substance
+[ismem,idx] = ismember(GN.gasMixAndCompoProp.gas, gasMix_library.gas);
+idx(idx==0) = [];
 try
-    [ismem,idx] = ismember(GN.gasMixAndCompoProp.gas, gasMix_library.gas);
-    idx(idx==0) = [];
     % try to load composition of gas mixture
     GN.gasMixAndCompoProp.x_mol(ismem) = gasMix_library{idx,gasMix};
 catch
     % return error message if gasMix is not availabe in gasMix_library.csv
-    gasMix_strings = gasMix_library.Properties.VariableNames(2:end);
+    gasMix_strings          = gasMix_library.Properties.VariableNames(2:end);
     gasMix_strings(1:end-2) = append(gasMix_strings(1:end-2), ', ');
-    gasMix_strings(end-1) = append(gasMix_strings(end-1), ' or ');
+    gasMix_strings(end-1)   = append(gasMix_strings(end-1), ' or ');
     error([gasMix, ' is not available. Chose one of these gas types: ',gasMix_strings{1:end}])
 end
 GN.gasMixAndCompoProp = movevars(GN.gasMixAndCompoProp,'x_mol','After','gas');
@@ -82,8 +82,7 @@ GN.gasMixProp = get_gasMixProp(GN.gasMixAndCompoProp);
 
 %% Check the need of a calorific value
 if GN.gasMixProp.H_s_n_avg <= 0 && ...
-        ( any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames)) || ...
-        any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames)))
+        (ismember('P_th_i__MW',GN.bus.Properties.VariableNames) || ismember('P_th_i__MW',GN.bus.Properties.VariableNames))
     error('The gas mixture needs a caloric value.')
 end
 

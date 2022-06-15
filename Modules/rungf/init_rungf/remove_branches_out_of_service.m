@@ -1,5 +1,6 @@
-function [GN] = remove_unsupplied_areas(GN)
-%REMOVE_UNSUPPLIED_AREAS
+function GN = remove_branches_out_of_service(GN)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -10,7 +11,6 @@ function [GN] = remove_unsupplied_areas(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Remove branches that are out of service (~in_service)
 if any(~GN.branch.in_service)
     if isfield(GN,'pipe')
         GN.pipe(GN.branch.i_pipe(~GN.branch.in_service & GN.branch.pipe_branch),:) = [];
@@ -38,23 +38,6 @@ if any(~GN.branch.in_service)
     keep_slack_properties = true;
     GN = check_GN_area_restrictions(GN,keep_slack_properties);
 
-end
-
-%% Remove unsupplied busses
-if any(~GN.bus.supplied)
-    GN.bus(~GN.bus.supplied,:) = [];
-    
-    % Inititialize indecies
-    GN = init_GN_indices(GN);
-    
-    % Check area restrictions
-    keep_slack_properties = true;
-    GN = check_GN_area_restrictions(GN,keep_slack_properties);
-end
-
-%%
-if isfield(GN,'GN_NR')
-    GN.GN_NR = remove_unsupplied_areas(GN.GN_NR);
 end
 
 end

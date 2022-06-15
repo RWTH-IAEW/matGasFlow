@@ -18,9 +18,10 @@ is_prs_branch_to_be_bypassed = ...
     & GN.branch.prs_branch ...
     & GN.branch.in_service;
 
+% UNDER CONSTRUCTION
 % [GN.bus.p_i__barg(GN.branch.i_from_bus(is_prs_branch_with_higher_pressure_output)), GN.bus.p_i__barg(GN.branch.i_to_bus(is_prs_branch_with_higher_pressure_output))]
 if any(is_prs_branch_to_be_bypassed & ~isnan(GN.branch.associate_prs_ID))
-    error('...')
+    error('Something went wrong. associate prs cannot be a bypass prs.')
 end
 
 if ismember('V_dot_n_ij',GN.branch.Properties.VariableNames) % UNDER CONSTRUCTION: Reihenfolge wählen

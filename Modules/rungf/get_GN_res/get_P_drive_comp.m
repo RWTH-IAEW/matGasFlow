@@ -10,7 +10,7 @@ function [GN] = get_P_drive_comp(GN, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if ~any(strcmp('comp_branch',GN.branch.Properties.VariableNames))
+if ~ismember('comp_branch',GN.branch.Properties.VariableNames)
     return
 end
 
@@ -35,7 +35,7 @@ if PHYMOD.comp == 1
     % especially with moderate pressure ratio, and uncooled as well as
     % single-stage compressors with shell cooling.
     
-    if ~any(strcmp('kappa_i',GN.bus.Properties.VariableNames))
+    if ~ismember('kappa_i',GN.bus.Properties.VariableNames)
         GN = get_kappa(GN, PHYMOD);
     end
     kappa_i = GN.bus.kappa_i(i_from_bus);
@@ -55,20 +55,19 @@ if PHYMOD.comp == 1
     
 elseif PHYMOD.comp == 2
     %% Isothermal compression
-    try
-        GN = get_P_drive_comp_isothermal(GN);
-    catch
+    path = which('get_P_drive_comp_isothermal.m');
+    if isempty(path)
         error('Option not available, choose PHYMOD.comp = 1')
     end
-    
+    GN = get_P_drive_comp_isothermal(GN);
     
 elseif OPTION == 3
     %% Polytropic compression
-    try
-        GN = get_P_drive_comp_polytropic(GN);
-    catch
+    path = which('get_P_drive_comp_polytropic.m');
+    if isempty(path)
         error('Option not available, choose PHYMOD.comp = 1')
     end
+    GN = get_P_drive_comp_polytropic(GN);
     
 end
 

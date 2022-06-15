@@ -12,11 +12,13 @@ function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
 %
 %   Output:
 %       GN: gas network struct containing all results
+%       success: rungf is not successful if pressure becomes negative
 %
 %   Calling syntax options:
 %       GN = rungf(GN);
 %       GN = rungf(GN, NUMPARAM);
 %       GN = rungf(GN, NUMPARAM, PHYMOD);
+%       [GN,success] = rungf(__)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -56,61 +58,34 @@ end
 GN_input = GN;
 
 %% Initialization
-if size(GN.bus,1) > 1
+GN.success = true;
+if isfield(GN, 'bus') && isfield(GN, 'branch')
     GN = init_rungf(GN, NUMPARAM, PHYMOD);
-elseif size(GN.bus,1) == 1
-%     warning('GN has only one bus.')
+elseif isfield(GN, 'bus')
+    GN = get_nodalGasMixProp(GN, PHYMOD);
     return
-elseif size(GN.bus,1) == 0
-    error('GN has no bus.')
+else
+    error('GN has no busses and branches.')
 end
 
 %% any(GN.branch.connecting_branch)?
-if ~any(GN.branch.connecting_branch) && NUMPARAM.OPTION_rungf == 1
+if ~any(GN.branch.connecting_branch) && ~NUMPARAM.OPTION_assume_meshed_GN
     %% rungf for radial gas network
-    iter = 0;
-    while 1
-        iter = iter + 1;
-        
-        % Update slack bus
-        GN.bus.V_dot_n_i(GN.bus.slack_bus) = GN.bus.V_dot_n_i(GN.bus.slack_bus) - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
-        
-        % Update V_dot_n_ij
-        GN = get_V_dot_n_ij_radialGN(GN);
-        
-        % Calulation of nodal temperature
-        if GN.isothermal ~= 1
-            GN = get_T_loop(GN, NUMPARAM, PHYMOD);
-        end
-        
-        % Calculation of p_i based on general gas flow equation
-        [GN, success] = get_p_i_SLE(GN, PHYMOD);
-        if ~success
-            return
-        end
-        
-        % Update nodal equation
-        NUMPARAM.OPTION_get_V_dot_n_ij_pipe = 2;
-        GN = get_f_nodal_equation(GN, NUMPARAM, PHYMOD);
-        
-        % Check convergence
-        GN = set_convergence(GN, ['$$rungf rad. GN (',num2str(iter),')$$']);
-        if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
-            break
-        elseif iter >= NUMPARAM.maxIter
-            error(['rungf: Non-converging while-loop. Number of interation: ',num2str(iter)])
-        end
-        
+    [GN, success] = rungf_radial_GN(GN, NUMPARAM, PHYMOD);
+    if ~success
+        GN.success = success;
+        return
     end
+    
 else
     %% rungf for meshed gas network
-    % V_dot_n_ij start solution - Solving a System of Linear Equations
-    % UNDER CONSTRUCTION: option to apply start solution and skip init_V_dot_n_ij
+    % V_dot_n_ij start solution
     GN = init_V_dot_n_ij(GN);
     
-    % Start solution p_i
+    % p_i start solution 
     [GN, success] = get_p_i(GN, NUMPARAM, PHYMOD);
     if ~success
+        GN.success = success;
         return
     end
     
@@ -119,6 +94,7 @@ else
     % [GN,success] = Secant_method(GN, NUMPARAM, PHYMOD);
     % [GN,success] = Levenberg_Marquardt_method(GN, NUMPARAM, PHYMOD);
     if ~success
+        GN.success = success;
         return
     end
     

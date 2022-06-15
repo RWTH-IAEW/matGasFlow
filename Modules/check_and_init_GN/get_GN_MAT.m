@@ -10,6 +10,7 @@ function [GN] = get_GN_MAT(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% area_active_branch
 ii = [...
     GN.bus.area_ID(GN.branch.i_from_bus(GN.branch.active_branch & GN.branch.in_service)); ...
     GN.bus.area_ID(GN.branch.i_to_bus(  GN.branch.active_branch & GN.branch.in_service))];
@@ -23,6 +24,7 @@ nn = length(unique(GN.bus.area_ID));
 mm = size(GN.branch,1);
 GN.MAT.area_active_branch = sparse(ii, jj, vv, nn, mm);
 
+%% area_bus
 ii = GN.bus.area_ID;
 jj = 1:size(GN.bus,1);
 vv = 1;

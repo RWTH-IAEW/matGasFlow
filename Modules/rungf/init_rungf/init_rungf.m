@@ -21,22 +21,27 @@ function [GN] = init_rungf(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Check if GN is initialized (If GN.INC is missing, GN might not be initialized)
-if ~isfield(GN,'INC')
-    GN = check_and_init_GN(GN);
+if nargin < 3
+    PHYMOD = getDefaultPhysicalModels;
+    if nargin < 2
+        NUMPARAM = getDefaultNumericalParameters;
+    end
 end
 
 %% Calculate V_dot_n_i [m^3/s]
 GN = get_V_dot_n_i(GN);
 
-%% Calculate V_dot_n_ij_preset [m^3/s] UNDER CONSTRUCTION "~isnan" unneccessary
+%% Calculate V_dot_n_ij_preset [m^3/s]
 GN = get_V_dot_n_ij_preset(GN);
 
 %% Remove ...
-% Remove branches that are out of service and unsupplied busses
-GN = remove_unsupplied_areas(GN);
+% ... branches that are out of service
+GN = remove_branches_out_of_service(GN);
 
-% Remove valves
+% ... unsupplied busses
+GN = remove_unsupplied_busses(GN);
+
+% ... valves
 GN = remove_valves(GN);
 
 %% Reset CONVERGENCE
@@ -44,33 +49,13 @@ if isfield(GN,'CONVERGENCE')
     GN = rmfield(GN,'CONVERGENCE');
 end
 
-%% Initialize V_dot_n_ij
-if ~any(ismember(GN.branch.Properties.VariableNames,'V_dot_n_ij'))
-    GN.branch.V_dot_n_ij(~GN.branch.active_branch) = zeros(sum(~GN.branch.active_branch),1);
-end
-
 %% Update of the slack bus: flow rate balance to(+)/from(-) the slack bus
 GN = get_V_dot_n_slack(GN, 'GN', NUMPARAM);
-if abs(sum(GN.bus.V_dot_n_i)) > NUMPARAM.numericalTolerance
-    warning('Entries and exits are not balanced. V_dot_n_ij of the slack busses have been updated.')
-end
-if any(GN.bus.V_dot_n_i(GN.bus.slack_bus) ~= 0)
-    GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) = ...
-        GN.bus.V_dot_n_i(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0) ...
-        - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus & GN.bus.V_dot_n_i ~= 0);
-else
-    GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
-        GN.bus.V_dot_n_i(GN.bus.slack_bus) ...
-        - sum(GN.bus.V_dot_n_i)/sum(GN.bus.slack_bus);
-end
 
 %% Update GN.bus.source_bus
-if GN.isothermal == 0
-    if GN.bus.V_dot_n_i(GN.bus.slack_bus) < 0
-        GN.bus.source_bus(GN.bus.slack_bus) = true;
-    else
-        GN.bus.source_bus(GN.bus.slack_bus) = false;
-    end
+if ~GN.isothermal
+    GN.bus.source_bus(GN.bus.V_dot_n_i <  0) = true;
+    GN.bus.source_bus(GN.bus.V_dot_n_i >= 0) = false;
 end
 
 %% Initialize pressure and temperature

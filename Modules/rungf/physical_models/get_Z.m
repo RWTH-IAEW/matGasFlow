@@ -42,7 +42,7 @@ if PHYMOD.Z == 1
     end
     
     % non-isothermal
-    if GN.isothermal == 0
+    if ~GN.isothermal
         % source bus
         GN.bus.Z_i_source(GN.bus.source_bus) = ...
             get_Z_VanDerWaals( GN.bus.p_i(GN.bus.source_bus), GN.bus.T_i_source(GN.bus.source_bus), a, b);
@@ -53,19 +53,21 @@ if PHYMOD.Z == 1
         i_bus_out = iT;
         i_bus_out(GN.bus.p_i(iF) < GN.bus.p_i(iT)) = iF(GN.bus.p_i(iF) < GN.bus.p_i(iT));
         p_ij_out = GN.bus.p_i(i_bus_out);
-        try
+        if ismember('T_ij_out', GN.branch.Properties.VariableNames)
             T_ij_out = GN.branch.T_ij_out;
-        catch
+        else
             T_ij_out = GN.bus.T_i(i_bus_out);
         end
         GN.branch.Z_ij_out = get_Z_VanDerWaals(p_ij_out, T_ij_out, a, b);
     end
 else
-    try
-        GN = get_Z_addOn(GN, PHYMOD);
-    catch
+    path = which('get_Z_addOn.m');
+    if isempty(path)
         error('Option not available, choose PHYMOD.Z = 1')
     end
+    GN = get_Z_addOn(GN, PHYMOD);
+
 end
+
 end
 

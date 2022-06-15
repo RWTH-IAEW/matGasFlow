@@ -71,8 +71,7 @@ GN.gasMixProp = get_gasMixProp(GN.gasMixAndCompoProp);
 
 %% Check the need of a calorific value
 if GN.gasMixProp.H_s_n_avg <= 0 && ...
-        ( any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames)) || ...
-        any(strcmp('P_th_i__MW',GN.bus.Properties.VariableNames)))
+        (ismember('P_th_i__MW',GN.bus.Properties.VariableNames) || ismember('P_th_i__MW',GN.bus.Properties.VariableNames))
     error('The gas mixture needs a caloric value.')
 end
 

@@ -18,20 +18,13 @@ GN = get_V_dot_n_ij_pipe(GN, NUMPARAM);
 %% V_dot_n_i demand of compressors
 GN = get_V_dot_n_i_comp(GN, PHYMOD);
 
-%% V_dot_n_i demand of prs UNDER CONSTRUCTION --> Merge branch von Marie
-% GN = get_V_dot_n_i_prs(GN, PHYMOD);
+%% V_dot_n_i demand of prs heater
+GN = get_V_dot_n_i_prs(GN);
 
-%% Update slack bus and slack branch to get f(at bus) = 0
-% f(p_i,T_i) = SUM(V_dot_n_ij) + V_dot_n_i
-GN.branch.V_dot_n_ij(isnan(GN.branch.V_dot_n_ij)) = 0;
-GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+%% Update slack bus and slack branch - UNDER CONSTRUCTION
+GN = get_V_dot_n_slack(GN, 'bus', NUMPARAM);
 
-GN.bus.V_dot_n_i(GN.bus.slack_bus) = ...
-    GN.bus.V_dot_n_i(GN.bus.slack_bus) - GN.bus.f(GN.bus.slack_bus);
-
-GN.branch.V_dot_n_ij(GN.branch.slack_branch) = ...
-    GN.branch.V_dot_n_ij(GN.branch.slack_branch) + GN.bus.f(GN.branch.i_to_bus(GN.branch.slack_branch));
-
+%% Calculate f
 GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
 
 end

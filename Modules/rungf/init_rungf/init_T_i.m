@@ -12,22 +12,14 @@ function [GN] = init_T_i(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Initialize T_i
-if ~any(strcmp('T_i',GN.bus.Properties.VariableNames))
-    GN.bus.T_i = NaN(size(GN.bus,1),1);
+if ~ismember('T_i',GN.bus.Properties.VariableNames)
+    GN.bus.T_i(:) = GN.T_env;
 end
 
-%% Loop - UNDER CONSTRUCTION: avoid loop
-while any(isnan(GN.bus.T_i)) 
-    if GN.isothermal == 0
-        T_i_set           = GN.bus.T_i(~isnan(GN.bus.T_i));
-        areas_T_bus         = GN.bus.area_ID(~isnan(GN.bus.T_i));
-        [~,area_idx]        = ismember(GN.bus.area_ID,areas_T_bus);
-        GN.bus.T_i(area_idx~=0)    = T_i_set(area_idx(area_idx~=0));
-        GN.bus.T_i(area_idx==0)    = GN.T_env;
-        
-    elseif GN.isothermal == 1
-        GN.bus.T_i(:) = GN.T_env;
-        
-    end
+GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
+
+if ~GN.isothermal
+	GN.bus.T_i(~isnan(GN.bus.T_i_source)) = GN.bus.T_i_source(~isnan(GN.bus.T_i_source));
 end
+
 end

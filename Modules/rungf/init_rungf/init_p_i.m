@@ -28,7 +28,7 @@ end
 
 % Check output
 if any(isnan(GN.bus.p_i) | isinf(GN.bus.p_i) | GN.bus.p_i < 0)
-    error(['Missing or invalid pressure values in theses areas: ', num2str(find(isnan(GN.bus.p_i) | isinf(GN.bus.p_i) | GN.bus.p_i < 0))'])
+    warning(['Missing or invalid pressure values in theses areas: ', num2str(find(isnan(GN.bus.p_i) | isinf(GN.bus.p_i) | GN.bus.p_i < 0)')])
 end
 
 end

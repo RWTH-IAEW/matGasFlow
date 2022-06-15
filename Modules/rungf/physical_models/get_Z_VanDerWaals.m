@@ -27,7 +27,7 @@ B = -(b + R_m .* T ./ p);           % [m^3/mol]
 C = a ./ p;                         % [m^6/mol^2]
 D = -a .* b ./ p;                   % [m^9/mol^3]
 
-V_m = solve_cubic_equation(B,C,D);    % [m^3/mol]
+V_m = solve_cubic_equation(B,C,D);  % [m^3/mol]
 
 Z = p .* V_m ./ (R_m .* T);         % [-]
 
