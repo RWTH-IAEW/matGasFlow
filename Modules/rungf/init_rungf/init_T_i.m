@@ -14,9 +14,9 @@ function [GN] = init_T_i(GN)
 %% Initialize T_i
 if ~ismember('T_i',GN.bus.Properties.VariableNames)
     GN.bus.T_i(:) = GN.T_env;
+elseif any(isnan(GN.bus.T_i))
+    GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
 end
-
-GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
 
 if ~GN.isothermal
 	GN.bus.T_i(~isnan(GN.bus.T_i_source)) = GN.bus.T_i_source(~isnan(GN.bus.T_i_source));

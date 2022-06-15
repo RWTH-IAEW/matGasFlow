@@ -28,7 +28,7 @@ while 1
     GN = get_V_dot_n_i_comp(GN, PHYMOD);
     
     % V_dot_n_i demand of prs heater
-    GN = get_V_dot_n_i_prs(GN);
+    % GN = get_V_dot_n_i_prs(GN);
     
     % Update of the slack bus: flow rate balance to(+)/from(-) the slack bus
     GN = get_V_dot_n_slack(GN, 'GN', NUMPARAM);
