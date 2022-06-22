@@ -19,7 +19,10 @@ GN = get_V_dot_n_ij_pipe(GN, NUMPARAM);
 GN = get_V_dot_n_i_comp(GN, PHYMOD);
 
 %% V_dot_n_i demand of prs heater
-GN = get_V_dot_n_i_prs(GN);
+path = which('get_V_dot_n_i_prs.m');
+if ~isempty(path)
+    GN = get_V_dot_n_i_prs(GN);
+end
 
 %% Update slack bus and slack branch - UNDER CONSTRUCTION
 GN = get_V_dot_n_slack(GN, 'bus', NUMPARAM);
