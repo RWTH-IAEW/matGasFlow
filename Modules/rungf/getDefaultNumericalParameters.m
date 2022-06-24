@@ -16,7 +16,7 @@ function [NUMPARAM] = getDefaultNumericalParameters()
 
 %% A C C U R A C Y
 % Maximum number of while loop iterations
-NUMPARAM.maxIter            = 50;
+NUMPARAM.maxIter            = 100;
 NUMPARAM.epsilon_NR_f       = 1e-3;         % Numerical convergence criteria for the pressure iterations
 NUMPARAM.epsilon_lambda     = 1e-3;         % Calculation accuracy of lambda
 NUMPARAM.numericalTolerance = 1e-12;
@@ -38,8 +38,8 @@ NUMPARAM.epsilon_V_dot_n_ij_loop = 1e-3;    %
 % Newton Raphson Parampeters
 NUMPARAM.dp_NR = 1e-6;                      % pressure disturbance dp to build up the Jacobian Matrix for the NR method
 NUMPARAM.OPTION_NR_damping = true;          % true/false
-NUMPARAM.omega_NR_min = 1e-1;               % minimal damping parameter: must be 0 < omega_NR_min <= 1
-NUMPARAM.omega_adaption_NR = 0.5;           % Reduction speed of omega. Default: 0.5
+NUMPARAM.omega_NR_min = 1e-3;               % minimal damping parameter: must be 0 < omega_NR_min <= 1
+NUMPARAM.omega_adaption_NR = 0.618;         % Reduction speed of omega.
 NUMPARAM.OPTION_get_J_iter = 1;             % Every xth repetition Jacobian Matrix is calculated. speedup_NR_iter >= 1
 NUMPARAM.OPTION_update_p_i_dependent_quantities_iter = 1; % update p_i dependent quantities every i iterations
 

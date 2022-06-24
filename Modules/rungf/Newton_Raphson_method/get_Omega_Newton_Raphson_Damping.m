@@ -33,7 +33,8 @@ while 1
     end
     
     %% Adjust omega
-    Omega = NUMPARAM.omega_adaption_NR * Omega;
+%     Omega = NUMPARAM.omega_adaption_NR * Omega;
+    Omega = rand(1) * Omega;
     
     if Omega < NUMPARAM.omega_NR_min
         % warning(['Newton-Raphson: The damping parameter has been reduced to omega = ',num2str(Omega)])

@@ -113,10 +113,10 @@ else
 end
 
 %% V_dot_n_i demand at compressor inputs
-if isfield(GN,'comp') && NUMPARAM.OPTION_get_J_dV_i_comp_dp
+if isfield(GN,'comp') && any(GN.comp.gas_powered) && NUMPARAM.OPTION_get_J_dV_i_comp_dp
     % Indices
-    iF_comp = GN.branch.i_from_bus(GN.branch.comp_branch);
-    iT_comp = GN.branch.i_to_bus(GN.branch.comp_branch);
+    iF_comp = GN.branch.i_from_bus(GN.branch.comp_branch & GN.comp.gas_powered);
+    iT_comp = GN.branch.i_to_bus(GN.branch.comp_branch & GN.comp.gas_powered);
 
     % Quantities
     p_i = GN.bus.p_i(iF_comp);
