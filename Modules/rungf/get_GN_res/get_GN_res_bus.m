@@ -20,15 +20,9 @@ function GN = get_GN_res_bus(GN)
 CONST = getConstants();
 
 %% p_i__barg
-if ismember('p_i', GN.bus.Properties.VariableNames) % UNDER CONSTRUCTION
-    GN.bus.p_i__barg = (GN.bus.p_i - CONST.p_n)*1e-5;
-elseif ismember('p_i__barg', GN.bus.Properties.VariableNames)
-    GN.bus.p_i = GN.bus.p_i__barg * 1e5 + CONST.p_n;
-else
-    error('Something went wrong: p_i and p_i__barg values are missing.')
-end
+GN.bus.p_i__barg = (GN.bus.p_i - CONST.p_n)*1e-5;
 
-%% check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max
+%% check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max  % UNDER CONSTRUCTION
 % if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
 %     if any(GN.bus.p_i__barg < GN.bus.p_i_min__barg)
 %         bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg < GN.bus.p_i_min__barg);
@@ -39,7 +33,7 @@ end
 %     if any(GN.bus.p_i__barg > GN.bus.p_i_max__barg)
 %         bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg > GN.bus.p_i_max__barg);
 %         warning(['Too high pressure at these nodes, bus_ID:
-%             ',num2str(bus_ID')]) % UNDER CONSTRUCTION
+%             ',num2str(bus_ID')])
 %     end
 % end
 

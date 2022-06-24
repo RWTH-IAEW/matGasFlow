@@ -16,10 +16,12 @@ function GN = get_GN_res_valve(GN)
 % GN = get_p_T_valve(GN);
 GN = get_V_dot_n_ij_valves(GN);
 
-%% Apply results from branch to pipe
-i_valve = GN.branch.i_valve(GN.branch.valve_branch);
-GN.valve.V_dot_n_ij(i_valve) = ...
-    GN.branch.V_dot_n_ij(GN.branch.valve_branch);
+%% Apply results from branch to valve
+% V_dot_n_ij
+GN.valve.V_dot_n_ij = GN.branch.V_dot_n_ij(GN.valve.i_branch);
+
+% Delta p
+GN.valve.delta_p_ij__bar = GN.branch.delta_p_ij__bar(GN.valve.i_branch);
 
 %% Calculate additional results
 % Calculate P_th_ij__MW, P_th_ij, V_dot_n_ij__m3_per_day, V_dot_n_ij__m3_per_h or m_dot_ij__kg_per_s

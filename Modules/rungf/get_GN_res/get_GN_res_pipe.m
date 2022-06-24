@@ -16,9 +16,7 @@ CONST = getConstants();
 
 %% Apply results from branch to pipe
 % V_dot_n_ij
-i_pipe = GN.branch.i_pipe(GN.branch.pipe_branch);
-GN.pipe.V_dot_n_ij(i_pipe) = ...
-    GN.branch.V_dot_n_ij(GN.branch.pipe_branch);
+GN.pipe.V_dot_n_ij = GN.branch.V_dot_n_ij(GN.pipe.i_branch);
 
 % Delta p
 GN.pipe.delta_p_ij__bar = GN.branch.delta_p_ij__bar(GN.pipe.i_branch);
@@ -52,5 +50,6 @@ elseif ismember('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames)
     GN.pipe.m_dot_ij__kg_per_s      = GN.pipe.V_dot_n_ij * GN.gasMixProp.rho_n_avg;
     %         GN.pipe.V_dot_n_ij = [];
 end
+
 end
 

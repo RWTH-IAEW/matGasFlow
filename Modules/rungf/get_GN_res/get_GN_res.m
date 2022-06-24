@@ -12,20 +12,17 @@ function [GN] = get_GN_res(GN, GN_input, flag_remove_auxiliary_variables, NUMPAR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Set default input arguments
-if nargin < 5
+if nargin < 5 || isempty(PHYMOD)
     PHYMOD = getDefaultPhysicalModels();
-
-    if nargin < 4
-        NUMPARAM = getDefaultNumericalParameters();
-
-        if nargin < 3
-            flag_remove_auxiliary_variables = false;
-            
-            if nargin < 2
-                GN_input = GN;
-            end
-        end
-    end
+end
+if nargin < 4 || isempty(NUMPARAM)
+    NUMPARAM = getDefaultNumericalParameters();
+end
+if nargin < 3 || isempty(flag_remove_auxiliary_variables)
+    flag_remove_auxiliary_variables = false;
+end
+if nargin < 2
+    GN_input = [];
 end
 
 %% GN plausibility check
@@ -34,12 +31,17 @@ if ~ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
 end
 
 %% Merge GN into GN_input
-GN = merge_GN_into_GN_input(GN, GN_input);
+if ~isempty(GN_input)
+    GN = merge_GN_into_GN_input(GN, GN_input);
+end
 
-%% Get GN results
-% 1) Apply results from branch to pipe, comp, prs and valve
-% 2) Calculate additional results
-% 3) Check results
+%%
+if ~ismember('p_i', GN.bus.Properties.VariableNames)
+    GN.bus.p_i = GN.bus.p_i__barg * 1e5 + CONST.p_n;
+end
+if isfield(GN, 'pipe') && ~ismember('p_ij', GN.pipe.Properties.VariableNames)
+    GN = get_p_ij(GN);
+end
 
 %% bus
 GN = get_GN_res_bus(GN);

@@ -13,9 +13,7 @@ function GN = get_GN_res_prs(GN, NUMPARAM, PHYMOD)
 
 %% Apply results from branch to prs
 % V_dot_n_ij
-i_prs = GN.branch.i_prs(GN.branch.prs_branch);
-GN.prs.V_dot_n_ij(i_prs) = ...
-    GN.branch.V_dot_n_ij(GN.branch.prs_branch);
+GN.prs.V_dot_n_ij = GN.branch.V_dot_n_ij(GN.prs.i_branch);
 
 % Delta p
 GN.prs.delta_p_ij__bar  = GN.branch.delta_p_ij__bar(GN.prs.i_branch);
@@ -83,24 +81,35 @@ end
 
 %% Check results
 % Direction of V_dot_n_ij
-prs_ID = GN.prs.prs_ID(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance);
+prs_ID = GN.prs.prs_ID(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.prs.in_service);
 if ~isempty(prs_ID)
-    warning(['The volume flows at these pressure gegulator stations have the wrong direction, prs_ID: ',num2str(prs_ID')])
+    n_prs_wrong_direction = length(prs_ID);
+    n_prs = sum(GN.prs.in_service);
+    r_prs = n_prs_wrong_direction/n_prs;
+    max_pressure_increase = max(GN.prs.V_dot_n_ij(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.prs.in_service));
+    min_pressure_increase = min(GN.prs.V_dot_n_ij(GN.prs.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.prs.in_service));
+    disp([num2str(n_prs_wrong_direction),...
+        ' of ',num2str(n_prs),...
+        ' (',num2str(r_prs),...
+        ' %) prs beeing in service have the wrong direction. Range: ',num2str(max_pressure_increase),...
+        ' m^3/s ... ',num2str(min_pressure_increase), ...
+        ' m^3/s.'])
 end
 
 % Compare input and output pressure
-i_from_bus  = GN.branch.i_from_bus(GN.branch.prs_branch);
-i_to_bus    = GN.branch.i_to_bus(GN.branch.prs_branch);
-p_i         = GN.bus.p_i(i_from_bus);
-p_j         = GN.bus.p_i(i_to_bus);
-delta_p     = p_i - p_j;
-prs_ID      = GN.prs.prs_ID(delta_p < -NUMPARAM.numericalTolerance & GN.prs.in_service);
+prs_ID = GN.prs.prs_ID(GN.prs.delta_p_ij__bar < -NUMPARAM.numericalTolerance & GN.prs.in_service);
 if ~isempty(prs_ID)
-    if length(prs_ID)/sum(GN.branch.prs_branch & GN.branch.in_service) < 0.02
-        warning(['Output pressure is smaler than input pressure at these prs_IDs: ',num2str(prs_ID')])
-    else
-        warning(['At ',num2str(length(prs_ID)),' of ',num2str(sum(GN.branch.prs_branch & GN.branch.in_service)),' prs, output pressure is smaler than input pressure.'])
-    end
+    n_prs_pressure_increase = length(prs_ID);
+    n_prs = sum(GN.prs.in_service);
+    r_prs = n_prs_pressure_increase/n_prs;
+    max_pressure_increase = max(GN.prs.delta_p_ij__bar(GN.prs.delta_p_ij__bar < -NUMPARAM.numericalTolerance & GN.prs.in_service));
+    min_pressure_increase = min(GN.prs.delta_p_ij__bar(GN.prs.delta_p_ij__bar < -NUMPARAM.numericalTolerance & GN.prs.in_service));
+    disp([num2str(n_prs_pressure_increase),...
+        ' of ',num2str(n_prs),...
+        ' (',num2str(r_prs),...
+        ' %) prs beeing in service have a higher output than input pressure. Range: ',num2str(min_pressure_increase),...
+        ' bar ... ',num2str(max_pressure_increase), ...
+        ' bar.'])
 end
 
 end

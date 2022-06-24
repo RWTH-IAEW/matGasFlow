@@ -16,9 +16,7 @@ CONST = getConstants();
 
 %% Apply results from branch to comp
 % V_dot_n_ij
-i_comp = GN.branch.i_comp(GN.branch.comp_branch);
-GN.comp.V_dot_n_ij(i_comp) = ...
-    GN.branch.V_dot_n_ij(GN.branch.comp_branch);
+GN.comp.V_dot_n_ij = GN.branch.V_dot_n_ij(GN.comp.i_branch);
 
 % Delta p
 GN.comp.delta_p_ij__bar = GN.branch.delta_p_ij__bar(GN.comp.i_branch);
@@ -92,20 +90,35 @@ end
 
 %% Check results
 % Direction of V_dot_n_ij
-comp_ID = GN.comp.comp_ID(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance);
+comp_ID = GN.comp.comp_ID(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.comp.in_service);
 if ~isempty(comp_ID)
-    warning(['The volume flows at these compressors have the wrong direction, comp_ID: ',num2str(comp_ID')])
+    n_comp_wrong_direction = length(comp_ID);
+    n_comp = sum(GN.comp.in_service);
+    r_comp = n_comp_wrong_direction/n_comp;
+    max_pressure_increase = max(GN.comp.V_dot_n_ij(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.comp.in_service));
+    min_pressure_increase = min(GN.comp.V_dot_n_ij(GN.comp.V_dot_n_ij < -NUMPARAM.numericalTolerance & GN.comp.in_service));
+    disp([num2str(n_comp_wrong_direction),...
+        ' of ',num2str(n_comp),...
+        ' (',num2str(r_comp),...
+        ' %) compressors beeing in service have the wrong direction. Range: ',num2str(max_pressure_increase),...
+        ' m^3/s ... ',num2str(min_pressure_increase), ...
+        ' m^3/s.'])
 end
 
 % Compare input and output pressure
-i_from_bus  = GN.branch.i_from_bus(GN.branch.comp_branch);
-i_to_bus    = GN.branch.i_to_bus(GN.branch.comp_branch);
-p_i         = GN.bus.p_i(i_from_bus);
-p_j         = GN.bus.p_i(i_to_bus);
-delta_p     = p_i - p_j;
-comp_ID     = GN.comp.comp_ID(delta_p > NUMPARAM.numericalTolerance & GN.comp.in_service);
+comp_ID = GN.comp.comp_ID(GN.comp.delta_p_ij__bar > NUMPARAM.numericalTolerance & GN.comp.in_service);
 if ~isempty(comp_ID)
-    warning(['Output pressure is smaler than input pressure at these compressors, comp_ID: ',num2str(comp_ID')])
+    n_comp_pressure_increase = length(comp_ID);
+    n_comp = sum(GN.comp.in_service);
+    r_comp = n_comp_pressure_increase/n_comp;
+    max_pressure_increase = max(GN.comp.delta_p_ij__bar(GN.comp.delta_p_ij__bar > NUMPARAM.numericalTolerance & GN.comp.in_service));
+    min_pressure_increase = min(GN.comp.delta_p_ij__bar(GN.comp.delta_p_ij__bar > NUMPARAM.numericalTolerance & GN.comp.in_service));
+    disp([num2str(n_comp_pressure_increase),...
+        ' of ',num2str(n_comp),...
+        ' (',num2str(r_comp),...
+        ' %) compressors beeing in service have a lower output than input pressure. Range: ',num2str(min_pressure_increase),...
+        ' bar ... ',num2str(max_pressure_increase), ...
+        ' bar.'])
 end
 
 end

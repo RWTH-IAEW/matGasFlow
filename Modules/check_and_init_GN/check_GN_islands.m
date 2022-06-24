@@ -24,7 +24,7 @@ if ...
         (ismember('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames)       && any(GN.bus.m_dot_i__kg_per_s(~GN.bus.supplied) ~= 0)) || ...
         (ismember('V_dot_n_i',GN.bus.Properties.VariableNames)               && any(GN.bus.V_dot_n_i(~GN.bus.supplied) ~= 0))
     
-    error(['GN.bus: bus_ID of unsupplied sinks/sources: ',num2str(GN.bus.bus_ID(~GN.bus.supplied)')])
+    warning(['GN.bus: bus_ID of unsupplied sinks/sources: ',num2str(GN.bus.bus_ID(~GN.bus.supplied)')])
     
 elseif any(~GN.bus.supplied)
     warning(['GN.bus: Unsupplied busses (bus_ID): ',num2str(GN.bus.bus_ID(~GN.bus.supplied)')])
