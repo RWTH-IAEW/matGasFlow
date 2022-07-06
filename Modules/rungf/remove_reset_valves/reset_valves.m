@@ -46,7 +46,7 @@ disp('...')
 [GN] = get_p_T_valve(GN);
 
 % %% INC
-% GN.INC = GN_input.INC;
+% GN.MAT.INC = GN_input.MAT.INC;
 % 
 % %% MAT
 % GN.MAT = GN_input.MAT;

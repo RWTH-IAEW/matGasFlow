@@ -22,11 +22,6 @@ p_i     = GN.bus.p_i;
 T_i     = GN.bus.T_i;
 V_m_i   = GN.bus.Z_i .* R_m .* T_i ./ p_i;
 
-%% UNDER CONSTRUCTION
-if PHYMOD.c_p == 11
-    PHYMOD.kappa = 10;
-end
-
 %% Isentropic exponent kappa_i - Physical Models
 if PHYMOD.kappa == 1 || PHYMOD.kappa == 2
     %% Heat capacity
@@ -56,7 +51,8 @@ if PHYMOD.kappa == 1 || PHYMOD.kappa == 2
         % Isentropic exponent
         GN.bus.kappa_i          = GN.bus.c_p_i./c_v_i;
     else
-        % UNDER CONSTRUCTION Größenordnung passt nicht!
+        % UNDER CONSTRUCTION Größenordnung passt nicht! @MB Ist das immer
+        % noch der Fall?
         % Isothermal exponent
         isothermalExponent_i    = -V_m_i ./ p_i .* (-R_m.*T_i./(V_m_i-b).^2 + 2.*a./V_m_i.^3);
         

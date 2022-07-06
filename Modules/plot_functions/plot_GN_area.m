@@ -1,4 +1,4 @@
-function plot_GN_area(GN, area_IDs, print_bus_ID, show_prs, show_comp, show_valves, color_p_i)
+function h = plot_GN_area(GN, h, area_IDs, print_bus_ID, show_prs, show_comp, show_valves, color_p_i)
 %PLOT_GN_AREA Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -10,23 +10,27 @@ function plot_GN_area(GN, area_IDs, print_bus_ID, show_prs, show_comp, show_valv
 %   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin < 7
+if nargin < 8
     color_p_i = true;
     
-    if nargin < 6
+    if nargin < 7
         show_valves = true;
         
-        if nargin < 5
+        if nargin < 6
             show_prs = true;
             
-            if nargin < 4
+            if nargin < 5
                 show_comp = true;
                 
-                if nargin < 3
+                if nargin < 4
                     print_bus_ID = false;
                     
-                    if nargin < 2
+                    if nargin < 3
                         area_IDs = unique(GN.bus.area_ID);
+                        
+                        if nargin < 2
+                            h = [];
+                        end
                     end
                 end
             end
@@ -59,7 +63,7 @@ if ~isfield(GN, 'branch')
     GN = check_and_init_GN(GN);
 end
 
-figure
+h = figure(h);
 hold on
 x = [GN.bus.x_coord(GN.branch.i_from_bus)'; GN.bus.x_coord(GN.branch.i_to_bus)'];
 y = [GN.bus.y_coord(GN.branch.i_from_bus)'; GN.bus.y_coord(GN.branch.i_to_bus)'];

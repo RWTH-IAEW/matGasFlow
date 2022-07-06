@@ -40,8 +40,6 @@ GN_temp.bus(~GN_temp.bus.supplied,:) = [];
 g = graph(i_from_bus,i_to_bus);
 islands = conncomp(g);
 if any(islands ~= 1)
-    %     figure % UNDER CONSTUCTION
-    %     plot(g)
     error(['The gas network is seperated in ',num2str(max(islands)),' gas networks. The gas network must be a connected graph.'])
 end
 end

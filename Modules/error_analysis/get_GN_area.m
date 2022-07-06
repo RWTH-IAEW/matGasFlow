@@ -21,10 +21,10 @@ GN = rmfield(GN,'time_series');
 %% Update V_dot_n_i
 if ismember('V_dot_n_ij_preset',GN.branch.Properties.VariableNames)
     % Apply V_dot_n_ij
-    GN.bus.f = GN.INC * GN.branch.V_dot_n_ij_preset(GN.branch.in_service) + GN.bus.V_dot_n_i; % UNDER CONSTRUCTION --> GN.INC muss immer alle branches abdecken! get_INC anpassen und in init_rungf anpassen
+    GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij_preset(GN.branch.in_service) + GN.bus.V_dot_n_i;
 elseif ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
     % Apply V_dot_n_ij_preset
-    GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+    GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
 else
     GN.bus.f = GN.bus.V_dot_n_i;
 end

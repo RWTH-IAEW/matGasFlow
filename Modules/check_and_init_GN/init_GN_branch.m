@@ -17,12 +17,14 @@ function [GN] = init_GN_branch(GN)
 GN.branch = table([]);
 if isfield(GN,'pipe')
     max_branch_ID = get_max_branch_ID(GN);
-    if ~ismember('branch_ID', GN.pipe.Properties.VariableNames)
-        GN.pipe.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.pipe,1))';
-    elseif any(isnan(GN.pipe.branch_ID))
+    if ismember('branch_ID', GN.pipe.Properties.VariableNames) && any(isnan(GN.pipe.branch_ID))
         i_nan = isnan(GN.pipe.branch_ID);
         GN.pipe.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
     end
+    if ~ismember('branch_ID', GN.pipe.Properties.VariableNames) || length(unique(GN.pipe.branch_ID)) ~= length(GN.pipe.branch_ID)
+        GN.pipe.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.pipe,1))';
+    end
+        
     GN.pipe = movevars(GN.pipe,'branch_ID','After','pipe_ID');
     GN.pipe = movevars(GN.pipe,'from_bus_ID','After','branch_ID');
     GN.pipe = movevars(GN.pipe,'to_bus_ID','After','from_bus_ID');
@@ -55,17 +57,16 @@ end
 
 if isfield(GN,'comp')
     max_branch_ID = get_max_branch_ID(GN);
-    
-    if ~ismember('branch_ID', GN.comp.Properties.VariableNames)
+    if ismember('branch_ID', GN.comp.Properties.VariableNames) && any(isnan(GN.comp.branch_ID))
+        i_nan = isnan(GN.comp.branch_ID);
+        GN.comp.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
+    end
+    if ~ismember('branch_ID', GN.comp.Properties.VariableNames) || length(unique(GN.comp.branch_ID)) ~= length(GN.comp.branch_ID)
         GN.comp.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.comp,1))';
-    elseif ismember('branch_ID', GN.comp.Properties.VariableNames)
-        if ismember('branch_ID', GN.branch.Properties.VariableNames) && any(ismember(GN.comp.branch_ID, GN.branch.branch_ID))
-            warning('GN.comp: Some branch_IDs already exist. GN.comp.branch_ID is initialized again.')
-            GN.comp.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.comp,1))';
-        elseif any(isnan(GN.comp.branch_ID))
-            i_nan = isnan(GN.comp.branch_ID);
-            GN.comp.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
-        end
+    end
+    if ismember('branch_ID', GN.branch.Properties.VariableNames) && any(ismember(GN.comp.branch_ID, GN.branch.branch_ID))
+        warning('GN.comp: Some branch_IDs already exist. GN.comp.branch_ID is reinitialized.')
+        GN.comp.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.comp,1))';
     end
     
     GN.comp = movevars(GN.comp,'branch_ID','After','comp_ID');
@@ -104,17 +105,16 @@ end
 
 if isfield(GN,'prs')
     max_branch_ID = get_max_branch_ID(GN);
-    
-    if ~ismember('branch_ID', GN.prs.Properties.VariableNames)
+    if ismember('branch_ID', GN.prs.Properties.VariableNames) && any(isnan(GN.prs.branch_ID))
+        i_nan = isnan(GN.prs.branch_ID);
+        GN.prs.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
+    end
+    if ~ismember('branch_ID', GN.prs.Properties.VariableNames) || length(unique(GN.prs.branch_ID)) ~= length(GN.prs.branch_ID)
         GN.prs.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.prs,1))';
-    elseif ismember('branch_ID', GN.prs.Properties.VariableNames)
-        if ismember('branch_ID', GN.branch.Properties.VariableNames) && any(ismember(GN.prs.branch_ID, GN.branch.branch_ID))
-            warning('GN.prs: Some branch_IDs already exist. GN.prs.branch_ID is initialized again.')
-            GN.prs.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.prs,1))';
-        elseif any(isnan(GN.prs.branch_ID))
-            i_nan = isnan(GN.prs.branch_ID);
-            GN.prs.branch_ID(i_nan) = (max_branch_ID+1 : max_branch_ID+sum(i_nan))';
-        end
+    end
+    if ismember('branch_ID', GN.branch.Properties.VariableNames) && any(ismember(GN.prs.branch_ID, GN.branch.branch_ID))
+        warning('GN.prs: Some branch_IDs already exist. GN.prs.branch_ID is reinitialized.')
+        GN.prs.branch_ID = (max_branch_ID+1 : max_branch_ID+size(GN.prs,1))';
     end
     
     GN.prs = movevars(GN.prs,'branch_ID','After','prs_ID');
@@ -180,33 +180,27 @@ if isfield(GN,'valve')
 end
 
 %% Initialize preset
-if ~ismember(GN.branch.Properties.VariableNames, 'preset')
-    GN.branch.preset(:) = false;
-end
+GN.branch.preset(:) = false;
 
 %% Set NaN preset values to zero
 if any(ismember(GN.branch.Properties.VariableNames,'P_th_ij_preset__MW'))
-    GN.branch.P_th_ij_preset__MW(isnan(GN.branch.P_th_ij_preset__MW)) = 0;
+    GN.branch.preset(~isnan(GN.branch.P_th_ij_preset__MW))              = true;
+    
 elseif any(ismember(GN.branch.Properties.VariableNames,'P_th_ij_preset'))
-    GN.branch.P_th_ij_preset(isnan(GN.branch.P_th_ij_preset)) = 0;
+    GN.branch.preset(~isnan(GN.branch.P_th_ij_preset))                  = true;
+    
 elseif any(ismember(GN.branch.Properties.VariableNames,'V_dot_n_ij_preset__m3_per_day'))
-    GN.branch.V_dot_n_ij_preset__m3_per_day(isnan(GN.branch.V_dot_n_ij_preset__m3_per_day)) = 0;
+    GN.branch.preset(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_day))   = true;
+    
 elseif any(ismember(GN.branch.Properties.VariableNames,'V_dot_n_ij_preset__m3_per_h'))
-    GN.branch.V_dot_n_ij_preset__m3_per_h(isnan(GN.branch.V_dot_n_ij_preset__m3_per_h)) = 0;
+    GN.branch.preset(~isnan(GN.branch.V_dot_n_ij_preset__m3_per_h))     = true;
+    
 elseif any(ismember(GN.branch.Properties.VariableNames,'m_dot_ij_preset__kg_per_s'))
-    GN.branch.m_dot_ij_preset__kg_per_s(isnan(GN.branch.m_dot_ij_preset__kg_per_s)) = 0;
+    GN.branch.preset(~isnan(GN.branch.m_dot_ij_preset__kg_per_s))       = true;
+    
 elseif any(ismember(GN.branch.Properties.VariableNames,'V_dot_n_ij_preset'))
-%     if isfield(GN,'pipe')
-%         GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.pipe_ID)) = NaN;
-%     end
-%     if isfield(GN,'valve')
-%         GN.branch.V_dot_n_ij_preset(~isnan(GN.branch.valve_ID)) = NaN;
-%     end
-    % GN.branch.V_dot_n_ij_preset(isnan(GN.branch.V_dot_n_ij_preset)) = 0;
-    GN.branch.preset(~isnan(GN.branch.V_dot_n_ij_preset))   = true;
-    GN.branch.preset(isnan(GN.branch.V_dot_n_ij_preset))    = false;
-else
-    GN.branch.V_dot_n_ij_preset(:) = NaN;
+    GN.branch.preset(~isnan(GN.branch.V_dot_n_ij_preset))               = true;
+
 end
 
 %% Initialze slack_branch if not existing

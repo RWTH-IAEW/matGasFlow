@@ -49,6 +49,9 @@ for ii = 1:length(i_prs_from_bus)
     GN.bus.p_i_max__barg(i_prs_from_bus(ii))    = max(GN.bus.p_i_max__barg(i_prs_to_bus_temp));
 end
 
+Delta_p_ij_comp = GN.bus.p_i__barg(GN.branch.i_from_bus) - GN.bus.p_i__barg(GN.branch.i_to_bus);
+i_comp_p_drop   = GN.branch.comp_branch & GN.branch.in_service & Delta_p_ij_comp > 0;
+GN.bus.p_i__barg(GN.branch.i_to_bus(i_comp_p_drop)) = GN.bus.p_i__barg(GN.branch.i_from_bus(i_comp_p_drop));
 
 end
 

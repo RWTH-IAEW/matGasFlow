@@ -11,38 +11,45 @@ function [GN, success] = rungf_radial_GN(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% V_dot_n_ij start solution
+GN = init_V_dot_n_ij(GN);
+    
 iter = 0;
 while 1
     iter = iter + 1;
     
-    % Update V_dot_n_ij
-    GN = get_V_dot_n_ij_radialGN(GN);
-    
-    % Calculation of p_i based on general gas flow equation
+    %% Calculation of p_i based on general gas flow equation
     [GN, success] = get_p_i_SLE_loop(GN, NUMPARAM, PHYMOD);
     if ~success
         return
     end
     
+    %% Update V_dot_n_i
     % V_dot_n_i demand of compressors
     GN = get_V_dot_n_i_comp(GN, PHYMOD);
     
     % V_dot_n_i demand of prs heater
-    % GN = get_V_dot_n_i_prs(GN);
+    path = which('get_V_dot_n_i_prs.m');
+    if ~isempty(path)
+        GN = get_V_dot_n_i_prs(GN);
+    end
     
     % Update of the slack bus: flow rate balance to(+)/from(-) the slack bus
     GN = get_V_dot_n_slack(GN, 'GN', NUMPARAM);
     
-    % Calculate f
-    GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+    %% Calculate f
+    GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
     
-    % Check convergence
+    %% Check convergence
     GN = set_convergence(GN, ['$$rungf rad. GN (',num2str(iter),')$$']);
     if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
         break
     elseif iter >= NUMPARAM.maxIter
         error(['rungf: Non-converging while-loop. Number of interation: ',num2str(iter)])
     end
+    
+    %% Update V_dot_n_ij
+    GN = get_V_dot_n_ij_radialGN(GN);
     
 end
 

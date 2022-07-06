@@ -27,14 +27,14 @@ if PHYMOD.eta == 1
     T_n         = CONST.T_n;
     p_ij__bar   = GN.pipe.p_ij*1e-5; % [bar]
     
-    % eta_mix at standard conditions
+    % eta_mix at standard conditions in Pa*s
     eta_mix = ...
         sum( GN.gasMixAndCompoProp.x_mol .* GN.gasMixAndCompoProp.eta_0 .* sqrt(GN.gasMixAndCompoProp.T_c.*GN.gasMixAndCompoProp.M) ) ./ ...
         sum( GN.gasMixAndCompoProp.x_mol .* sqrt(GN.gasMixAndCompoProp.T_c.*GN.gasMixAndCompoProp.M) );
     
     % Temperature dependency
-    C_s = sum( GN.gasMixAndCompoProp.x_mol .* GN.gasMixAndCompoProp.C_s );
-    eta_temp = eta_mix .* ((T_ij-T_n)./ T_n + 1).^(3/2) .* (T_n+C_s) ./ (C_s+T_ij);
+    C_s         = sum( GN.gasMixAndCompoProp.x_mol .* GN.gasMixAndCompoProp.C_s );
+    eta_temp    = eta_mix .* ((T_ij-T_n)./ T_n + 1).^(3/2) .* (T_n+C_s) ./ (C_s+T_ij);
     
     % Pressure dependency
     z_a = 0.91690348 ...

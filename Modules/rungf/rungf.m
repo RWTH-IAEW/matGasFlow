@@ -1,7 +1,7 @@
 function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
 %RUNGF Steady-state gas flow simulation
 %
-%   [GN] = RUNGF(GN, NUMPARAM, PHYMOD)
+%   [GN, success] = RUNGF(GN, NUMPARAM, PHYMOD)
 %   
 %   Input arguments:
 %       GN (necessarry):        gas network struct ...
@@ -11,8 +11,9 @@ function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
 %       PHYMOD (optional):      struct with physical model settings
 %
 %   Output:
-%       GN: gas network struct containing all results
-%       success: rungf is not successful if pressure becomes negative
+%       GN:                     gas network struct containing all results
+%       success:                rungf is not successful if pressure becomes
+%                               negative
 %
 %   Calling syntax options:
 %       GN = rungf(GN);
@@ -38,7 +39,7 @@ if nargin < 3
     end
 end
 
-%% Success
+%% Unitialize success
 success = true;
 
 %% Check GN data type
@@ -48,7 +49,7 @@ if ischar(GN)
     flag_remove_auxiliary_variables = 1;
 end
 
-%% Check for get_T add-on
+%% Check for availability of non-isothermal model
 path = which('get_T.m');
 if isempty(path) && GN.isothermal ~=1
     error('Non-isothermal model not available, choose GN.isothermal = 1')
@@ -69,7 +70,7 @@ else
 end
 
 %% any(GN.branch.connecting_branch)?
-if ~any(GN.branch.connecting_branch) && ~NUMPARAM.OPTION_assume_meshed_GN
+if ~any(GN.branch.connecting_branch & ~GN.branch.active_branch) && ~NUMPARAM.OPTION_assume_meshed_GN
     %% rungf for radial gas network
     [GN, success] = rungf_radial_GN(GN, NUMPARAM, PHYMOD);
     if ~success
@@ -79,20 +80,7 @@ if ~any(GN.branch.connecting_branch) && ~NUMPARAM.OPTION_assume_meshed_GN
     
 else
     %% rungf for meshed gas network
-    % V_dot_n_ij start solution
-    GN = init_V_dot_n_ij(GN);
-    
-    % p_i start solution 
-    [GN, success] = get_p_i(GN, NUMPARAM, PHYMOD);
-    if ~success
-        GN.success = success;
-        return
-    end
-    
-    % Newton Raphson
-    [GN, success] = Newton_Raphson_method(GN, NUMPARAM, PHYMOD);
-    % [GN,success] = Secant_method(GN, NUMPARAM, PHYMOD);
-    % [GN,success] = Levenberg_Marquardt_method(GN, NUMPARAM, PHYMOD);
+    [GN, success] = rungf_meshed_GN(GN, NUMPARAM, PHYMOD);
     if ~success
         GN.success = success;
         return

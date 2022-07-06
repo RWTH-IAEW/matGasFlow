@@ -11,7 +11,7 @@ function [GN] = remove_auxiliary_variables(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fields = {'INC', 'gasMixProp', 'branch', 'J', 'CONVERGENCE'};
+fields = {'MAT', 'gasMixProp', 'branch', 'J', 'CONVERGENCE'};
 idx = isfield(GN, fields);
 GN = rmfield(GN, fields(idx));
 

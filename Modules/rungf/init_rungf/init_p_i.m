@@ -19,11 +19,11 @@ GN.bus.p_i = GN.bus.p_i__barg*1e5 + CONST.p_n;
 
 % Initialize p_i values if missing
 if any(isnan(GN.bus.p_i))
-    area_ID_slack = GN.bus.area_ID(GN.bus.slack_bus);
-    p_area      = GN.bus.p_i(GN.bus.slack_bus);
-    p_area(area_ID_slack)      = p_area;
-    p_i_temp    = p_area(GN.bus.area_ID);
-    GN.bus.p_i(isnan(GN.bus.p_i)) = p_i_temp(isnan(GN.bus.p_i));
+    area_ID_slack                   = GN.bus.area_ID(GN.bus.slack_bus);
+    p_area                          = GN.bus.p_i(GN.bus.slack_bus);
+    p_area(area_ID_slack)           = p_area;
+    p_i_temp                        = p_area(GN.bus.area_ID);
+    GN.bus.p_i(isnan(GN.bus.p_i))   = p_i_temp(isnan(GN.bus.p_i));
 end
 
 % Check output

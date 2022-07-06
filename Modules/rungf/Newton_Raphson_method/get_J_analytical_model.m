@@ -18,15 +18,13 @@ function [GN] = get_J_analytical_model(GN, NUMPARAM, PHYMOD)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Quantities
-p_i = GN.bus.p_i;
 
 %% d(V_dot_n_ij)/dp
 if isfield(GN, 'pipe')
     % Indices
-    iF_pipe = GN.branch.i_from_bus(GN.branch.pipe_branch);
-    iT_pipe = GN.branch.i_to_bus(GN.branch.pipe_branch);
-    is_p_i_greater_than_p_j = p_i(iF_pipe) > p_i(iT_pipe);
+    iF_pipe = GN.branch.i_from_bus(GN.pipe.i_branch);
+    iT_pipe = GN.branch.i_to_bus(GN.pipe.i_branch);
+    is_p_i_greater_than_p_j = GN.bus.p_i(iF_pipe) > GN.bus.p_i(iT_pipe);
     
     iIn = iF_pipe;
     iIn(~is_p_i_greater_than_p_j) = iT_pipe(~is_p_i_greater_than_p_j);
@@ -40,10 +38,10 @@ if isfield(GN, 'pipe')
     % laminar or turbolent
     laminar     = GN.pipe.Re_ij <= 2320;
     turbolent   = GN.pipe.Re_ij > 2320;
-    V_dot_n_ij_pipe = GN.branch.V_dot_n_ij(GN.branch.pipe_branch);
+    V_dot_n_ij_pipe = GN.branch.V_dot_n_ij(GN.pipe.i_branch);
     sign_V_dot_n_ij_pipe = sign(V_dot_n_ij_pipe);
-    sign_V_dot_n_ij_pipe(is_p_i_greater_than_p_j(GN.branch.pipe_branch))  = 1;
-    sign_V_dot_n_ij_pipe(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = -1;
+    sign_V_dot_n_ij_pipe(is_p_i_greater_than_p_j)  = 1;
+    sign_V_dot_n_ij_pipe(~is_p_i_greater_than_p_j) = -1;
     
     d_V_ij_d_p_iIn  = NaN(size(GN.pipe,1),1);
     dV_ij_dp_iOut   = NaN(size(GN.pipe,1),1);
@@ -101,9 +99,9 @@ if isfield(GN, 'pipe')
         
     %% dV_ij_dp_i, dV_ij_dp_j
     dV_ij_dp_i = d_V_ij_d_p_iIn;
-    dV_ij_dp_i(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = dV_ij_dp_iOut(~is_p_i_greater_than_p_j(GN.branch.pipe_branch));
+    dV_ij_dp_i(~is_p_i_greater_than_p_j) = dV_ij_dp_iOut(~is_p_i_greater_than_p_j);
     dV_ij_dp_j = dV_ij_dp_iOut;
-    dV_ij_dp_j(~is_p_i_greater_than_p_j(GN.branch.pipe_branch)) = d_V_ij_d_p_iIn(~is_p_i_greater_than_p_j(GN.branch.pipe_branch));
+    dV_ij_dp_j(~is_p_i_greater_than_p_j) = d_V_ij_d_p_iIn(~is_p_i_greater_than_p_j);
     
 else
     iF_pipe = [];

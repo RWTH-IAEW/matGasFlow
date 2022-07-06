@@ -26,7 +26,7 @@ bus_temp                        = GN_input.bus;
 GN_input.bus(i_row,i_column)    = GN.bus;
 
 % Keep some properties from GN_input.bus % UNDER CONSTRUCTION Bug?!
-if any(GN_input.bus.slack_bus  ~= bus_temp.slack_bus)
+if any(GN_input.bus.slack_bus   ~= bus_temp.slack_bus)
     GN_input.bus.slack_bus      = bus_temp.slack_bus;
 end
 

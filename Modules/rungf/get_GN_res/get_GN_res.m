@@ -37,6 +37,7 @@ end
 
 %%
 if ~ismember('p_i', GN.bus.Properties.VariableNames)
+    CONST = getConstants;
     GN.bus.p_i = GN.bus.p_i__barg * 1e5 + CONST.p_n;
 end
 if isfield(GN, 'pipe') && ~ismember('p_ij', GN.pipe.Properties.VariableNames)

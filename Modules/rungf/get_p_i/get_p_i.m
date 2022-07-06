@@ -1,7 +1,6 @@
 function [GN, success] = get_p_i(GN, NUMPARAM, PHYMOD)
 %GET_P_I Summary of this function goes here
 %   Detailed explanation goes here
-%   UNDER CONSTRUCTION: Description is missing
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,

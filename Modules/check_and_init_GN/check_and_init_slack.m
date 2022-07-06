@@ -38,9 +38,6 @@ if keep_slacks
     % get area_IDs of areas with less or more than one slack_bus
     number_of_slack_busses_in_each_area = GN.MAT.area_bus * GN.bus.slack_bus;
     area_IDs                            = find(number_of_slack_busses_in_each_area ~= 1);
-    % if any(area_IDs) % UNDER CONSTRUCTION
-    %     warning('...')
-    % end
 else
     % choose all areas
     area_IDs = unique(GN.bus.area_ID);

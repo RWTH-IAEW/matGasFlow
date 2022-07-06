@@ -36,7 +36,7 @@ while 1
     
     %% Check convergence
     GN = set_convergence(GN, ['NR (',num2str(iter_1),')']);
-    %     disp({iter_1, norm(GN.bus.f), norm(delta_p), omega}) %- UNDER CONSTRUCTION
+    % disp({iter_1, norm(GN.bus.f), norm(delta_p), omega})
     if norm(GN.bus.f) < NUMPARAM.epsilon_NR_f
         if isfield(GN,'J')
             GN = rmfield(GN,'J');
