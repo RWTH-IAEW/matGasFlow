@@ -1,0 +1,10 @@
+bus_ID;name;p_i__barg;p_i_min__barg;p_i_max__barg;slack_bus;P_th_i__MW;T_i_source;x_coord;y_coord
+1;"Esbjerg";80;0;80;1;-2500;NaN;8.45;55.4666666666667
+2;"Holstebro";80;0;80;0;0;NaN;8.61666666666667;56.35
+3;"Egtved_in";80;0;80;0;0;NaN;9.3;55.6
+4;"Egtved_out";80;0;80;1;0;NaN;9.3;55.5833333333333
+5;"Ellund_in";80;0;80;0;0;NaN;9.3;54.7833333333333
+6;"Ellund_out";80;0;84;1;0;NaN;9.3;54.7666666666667
+7;"Fockbeck";80;0;84;0;0;NaN;9.6;54.3
+8;"Heist";80;0;84;0;0;NaN;9.65;53.65
+9;"Heidenau";80;0;84;0;2500;NaN;9.65;53.3
