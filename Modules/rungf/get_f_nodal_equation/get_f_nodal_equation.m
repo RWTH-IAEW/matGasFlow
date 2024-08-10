@@ -24,11 +24,11 @@ if ~isempty(path)
     GN = get_V_dot_n_i_prs(GN);
 end
 
-%% Update slack bus and slack branch - UNDER CONSTRUCTION
+%% Update slack bus and slack branch
 GN = get_V_dot_n_slack(GN, 'bus', NUMPARAM);
 
 %% Calculate f
-GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
 
 end
 

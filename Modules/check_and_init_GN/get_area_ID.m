@@ -5,9 +5,9 @@ function [bus_area_ID, pipe_area_ID, valve_area_ID, valve_group_ID] = get_area_I
 %   valves form an area with the same area_ID. Areas are seperated by
 %   active branches (comp and prs).
 %   Output variables:
-%       bus_area_ID: area_ID of each bus
-%       pipe_area_ID: area_ID of each pipe
-%       valve_area_ID: area_ID of each valve
+%       bus_area_ID:    area_ID of each bus
+%       pipe_area_ID:   area_ID of each pipe
+%       valve_area_ID:  area_ID of each valve
 %       valve_group_ID: All valves that are connected to each other and are
 %           in service get the same valve_group_ID
 %
@@ -20,7 +20,7 @@ function [bus_area_ID, pipe_area_ID, valve_area_ID, valve_group_ID] = get_area_I
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Bus area ID % UNDER CONSTRUCTION: Anpassung des valve Modells
+%% Bus area ID
 GN_temp = GN;
 GN_temp.branch(GN_temp.branch.active_branch,:) = [];
 if isfield(GN,'pipe')
@@ -30,8 +30,8 @@ if isfield(GN, 'valve')
     GN_temp.branch(GN_temp.branch.valve_branch & ~GN_temp.branch.in_service,:) = [];
 end
 
-i_from_bus = GN_temp.branch.i_from_bus;
-i_to_bus = GN_temp.branch.i_to_bus;
+i_from_bus      = GN_temp.branch.i_from_bus;
+i_to_bus        = GN_temp.branch.i_to_bus;
 i_seperated_bus = find(~ismember((1:size(GN_temp.bus,1))',[i_from_bus;i_to_bus]));
 ADJACENY = sparse(...
     [i_from_bus', i_to_bus', i_seperated_bus'],...
@@ -40,7 +40,7 @@ ADJACENY = sparse(...
 g = graph(ADJACENY);
 bus_area_ID = conncomp(g)';
 
-%% Pipe area_ID
+%% pipe_area_ID
 if isfield(GN,'pipe')
     [~,i_from_bus] = ismember(GN.pipe.from_bus_ID,GN.bus.bus_ID);
     pipe_area_ID = bus_area_ID(i_from_bus);
@@ -49,7 +49,7 @@ else
     pipe_area_ID = NaN;
 end
 
-%% Valve area_ID
+%% valve_area_ID
 if isfield(GN,'valve')
     [~,i_from_bus] = ismember(GN.valve.from_bus_ID,GN.bus.bus_ID);
     valve_area_ID = bus_area_ID(i_from_bus);

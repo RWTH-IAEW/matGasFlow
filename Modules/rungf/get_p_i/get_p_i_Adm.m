@@ -24,7 +24,7 @@ end
 GN = get_G_ij(GN, 2);
 
 G_ij = GN.pipe.G_ij;
-INC_Pipes = GN.INC(:,GN.branch.pipe_branch);
+INC_Pipes = GN.MAT.INC(:,GN.branch.pipe_branch);
 G_ij_diag = abs(INC_Pipes)*abs(G_ij);
 
 i_from_bus  = GN.branch.i_from_bus(GN.branch.pipe_branch);
@@ -40,7 +40,7 @@ ADM_G_ij = G(:,~GN.bus.slack_bus);
 % V_dot_n_ij = G_ij * sqrt(p_i^2 - p_j^2)
 % ~> G * p_i = V_dot_n_i
 
-V_dot_n_i_nonPipes = GN.INC(:,~GN.branch.pipe_branch) * GN.branch.V_dot_n_ij(~GN.branch.pipe_branch);
+V_dot_n_i_nonPipes = GN.MAT.INC(:,~GN.branch.pipe_branch) * GN.branch.V_dot_n_ij(~GN.branch.pipe_branch);
 if isempty(V_dot_n_i_nonPipes)
     V_dot_n_i_nonPipes = zeros(size(GN.bus.V_dot_n_i));
 end

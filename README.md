@@ -6,8 +6,7 @@ gas transport and distribution grids.
 
 System Requirements
 -------------------
-matGasFlow works for MATLAB R2019b. For which other MATLAB distributions
-matGasFlow works has not yet been investigated. More information to come ...
+matGasFlow works for MATLAB > R2019b.
 
 
 Run matGasFlow
@@ -32,7 +31,7 @@ paper. Until then, we request that publications derived from the use of
 matGasFlow explicitly acknowledge that fact by citing the the software as
 follows:
 
-    Marcel Kurth (2021). matGasFlow [Software]. Institute for High Voltage
+    Marcel Kurth (2022). matGasFlow [Software]. Institute for High Voltage
         Equipment and Grids, Digitalization and Energy Economics (IAEW),
         RWTH Aachen University.
 
@@ -58,6 +57,3 @@ References
         Solved by an Extension of the Simplex Algorithm. Management
         Science 46(11):1454-1465
 
-[Ned17]
-
-[Mar10]

@@ -1,4 +1,4 @@
-function [GN] = preset_optimization(GN, include_out_of_service, NUMPARAM)
+function [GN, exitflag] = preset_optimization(GN, include_out_of_service, NUMPARAM)
 %PRESET_OPTIMIZATION_V2 Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -113,14 +113,14 @@ jjj = iii;
 H   = sparse(iii, jjj, vvv);
 
 %% optimization
-options             = [];
-options.Diagnostics = 'off';
-options.Display     = 'off';
-options.ConstraintTolerance = 1e-9;
+options                     = [];
+options.Diagnostics         = 'off';
+options.Display             = 'off';
+options.ConstraintTolerance = NUMPARAM.epsilon_NR_f;
 
 [x,~,exitflag] = quadprog(H, [], [], [], Aeq, beq, lb, [], [], options);
-if exitflag < 0 % UNDER CONSTRUCTION
-    error('Something went wrong.')
+if exitflag < 0
+    return
 end
 
 %% Apply result
@@ -132,11 +132,7 @@ if any(GN.branch.V_dot_n_ij(GN.branch.active_branch) < -options.ConstraintTolera
     error('Constraint tolerance is not satified.')
 end
 GN.bus.f = Aeq * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
-if norm(GN.bus.f) > 1 % UNDER CONSTRUCTION
-    %     area_ID = unique(GN.bus.area_ID);
-    %     area_load = GN.MAT.area_bus * GN.bus.V_dot_n_i;
-    %     exit_area_unsupplied    = find(~ismember(area_ID(area_load>0),unique(GN.bus.area_ID(GN.branch.i_to_bus(GN.branch.active_branch & GN.branch.in_service)))));
-    %     entry_area_unsupplied   = find(~ismember(area_ID(area_load<0),unique(GN.bus.area_ID(GN.branch.i_from_bus(GN.branch.active_branch & GN.branch.in_service)))));
+if any(abs(GN.bus.f) > 10 * options.ConstraintTolerance)
     error('Something went wrong.')
 end
 
@@ -177,8 +173,8 @@ if isfield(GN, 'comp')
     GN.comp.in_service          = GN.branch.in_service(GN.comp.i_branch);
 end
 if isfield(GN, 'prs')
-    GN.prs.V_dot_n_ij_preset   = GN.branch.V_dot_n_ij_preset(GN.prs.i_branch);
-    GN.prs.in_service          = GN.branch.in_service(GN.prs.i_branch);
+    GN.prs.V_dot_n_ij_preset    = GN.branch.V_dot_n_ij_preset(GN.prs.i_branch);
+    GN.prs.in_service           = GN.branch.in_service(GN.prs.i_branch);
 end
 
 %% Merge GN and GN_Input
@@ -186,7 +182,10 @@ if ~include_out_of_service
     GN = merge_GN_into_GN_input(GN, GN_input);
 end
 
-%% Check result - UNDER CONSTRUCTION:
-GN = check_and_init_GN(GN);
+%% Check result
+GN = init_GN_branch(GN);
+GN = init_GN_indices(GN);
+GN = check_GN_area_restrictions(GN);
+
 end
 

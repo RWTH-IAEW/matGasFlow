@@ -229,18 +229,5 @@ if length(pipe_flow_type) > 1
     GN.pipe(:,pipe_flow_type(2:end)) = [];
 end
 
-time_series_pipe_flow = false; % UNDER CONSTRUCTION
-if isfield(GN,'time_series')
-    white_list = {'P_th_ij_preset__MW', 'P_th_ij_preset', 'V_dot_n_ij_preset__m3_per_day', 'V_dot_n_ij_preset__m3_per_h', 'm_dot_ij_preset__kg_per_s', 'V_dot_n_ij_preset'};
-    pipe_object_quantities = unique(GN.time_series.object_quantity);
-    time_series_pipe_flow = any(ismember(pipe_object_quantities, white_list));
-end
-
-if isempty(pipe_flow_type) && ~time_series_pipe_flow
-    % UNDER CONSTRUCTION: No presets necessary
-    %         error(['GN.pipe: information about pipe flow is missing. GN.pipe or GN.times_series must have at least one of these colums: ',...
-    %             'P_th_ij_preset__MW, P_th_ij_preset, V_dot_n_ij_preset__m3_per_day, V_dot_n_ij_preset__m3_per_h, m_dot_ij_preset__kg_per_s or V_dot_n_ij_preset.'])
-end
-
 end
 

@@ -20,6 +20,8 @@ function GN = check_GN_bus(GN)
 %           source_bus
 %       INPUT DATA - OPTIONAL FOR NON-ISOTHERMAL SIMULATION
 %           T_i_source
+%       RESULT DATA
+%           T_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -160,24 +162,10 @@ if ismember('slack_bus',GN.bus.Properties.VariableNames)
     elseif any(GN.bus.slack_bus ~= 0 & GN.bus.slack_bus ~= 1 & ~isnan(GN.bus.slack_bus))
         error('GN.bus: slack_bus must be ''1'' (true), ''0'' (false) or ''NaN''(false).')
     end
-    GN.bus.slack_bus(isnan(GN.bus.slack_bus)) = false;
-    GN.bus.slack_bus(GN.bus.slack_bus == 0) = false;
-    GN.bus.slack_bus(GN.bus.slack_bus == 1) = true;
-    GN.bus.slack_bus = logical(GN.bus.slack_bus);
-    % UNDER CONSTRUCTION
-    %     if ~any(GN.bus.slack_bus) && any(isnan(GN.bus.p_i__barg)) && all(~isnan(GN.bus.p_i__barg))
-    %         GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
-    %         warning('GN.bus: There must be at least one slack bus. All busses with p_i__barg values have been choosen to be slack busses.')
-    %     end
-    %     if any(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))
-    %         error(['GN.bus: p_i__barg entries at slack busses are missing. Check theses bus_IDs: ',...
-    %             num2str(find(GN.bus.slack_bus & isnan(GN.bus.p_i__barg))')])
-    %     end
-else
-    % Initialize slack_bus if not existing
-    GN.bus.slack_bus(:) = false;
-    GN.bus.slack_bus(~isnan(GN.bus.p_i__barg)) = true;
-    GN.bus = movevars(GN.bus,'slack_bus','After','p_i__barg');
+    GN.bus.slack_bus(isnan(GN.bus.slack_bus))   = false;
+    GN.bus.slack_bus(GN.bus.slack_bus == 0)     = false;
+    GN.bus.slack_bus(GN.bus.slack_bus == 1)     = true;
+    GN.bus.slack_bus                            = logical(GN.bus.slack_bus);
 end
 
 %% p_i_min__barg and p_i_max__barg
@@ -307,7 +295,7 @@ if ~GN.isothermal
             error('GN.bus: T_i_source entries are needed for all sources and must be double values greater than 0 Kelvin.')
         end
         if any(isnan(GN.bus.T_i_source(GN.bus.source_bus)))
-            GN.bus.T_i_source(~GN.bus.slack_bus & (GN.bus.P_th_i < 0 | GN.bus.V_dot_n_i < 0) & isnan(GN.bus.T_i_source)) = GN.T_env;
+            GN.bus.T_i_source(isnan(GN.bus.T_i_source) & GN.bus.source_bus) = GN.T_env;
             warning(['GN.bus: Some T_i_source entries at source busses for non-isothermal simulation are missing and are set to ' num2str(GN.T_env(1,1)) ' K.'])
         end
     else
@@ -321,16 +309,14 @@ end
 %  R E S U L T   D A T A
 %  #######################################################################
 %% T_i
-% if ismember('T_i',GN.bus.Properties.VariableNames)
-%     if any(~isnumeric(GN.bus.T_i))
-%         error('GN.bus: T_i must be numeric.')
-%     elseif any(GN.bus.T_i <= 0 | isinf(GN.bus.T_i))
-%         error('GN.bus: T_i [K] must be positive numeric value.')
-%     elseif all(isnan(GN.bus.T_i))
-%         GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
-%     end
-% else
-%     GN.bus.T_i(:) = GN.T_env;
-% end
+if ismember('T_i',GN.bus.Properties.VariableNames)
+    if any(~isnumeric(GN.bus.T_i))
+        error('GN.bus: T_i must be numeric.')
+    elseif any(GN.bus.T_i <= 0 | isinf(GN.bus.T_i))
+        error('GN.bus: T_i [K] must be positive numeric value.')
+    elseif all(isnan(GN.bus.T_i))
+        GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
+    end
+end
 
 end

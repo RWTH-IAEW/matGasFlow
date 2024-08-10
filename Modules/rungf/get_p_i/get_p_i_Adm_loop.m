@@ -43,6 +43,9 @@ while 1
             GN = get_T_loop(GN, NUMPARAM, PHYMOD);
         end
         
+        %% Division of gas flow at parallel pipes
+        GN = get_V_dot_n_ij_parallelPipes(GN);
+
         %% Check convergence
         GN = set_convergence(GN, ['$$p_i Adm loop, p_i, (',num2str(iter_2),')$$']);
         if norm((p_i_temp - GN.bus.p_i) ./ p_i_temp) < NUMPARAM.epsilon_p_i_loop

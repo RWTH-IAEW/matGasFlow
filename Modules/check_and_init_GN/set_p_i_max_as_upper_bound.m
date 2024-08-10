@@ -24,9 +24,8 @@ for jj = 1:length(area_IDs)
     [~,i_new_slack_bus]     = ismember(GN_res.bus.bus_ID(i_new_slack_bus_res), GN.bus.bus_ID);
     GN.bus.slack_bus(i_bus) = false;
     GN.bus.slack_bus(i_new_slack_bus(1))    = true;
-    % GN.bus.p_i__barg(i_new_slack_bus(1))    = GN.bus.p_i_min__barg(i_new_slack_bus(1));
     GN.bus.p_i__barg(i_bus) = GN.bus.p_i_max__barg(i_new_slack_bus(1));
-    % UNDER CONSTRUCTION: Reset slack_branch?!
+
 end
 
 GN = check_and_init_GN(GN);

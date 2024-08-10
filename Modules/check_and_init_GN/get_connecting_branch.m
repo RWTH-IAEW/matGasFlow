@@ -20,9 +20,7 @@ branch_temp(branch_temp.parallel_branch,:)  = [];
 branch_temp(~branch_temp.in_service,:)      = [];
 
 weights                                     = ones(size(branch_temp,1),1);
-weights(branch_temp.preset)                 = 1e6;
-i_branch_at_slack_bus                       = GN.bus.slack_bus(branch_temp.i_from_bus) | GN.bus.slack_bus(branch_temp.i_to_bus);
-weights(i_branch_at_slack_bus)              = 1e3;
+weights(branch_temp.preset)                 = 1e3;
 
 g       = graph(branch_temp.i_from_bus, branch_temp.i_to_bus, weights);
 t       = minspantree(g,'Method','sparse');

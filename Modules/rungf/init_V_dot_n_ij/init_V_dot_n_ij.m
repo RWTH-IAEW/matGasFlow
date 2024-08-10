@@ -18,32 +18,32 @@ function [GN] = init_V_dot_n_ij(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Apply presets of active branches
-if any(ismember(GN.branch.Properties.VariableNames, 'P_th_ij_preset__MW'))
+if ismember('P_th_ij_preset__MW', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.P_th_ij_preset__MW(GN.branch.connecting_branch & GN.branch.preset) ...
         * 1e6 / GN.gasMixProp.H_s_n_avg; % [MW]*1e6/[Ws/m^3] = [m^3/s]
     
-elseif any(ismember(GN.branch.Properties.VariableNames, 'P_th_ij_preset'))
+elseif ismember('P_th_ij_preset', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.P_th_ij_preset(GN.branch.connecting_branch & GN.branch.preset) ...
         / GN.gasMixProp.H_s_n_avg; % [W]/[Ws/m^3] = [m^3/s]
     
-elseif any(ismember(GN.branch.Properties.VariableNames, 'V_dot_n_ij_preset__m3_per_day'))
+elseif ismember('V_dot_n_ij_preset__m3_per_day', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.V_dot_n_ij_preset__m3_per_day(GN.branch.connecting_branch & GN.branch.preset) ...
         / (60 * 60 * 24);
     
-elseif any(ismember(GN.branch.Properties.VariableNames, 'V_dot_n_ij_preset__m3_per_h'))
+elseif ismember('V_dot_n_ij_preset__m3_per_h', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.V_dot_n_ij_preset__m3_per_day(GN.branch.connecting_branch & GN.branch.preset) ...
         * 60 * 60;
     
-elseif any(ismember(GN.branch.Properties.VariableNames, 'm_dot_ij_preset__kg_per_s'))
+elseif ismember('m_dot_ij_preset__kg_per_s', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.m_dot_ij_preset__kg_per_s(GN.branch.connecting_branch & GN.branch.preset) ...
         / GN.gasMixProp.rho_n_avg; % [kg/s]/[kg/m^3] = [m^3/s]
     
-elseif any(ismember(GN.branch.Properties.VariableNames, 'V_dot_n_ij_preset'))
+elseif ismember('V_dot_n_ij_preset', GN.branch.Properties.VariableNames)
     GN.branch.V_dot_n_ij(GN.branch.connecting_branch & GN.branch.preset) = ...
         GN.branch.V_dot_n_ij_preset(GN.branch.connecting_branch & GN.branch.preset);
     

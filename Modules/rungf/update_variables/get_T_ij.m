@@ -13,10 +13,9 @@ function [GN] = get_T_ij(GN)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if isfield(GN,'pipe')
-    iF = GN.branch.i_from_bus(GN.branch.pipe_branch);
-    iT = GN.branch.i_to_bus(GN.branch.pipe_branch);
-    T_ij = mean([GN.bus.T_i(iF),GN.bus.T_i(iT)],2);
-    GN.pipe.T_ij = T_ij(GN.pipe.i_branch);
+    iF              = GN.branch.i_from_bus(GN.pipe.i_branch);
+    iT              = GN.branch.i_to_bus(GN.pipe.i_branch);
+    GN.pipe.T_ij    = mean([GN.bus.T_i(iF),GN.bus.T_i(iT)],2);
 end
 
 end

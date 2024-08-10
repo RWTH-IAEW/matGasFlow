@@ -3,16 +3,17 @@ function [GN] = check_GN_area_restrictions(GN, keep_slack_properties)
 %   [GN] = check_GN_area_restrictions(GN)
 %   Checks:
 %       - Check and update bus area_ID
-%       - Check and update pipe area_ID
-%       - Check and update valve_group_ID
-%       - Set area_ID of unsupplied bussus to NaN
-%       - Busses must not have more than one valve_from_bus AND not more
-%           than one valve_to_bus
 %       - Check for islands
-%       - Initialize Incidence Matrix
-%       - Check bus types
-%           1) Check if there is exactly one slack_bus in each area
-%           2) Check if two or more non-pipe_branches feed the same bus
+%       - Initialize Incidence Matrix and further system matrices
+%       - set interconnecting active_branches out of service
+%       - Specify connecting_branch
+%       - Check and initialize slack
+%       - Check and initialize p_i__barg
+%       - Check output
+%           * Each area must have one slack_bus
+%           * to_bus of slack_branch must be slack_bus
+%           * All slack_branches must be in_service
+%           * All slack_branches must be active_branches
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
@@ -33,23 +34,20 @@ GN = check_and_init_area_ID(GN);
 %% Check for islands
 GN = check_GN_islands(GN);
 
-%% Incidence Matrix
-GN = get_INC(GN);
-
-% GN.MAT % UNDER CONSTRUCTION: Include INC
+%% System Matrices
 GN = get_GN_MAT(GN);
 
 %% Set interconnecting active_branches out of service
 GN = set_interconnecting_active_branches_out_of_service(GN);
 
-%% Connecting branches
-GN = get_connecting_branch(GN);
-
-%% Check and init slack bus and slack branch % UNDER CONSTRUCTION: rename
+%% Check and init slack bus and slack branch
 GN = check_and_init_slack(GN, keep_slack_properties);
 
 %% Check and init nodal pressure
 GN = check_and_init_p_i__barg(GN);
+
+%% Connecting branches
+GN = get_connecting_branch(GN);
 
 %% Check output
 % Each area must have one slack_bus

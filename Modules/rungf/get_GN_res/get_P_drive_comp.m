@@ -18,11 +18,8 @@ end
 CONST = getConstants();
 
 %% Indices
-i_comp = GN.branch.i_comp(GN.branch.comp_branch);
-i_from_bus = GN.branch.i_from_bus(GN.branch.comp_branch);
-i_from_bus = i_from_bus(i_comp);
-i_to_bus = GN.branch.i_to_bus(GN.branch.comp_branch);
-i_to_bus = i_to_bus(i_comp);
+iF  = GN.branch.i_from_bus(GN.comp.i_branch);
+iT  = GN.branch.i_to_bus(GN.comp.i_branch);
 
 %% Option 1: Isentroper Vergleichsprozess
 % Isentrope Vergleichsprozesse werden fuer ungeuehlte ein- und mehrstufige Turbo Verdichter,
@@ -38,19 +35,19 @@ if PHYMOD.comp == 1
     if ~ismember('kappa_i',GN.bus.Properties.VariableNames)
         GN = get_kappa(GN, PHYMOD);
     end
-    kappa_i = GN.bus.kappa_i(i_from_bus);
+    kappa_i = GN.bus.kappa_i(iF);
     
     %% Mechanical power on the compressor's shaft [W]
     GN.comp.P_mech = ...
         GN.branch.V_dot_n_ij(GN.branch.comp_branch) .* GN.gasMixProp.rho_n_avg ./ GN.comp.eta_s .* (kappa_i./(kappa_i-1)) ...
-        .* GN.bus.Z_i(i_from_bus) .* CONST.R_m .* GN.bus.T_i(i_from_bus) ...
-        .* ( (GN.bus.p_i(i_to_bus)./GN.bus.p_i(i_from_bus)).^((kappa_i-1)./kappa_i) - 1);
+        .* GN.bus.Z_i(iF) .* CONST.R_m .* GN.bus.T_i(iF) ...
+        .* ( (GN.bus.p_i(iT)./GN.bus.p_i(iF)).^((kappa_i-1)./kappa_i) - 1);
     
     %% Power of compressor drive [W]
-    %   If the compressor is gas-powered, P_drive is the thermal power of the
-    %   fuel gas.
+    %   If the compressor is gas-powered, P_drive is the thermal power of
+    %       the fuel gas.
     %   If the compressor has an electric drive (gas_powered = false),
-    %   P_drive is the electric power of the eletric drive.
+    %       P_drive is the electric power of the eletric drive.
     GN.comp.P_drive = GN.comp.P_mech ./ GN.comp.eta_drive;
     
 elseif PHYMOD.comp == 2

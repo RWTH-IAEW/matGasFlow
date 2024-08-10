@@ -17,6 +17,11 @@ success = true;
 
 %% Check if there is any volumen flow and check for pipes
 if all(GN.branch.V_dot_n_ij == 0) || ~isfield(GN, 'pipe')
+    %% Calulation of nodal temperature
+    if ~GN.isothermal
+        GN = get_T_loop(GN, NUMPARAM, PHYMOD);
+    end
+    
     return
 end
 

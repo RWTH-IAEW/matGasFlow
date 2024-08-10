@@ -10,6 +10,21 @@ function [GN] = get_GN_MAT(GN)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Incidence Matrix
+ii = [...
+    GN.branch.i_from_bus(GN.branch.in_service);...
+    GN.branch.i_to_bus(GN.branch.in_service)];
+if any(~GN.bus.supplied) % UNDER CONSTRUCTION
+    ii(ismember(ii,find(~GN.bus.supplied))) = [];
+end
+jj = 1:sum(GN.branch.in_service);
+% jj = find(GN.branch.in_service);
+jj = [jj';jj'];
+vv = [...
+    ones(size(GN.branch.i_from_bus(GN.branch.in_service)));...
+    -ones(size(GN.branch.i_to_bus(GN.branch.in_service)))];
+GN.MAT.INC = sparse(ii,jj,vv);
+
 %% area_active_branch
 ii = [...
     GN.bus.area_ID(GN.branch.i_from_bus(GN.branch.active_branch & GN.branch.in_service)); ...

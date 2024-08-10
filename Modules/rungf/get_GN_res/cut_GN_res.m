@@ -1,5 +1,5 @@
 function [GN] = cut_GN_res(GN, time_series_res_white_list)
-%GET_TIME_SERIES_RESULT Summary of this function goes here
+%CUT_GN_RES Summary of this function goes here
 %   Detailed explanation goes here
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,13 +114,6 @@ if isfield(GN,'MAT')
     is_MAT = strcmp(time_series_res_white_list(:,1),'MAT');
     if ~any(is_MAT)
         GN = rmfield(GN,'MAT');
-    end
-end
-
-if isfield(GN,'INC') % UNDER CONSTRUCTION
-    is_INC = strcmp(time_series_res_white_list(:,1),'INC');
-    if ~any(is_INC)
-        GN = rmfield(GN,'INC');
     end
 end
 

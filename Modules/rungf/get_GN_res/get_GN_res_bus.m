@@ -22,7 +22,7 @@ CONST = getConstants();
 %% p_i__barg
 GN.bus.p_i__barg = (GN.bus.p_i - CONST.p_n)*1e-5;
 
-%% check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max  % UNDER CONSTRUCTION
+%% check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max
 % if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
 %     if any(GN.bus.p_i__barg < GN.bus.p_i_min__barg)
 %         bus_ID = GN.bus.bus_ID(GN.bus.p_i__barg < GN.bus.p_i_min__barg);

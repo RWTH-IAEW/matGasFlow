@@ -20,7 +20,7 @@ function [GN] = get_V_dot_n_ij_radialGN(GN)
 if any(GN.branch.connecting_branch)
     b = - (...
         GN.bus.V_dot_n_i ...
-        + GN.INC(:, GN.branch.connecting_branch) ...
+        + GN.MAT.INC(:, GN.branch.connecting_branch) ...
         * GN.branch.V_dot_n_ij(GN.branch.connecting_branch) ...
         );
 else
@@ -29,10 +29,20 @@ end
 
 idx = ~GN.branch.connecting_branch & ~GN.branch.parallel_branch;
 
-A = GN.INC(:,idx);
+A = GN.MAT.INC(:,idx);
 GN.branch.V_dot_n_ij(idx) = A\b;
+
+% idx = ~GN.branch.connecting_branch & ~GN.branch.parallel_branch;
+% ii  = 1:sum(GN.branch.connecting_branch | GN.branch.parallel_branch);
+% jj  = find(GN.branch.connecting_branch | GN.branch.parallel_branch);
+% vv  = 1;
+% A2  = sparse(ii,jj,vv,sum(GN.branch.connecting_branch | GN.branch.parallel_branch),size(GN.branch,1));
+% A   = [GN.MAT.INC;A2];
+% b   = [-GN.bus.V_dot_n_i;GN.branch.V_dot_n_ij(GN.branch.connecting_branch);
+% GN.branch.V_dot_n_ij(idx) = A\b;
+
 if any(norm(A * GN.branch.V_dot_n_ij(idx) - b) > 1e-6)
-    error('Something went wrong.')
+    warning('Something went wrong.')
 end
 GN.branch.V_dot_n_ij(GN.branch.parallel_branch) = 0;
 
@@ -40,7 +50,7 @@ GN.branch.V_dot_n_ij(GN.branch.parallel_branch) = 0;
 GN = get_V_dot_n_ij_parallelPipes(GN);
 
 %% Nodal equation f
-GN.bus.f = GN.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
+GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij + GN.bus.V_dot_n_i;
 
 end
 

@@ -26,7 +26,7 @@ elseif all(~isfield(GN,{'pipe', 'comp', 'prs', 'valve'}))
     return
 else
     GN.T_env = 283.15;
-    warning('T_env is missing. The environmental temperature is set to the default value 283.15 K.')
+    warning('GN.T_env is missing. The environmental temperature is set to the default value 283.15 K.')
 end
 
 end

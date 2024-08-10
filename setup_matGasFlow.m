@@ -24,6 +24,7 @@ addpath(genpath('CI'));
 addpath(genpath('Data'));
 addpath(genpath('log'));
 addpath(genpath('Modules'));
+addpath(genpath('Examples'));
 
 end
 

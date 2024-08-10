@@ -34,9 +34,9 @@ c_p_0_i_x = C_p_m_0_i_x./gasCompoProp.M;
 c_p_0_i = sum(gasCompoProp.x_mol .* c_p_0_i_x, 1)';
 
 % Real specific isobaric heat capacity of the gas mixture at each bus [J/(kg*K)]
-numerator   = T .* R_m^2 ./ (V_m - b).^2;
-denominator = - R_m * T ./ (V_m - b).^2 + 2*a ./ V_m.^2;
-c_p_i = c_p_0_i - (numerator./denominator)/M_avg - R_m/M_avg;
+numerator   = T .* R_m^2 ./ ((V_m - b).^2);
+denominator = - R_m .* T ./ ((V_m - b).^2) + 2*a ./ V_m.^3;
+c_p_i = c_p_0_i - (numerator./denominator)./M_avg - R_m./M_avg;
 
 end
 
