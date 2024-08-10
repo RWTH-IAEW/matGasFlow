@@ -1,6 +1,16 @@
 function h = show_Lummerland
-%SHOW_LUMMERLAND Summary of this function goes here
-%   Detailed explanation goes here
+%SHOW_LUMMERLAND
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
+%       Digitalization and Energy Economics (IAEW),
+%       RWTH Aachen University, Marcel Kurth
+%   All rights reserved.
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
+%   This script is part of matGasFlow.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 img = imread('Lummerland.jpg');
 scaling_factor = 500/size(img,2);
 img = imresize(img,scaling_factor);

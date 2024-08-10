@@ -2,11 +2,11 @@ function [GN] = init_GN_indices(GN)
 %INIT_GN_INDICES
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,6 +30,11 @@ else
     GN.branch.pipe_branch = false(size(GN.branch,1),1);
 end
 
+%% Output temperature controlled
+if ~GN.isothermal
+    GN.branch.T_controlled(:) = false;
+end
+
 %% comp
 if isfield(GN,'comp')
     [GN.branch.comp_branch,     GN.branch.i_comp]   = ismember(GN.branch.branch_ID,GN.comp.branch_ID);
@@ -42,6 +47,12 @@ if isfield(GN,'comp')
     % bypass comp
     GN.branch.bypass_comp_ID(:)                     = NaN;
     GN.branch.i_bypass_comp(:)                      = NaN;
+    
+    % Output temperature controlled
+    if ~GN.isothermal
+        GN.branch.T_controlled(GN.comp.i_branch(GN.comp.T_controlled)) = true;
+    end
+    
 end
 
 %% prs
@@ -58,6 +69,12 @@ if isfield(GN,'prs')
     GN.branch.i_bypass_prs(:)                       = NaN;
     GN.branch.associate_prs_ID(:)                   = NaN;
     GN.branch.i_associate_prs(:)                    = NaN;
+    
+    % Output temperature controlled
+    if ~GN.isothermal
+        GN.branch.T_controlled(GN.prs.i_branch(GN.prs.T_controlled)) = true;
+    end
+    
 end
 
 %% valve

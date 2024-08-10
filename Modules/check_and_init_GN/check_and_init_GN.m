@@ -1,15 +1,19 @@
-function [GN] = check_and_init_GN(GN, keep_slack_properties, create_log_file)
+function [GN] = check_and_init_GN(GN, keep_slack_properties, create_log_file, PHYMOD)
 %CHECK_AND_INIT_GN
 %   [GN] = check_and_init_GN(GN, create_log_file)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if nargin < 4
+    PHYMOD = getDefaultPhysicalModels;
+end
 
 %% Set default input arguments
 if nargin < 3
@@ -65,7 +69,9 @@ GN = check_GN_valve(GN);
 
 %% Gas Composition Properties
 if isfield(GN,'gasMix')
-    GN = get_gasMixAndCompoProp(GN,GN.gasMix);
+    GN = get_gasMixAndCompoProp(GN, GN.gasMix, PHYMOD);
+elseif ~isfield(GN,'gasMixAndCompoProp')
+    error('GN.gasMix is missing. Call ''help get_gasMixAndCompoProp'' for information about the gasMix options')
 end
 
 %% Check GN.time_series

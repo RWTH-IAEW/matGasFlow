@@ -2,11 +2,11 @@ function [GN] = get_G_ij(GN, OPTION, NUMPARAM)
 %GET_G_IJ
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,7 +28,7 @@ end
 if OPTION == 1
     CONST = getConstants();
     
-    %% Transport Quantities
+    %% Calculate transport quantities
     % Reynolds number Re_ij(V_dot_n_ij, eta_ij)
     GN = get_Re(GN);
     
@@ -49,13 +49,13 @@ if OPTION == 1
         
     lambda_ij       = GN.pipe.lambda_ij;
         
-    %% Volume flow factor  A_ij [(K*m^10)/(N^2*s^2)]
+    %% Pipe conductivity
+    % Volume flow factor  A_ij [(K*m^10)/(N^2*s^2)]
     A_ij = pi^2 * D_ij.^5 * T_n ./ (16 * rho_n_avg * p_n * L_ij);
     
-    %% Volume flow factor B_ij [1/K]
+    % Volume flow factor B_ij [1/K]
     B_ij = 1./(lambda_ij .* Z_ij / Z_n_avg .* T_ij);
     
-    %% "Hydraulic conductance"
     GN.pipe.G_ij = sqrt(A_ij.*B_ij);
     
     %% 
@@ -65,10 +65,12 @@ if OPTION == 1
     end
     
 elseif OPTION == 2
-    %% rho
-    GN = get_rho(GN);
+    %% Linearized pipe conductivity
     
-    %% Transport Quantities
+    %% calculate rho and transport tuantities
+    % rho
+    GN = get_rho(GN);
+
     % Reynolds number Re_ij(V_dot_n_ij, eta_ij)
     GN = get_Re(GN);
     
@@ -84,7 +86,7 @@ elseif OPTION == 2
     lambda_ij       = GN.pipe.lambda_ij;
     eta_ij          = GN.pipe.eta_ij;
     
-    %% Pneumatic conductance
+    %% Linearized pipe conductivity
     GN.pipe.G_ij            = zeros(size(GN.pipe,1),1);
     GN.pipe.G_ij(Re_ij==0)  = (D_ij(Re_ij==0).^4.*pi.*rho_ij(Re_ij==0)) ./ (2.*64                                .*eta_ij(Re_ij==0).*rho_n_avg.*L_ij(Re_ij==0));
     GN.pipe.G_ij(Re_ij>0)   = (D_ij(Re_ij>0).^4 .*pi.*rho_ij(Re_ij>0))  ./ (2.*lambda_ij(Re_ij>0).*Re_ij(Re_ij>0).*eta_ij(Re_ij>0) .*rho_n_avg.*L_ij(Re_ij>0));

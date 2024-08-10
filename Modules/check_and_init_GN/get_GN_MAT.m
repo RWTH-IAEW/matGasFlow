@@ -1,12 +1,12 @@
 function [GN] = get_GN_MAT(GN)
-%GET_GN_MAT Summary of this function goes here
+%GET_GN_MAT
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -14,7 +14,7 @@ function [GN] = get_GN_MAT(GN)
 ii = [...
     GN.branch.i_from_bus(GN.branch.in_service);...
     GN.branch.i_to_bus(GN.branch.in_service)];
-if any(~GN.bus.supplied) % UNDER CONSTRUCTION
+if any(~GN.bus.supplied) % TODO
     ii(ismember(ii,find(~GN.bus.supplied))) = [];
 end
 jj = 1:sum(GN.branch.in_service);

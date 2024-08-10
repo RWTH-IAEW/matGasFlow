@@ -1,13 +1,13 @@
 function [model, GN] = get_LP_model(GN, include_out_of_service_branches, reduce_V_dot_n_ij_bounds, NUMPARAM)
-%GET_LP_MODEL Summary of this function goes here
-%   Detailed explanation goes here
+%GET_LP_MODEL
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -27,7 +27,7 @@ GN = get_V_dot_n_i(GN);
 %% Update slack busses
 GN = get_V_dot_n_slack(GN, 'GN', NUMPARAM);
 
-%% Delete P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h or m_dot_i__kg_per_s - UNDER CONSTRUCTION
+%% Delete P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h or m_dot_i__kg_per_s - TODO
 if ismember('P_th_i__MW',GN.bus.Properties.VariableNames)
     GN.bus.P_th_i__MW = [];
 end
@@ -169,7 +169,7 @@ if isfield(GN, 'pipe')
     GN = get_T_ij(GN);
     
     % Update p_i dependent quantities
-    GN = update_p_i_dependent_quantities(GN);
+    GN = update_p_i_dependent_quantities(GN, NUMPARAM, PHYMOD);
     
     % G_ij_pipe
     OPTION      = 1;

@@ -1,3 +1,3 @@
-bus_ID;p_i__barg;slack_bus;P_th_i__MW;T_i_source;x_coord;y_coord
-1;80;1;-1000;283;0;0
-2;NaN;0;1000;283;1;0
+bus_ID;area_ID;p_i__barg;slack_bus;P_th_i__MW;T_i_source;x_coord;y_coord;supplied;V_bus
+1;1;80;1;-1000;283;0;0;1;0
+2;1;NaN;0;1000;283;1;0;1;1

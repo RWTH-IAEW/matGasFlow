@@ -1,15 +1,16 @@
 function [GN, exitflag] = preset_optimization(GN, include_out_of_service, NUMPARAM)
-%PRESET_OPTIMIZATION_V2 Summary of this function goes here
-%   Detailed explanation goes here
+%PRESET_OPTIMIZATION_V2
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if nargin < 3
     NUMPARAM = getDefaultNumericalParameters;
     if nargin < 2
@@ -116,7 +117,7 @@ H   = sparse(iii, jjj, vvv);
 options                     = [];
 options.Diagnostics         = 'off';
 options.Display             = 'off';
-options.ConstraintTolerance = NUMPARAM.epsilon_NR_f;
+options.ConstraintTolerance = NUMPARAM.epsilon_norm_f;
 
 [x,~,exitflag] = quadprog(H, [], [], [], Aeq, beq, lb, [], [], options);
 if exitflag < 0

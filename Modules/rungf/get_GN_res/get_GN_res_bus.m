@@ -1,13 +1,13 @@
 function GN = get_GN_res_bus(GN)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%UNTITLED
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,6 +21,9 @@ CONST = getConstants();
 
 %% p_i__barg
 GN.bus.p_i__barg = (GN.bus.p_i - CONST.p_n)*1e-5;
+
+%% rho
+GN = get_rho(GN);
 
 %% check p_i__barg: p_i_min__barg, p_i_max__barg, T_i_min, T_i_max
 % if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
@@ -39,19 +42,19 @@ GN.bus.p_i__barg = (GN.bus.p_i - CONST.p_n)*1e-5;
 
 %% Calculate P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h or m_dot_i__kg_per_s
 if ismember('P_th_i__MW',GN.bus.Properties.VariableNames)
-    GN.bus.P_th_i__MW = GN.bus.V_dot_n_i * 1e-6 * GN.gasMixProp.H_s_n_avg;
-    GN.bus.V_dot_n_i = [];
+    GN.bus.P_th_i__MW               = convert_gas_flow_quantity(GN.bus.V_dot_n_i, 'm3_per_s', 'MW',         GN.gasMixProp);
+    GN.bus.V_dot_n_i = [];    
 elseif ismember('P_th_i',GN.bus.Properties.VariableNames)
-    GN.bus.P_th_i = GN.bus.V_dot_n_i * GN.gasMixProp.H_s_n_avg;
-    GN.bus.V_dot_n_i = [];
+    GN.bus.P_th_i                   = convert_gas_flow_quantity(GN.bus.V_dot_n_i, 'm3_per_s', 'W',          GN.gasMixProp);
+    GN.bus.V_dot_n_i = [];    
 elseif ismember('V_dot_n_i__m3_per_day',GN.bus.Properties.VariableNames)
-    GN.bus.V_dot_n_i__m3_per_day  = GN.bus.V_dot_n_i * 60 * 60 * 24;
-    GN.bus.V_dot_n_i = [];
+    GN.bus.V_dot_n_i__m3_per_day    = convert_gas_flow_quantity(GN.bus.V_dot_n_i, 'm3_per_s', 'm3_per_day', GN.gasMixProp);
+    GN.bus.V_dot_n_i = [];   
 elseif ismember('V_dot_n_i__m3_per_h',GN.bus.Properties.VariableNames)
-    GN.bus.V_dot_n_i__m3_per_h    = GN.bus.V_dot_n_i * 60 * 60;
-    GN.bus.V_dot_n_i = [];
+    GN.bus.V_dot_n_i__m3_per_h      = convert_gas_flow_quantity(GN.bus.V_dot_n_i, 'm3_per_s', 'm3_per_h',   GN.gasMixProp);
+    GN.bus.V_dot_n_i = [];    
 elseif ismember('m_dot_i__kg_per_s',GN.bus.Properties.VariableNames)
-    GN.bus.m_dot_i__kg_per_s      = GN.bus.V_dot_n_i * GN.gasMixProp.rho_n_avg;
+    GN.bus.m_dot_i__kg_per_s        = convert_gas_flow_quantity(GN.bus.V_dot_n_i, 'm3_per_s', 'kg_per_s',   GN.gasMixProp);
     GN.bus.V_dot_n_i = [];
 end
 

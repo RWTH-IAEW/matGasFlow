@@ -1,2 +1,2 @@
-pipe_ID;from_bus_ID;to_bus_ID;L_ij;D_ij;k_ij;T_env_ij
-1;1;2;100000;0.89;5e-05;283
+pipe_ID;branch_ID;from_bus_ID;to_bus_ID;in_service;area_ID;L_ij;D_ij;k_ij;T_env_ij;U_ij;i_branch
+1;1;1;2;1;1;100000;0.89;5e-05;283;2;1

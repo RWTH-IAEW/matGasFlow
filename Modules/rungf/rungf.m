@@ -1,8 +1,8 @@
-function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
+function [GN, success] = rungf(GN, NUMPARAM, PHYMOD, remove_auxiliary_variables)
 %RUNGF Steady-state gas flow simulation
 %
 %   [GN, success] = RUNGF(GN, NUMPARAM, PHYMOD)
-%   
+%
 %   Input arguments:
 %       GN (necessarry):        gas network struct ...
 %                               OR file name of the gas network model
@@ -22,31 +22,32 @@ function [GN, success] = rungf(GN, NUMPARAM, PHYMOD)
 %       [GN,success] = rungf(__)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Set default input arguments
-if nargin < 3
+if nargin < 4 || isempty(PHYMOD)
+    remove_auxiliary_variables = false;
+end
+if nargin < 3 || isempty(PHYMOD)
     PHYMOD = getDefaultPhysicalModels();
-    
-    if nargin < 2
-        NUMPARAM = getDefaultNumericalParameters();
-    end
+end
+if nargin < 2 || isempty(NUMPARAM)
+    NUMPARAM = getDefaultNumericalParameters();
 end
 
 %% Unitialize success
 success = true;
 
 %% Check GN data type
-flag_remove_auxiliary_variables = 0;
 if ischar(GN)
     GN = load_GN(GN);
-    flag_remove_auxiliary_variables = 1;
+    remove_auxiliary_variables = false;
 end
 
 %% Check for availability of non-isothermal model
@@ -69,26 +70,21 @@ else
     error('GN has no busses and branches.')
 end
 
-%% any(GN.branch.connecting_branch)?
-if ~any(GN.branch.connecting_branch & ~GN.branch.active_branch) && ~NUMPARAM.OPTION_assume_meshed_GN
-    %% rungf for radial gas network
-    [GN, success] = rungf_radial_GN(GN, NUMPARAM, PHYMOD);
-    if ~success
-        GN.success = success;
-        return
-    end
-    
-else
+%% run solver
+if any(GN.branch.connecting_branch) || NUMPARAM.assume_meshed_GN
     %% rungf for meshed gas network
     [GN, success] = rungf_meshed_GN(GN, NUMPARAM, PHYMOD);
-    if ~success
-        GN.success = success;
-        return
-    end
-    
+else
+    %% rungf for radial gas network
+    [GN, success] = rungf_radial_GN(GN, NUMPARAM, PHYMOD);
 end
 
 %% Prepair results
-GN = get_GN_res(GN, GN_input, flag_remove_auxiliary_variables, NUMPARAM, PHYMOD);
+if success
+    [GN,success] = get_GN_res(GN, GN_input, remove_auxiliary_variables, NUMPARAM, PHYMOD); 
+end
+
+%% Success
+GN.success = success;
 
 end

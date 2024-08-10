@@ -1,13 +1,13 @@
 function [GN] = get_V_dot_n_ij_valves(GN, NUMPARAM)
-%GET_V_DOT_N_IJ_VALVES Summary of this function goes here
+%GET_V_DOT_N_IJ_VALVES
 %   [GN] = get_V_dot_n_ij_valves(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,14 +30,14 @@ b = b(i_valve_bus);
 idx_2   = branch_in_service.valve_branch;% & ~branch_in_service.parallel_branch;
 A       = GN.MAT.INC(i_valve_bus,idx_2);
 branch_in_service.V_dot_n_ij(idx_2) = A\b;
-if norm(abs(A * branch_in_service.V_dot_n_ij(idx_2) - b)) > 0.5 * NUMPARAM.epsilon_NR_f
+if norm(abs(A * branch_in_service.V_dot_n_ij(idx_2) - b)) > 0.5 * NUMPARAM.epsilon_norm_f
     warning('...')
 end
 % branch_in_service.V_dot_n_ij(branch_in_service.parallel_branch) = 0;
 GN.branch.V_dot_n_ij(GN.branch.in_service) = branch_in_service.V_dot_n_ij;
 
 GN.bus.f = GN.MAT.INC * GN.branch.V_dot_n_ij(GN.branch.in_service) + GN.bus.V_dot_n_i;
-if norm(GN.MAT.INC * GN.branch.V_dot_n_ij(GN.branch.in_service) + GN.bus.V_dot_n_i) > NUMPARAM.epsilon_NR_f
+if norm(GN.MAT.INC * GN.branch.V_dot_n_ij(GN.branch.in_service) + GN.bus.V_dot_n_i) > NUMPARAM.epsilon_norm_f
     error('Something went wrong.')
 end
 

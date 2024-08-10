@@ -10,26 +10,25 @@ function GN = check_GN_prs(GN)
 %       INPUT DATA - OPTIONAL FOR NON-ISOTHERMAL SIMULATION
 %           T_controlled
 %           T_ij_out
-%           Q_dot_heater_cooler
+%           Q_dot_heater
 %           gas_powered_heater
 %           eta_heater
-%           eta_cooler
 %       INPUT DATA - OPTIONAL
 %           in_service
 %           slack_branch
 %           exp_turbine
-%           eta_s
-%           eta_drive
+%           eta_S
+%           eta_gen
 %           P_th_ij_preset__MW, P_th_ij_preset, V_dot_n_ij_preset__m3_per_day,
 %               V_dot_n_ij_preset__m3_per_h, m_dot_ij_preset__kg_per_s,
 %               V_dot_n_ij_preset
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,7 +97,7 @@ end
 %  I N P U T   D A T A   -
 %  O P T I O N A L   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
 %  #######################################################################
-if ~GN.isothermal
+% if ~GN.isothermal % TODO
     %% T_controlled
     if ismember('T_controlled',GN.prs.Properties.VariableNames)
         if any(GN.prs.T_controlled ~= 0 & GN.prs.T_controlled ~= 1 & ~isnan(GN.prs.T_controlled))
@@ -129,18 +128,18 @@ if ~GN.isothermal
     % Set default parameter
     GN.prs.T_ij_out(isnan(GN.prs.T_ij_out) & GN.prs.T_controlled) = GN.T_env;
     
-    %% Q_dot_heater_cooler
-    if ismember('Q_dot_heater_cooler',GN.prs.Properties.VariableNames)
-        if any(~isnumeric(GN.prs.Q_dot_heater_cooler))
-            error('GN.prs: Q_dot_heater_cooler must be numeric.')
-        elseif any(isinf(GN.prs.Q_dot_heater_cooler))
-            error('GN.prs: Q_dot_heater_cooler must be a numeric value or NaN.')
+    %% Q_dot_heater
+    if ismember('Q_dot_heater',GN.prs.Properties.VariableNames)
+        if any(~isnumeric(GN.prs.Q_dot_heater))
+            error('GN.prs: Q_dot_heater must be numeric.')
+        elseif any(isinf(GN.prs.Q_dot_heater))
+            error('GN.prs: Q_dot_heater must be a numeric value or NaN.')
         end
     else
-        GN.prs.Q_dot_heater_cooler(:) = NaN;
+        GN.prs.Q_dot_heater(:) = NaN;
     end
     % Set default parameter
-    GN.prs.Q_dot_heater_cooler(isnan(GN.prs.Q_dot_heater_cooler) & ~GN.prs.T_controlled) = 0;
+    GN.prs.Q_dot_heater(isnan(GN.prs.Q_dot_heater) & ~GN.prs.T_controlled) = 0;
     
     %% gas_powered_heater
     if ismember('gas_powered_heater',GN.prs.Properties.VariableNames)
@@ -168,22 +167,12 @@ if ~GN.isothermal
         end
     else
         % Set default parameter
-        GN.prs.eta_heater(:) = 1;
+        GN.prs.eta_heater(:) = NaN;
     end
+    % Set default parameter
+    GN.prs.eta_heater(isnan(GN.prs.eta_heater)) = 1;
     
-    %% eta_cooler
-    if ismember('eta_cooler',GN.prs.Properties.VariableNames)
-        if any(~isnumeric(GN.prs.eta_cooler))
-            error('GN.prs: eta_cooler must be numeric.')
-        elseif any(GN.prs.eta_cooler < 0 | GN.prs.eta_cooler > 1 | isnan(GN.prs.eta_cooler))
-            error(['GN.prs: eta_cooler must be larger than zero and less than or equal to one. Check entries at these prs IDs: ',...
-                num2str( GN.prs.prs_ID(GN.prs.eta_cooler < 0 | GN.prs.eta_cooler > 1 | isnan(GN.prs.eta_cooler))' )])
-        end
-    else
-        % Set default parameter
-        GN.prs.eta_cooler(:) = 1;
-    end
-end
+% end
 
 %% #######################################################################
 %  I N P U T   D A T A   -   O P T I O N A L
@@ -242,28 +231,47 @@ else
     GN.prs.exp_turbine(:) = false;
 end
 
-%% eta_s
-if ismember('eta_s',GN.prs.Properties.VariableNames)
-    if any(~isnumeric(GN.prs.eta_s))
-        error('GN.prs: eta_s must be numeric.')
-    elseif any(GN.prs.eta_s < 0 | GN.prs.eta_s > 1)
-        error('GN.eta_s: eta_s must be larger than zero and less than or equal to one.')
+%% eta_S, eta_mech, eta_gen
+if any(GN.prs.exp_turbine)
+    %% eta_S
+    if ismember('eta_S',GN.prs.Properties.VariableNames)
+        if any(~isnumeric(GN.prs.eta_S))
+            error('GN.prs: eta_S must be numeric.')
+        elseif any(GN.prs.eta_S < 0 | GN.prs.eta_S > 1)
+            error('GN.eta_S: eta_S must be larger than zero and less than or equal to one.')
+        end
+    else
+        GN.prs.eta_S(:) = NaN;
     end
-elseif any(GN.prs.exp_turbine)
     % Set default parameter
-    GN.prs.eta_s(:) = 1;
-end
-
-%% eta_drive
-if ismember('eta_drive',GN.prs.Properties.VariableNames)
-    if any(~isnumeric(GN.prs.eta_drive))
-        error('GN.prs: eta_drive must be numeric.')
-    elseif any(GN.prs.eta_drive < 0 | GN.prs.eta_drive > 1)
-        error('GN.eta_s: eta_drive must be larger than zero and less than or equal to one.')
+    GN.prs.eta_S(isnan(GN.prs.eta_S)) = 1;
+    
+    %% eta_mech
+    if ismember('eta_mech',GN.prs.Properties.VariableNames)
+        if any(~isnumeric(GN.prs.eta_mech))
+            error('GN.prs: eta_mech must be numeric.')
+        elseif any(GN.prs.eta_mech < 0 | GN.prs.eta_mech > 1)
+            error('GN.eta_mech: eta_mech must be larger than zero and less than or equal to one.')
+        end
+    else
+        GN.prs.eta_mech(:) = NaN;
     end
-elseif any(GN.prs.exp_turbine)
     % Set default parameter
-    GN.prs.eta_drive(:) = 1;
+    GN.prs.eta_mech(isnan(GN.prs.eta_mech)) = 1;
+    
+    %% eta_gen
+    if ismember('eta_gen',GN.prs.Properties.VariableNames)
+        if any(~isnumeric(GN.prs.eta_gen))
+            error('GN.prs: eta_gen must be numeric.')
+        elseif any(GN.prs.eta_gen < 0 | GN.prs.eta_gen > 1)
+            error('GN.eta_S: eta_gen must be larger than zero and less than or equal to one.')
+        end
+    else
+        % Set default parameter
+        GN.prs.eta_gen(:) = 1;
+    end
+    % Set default parameter
+    GN.prs.eta_gen(isnan(GN.prs.eta_gen)) = 1;
 end
 
 %% P_th_ij_preset__MW, P_th_ij_preset, V_dot_n_ij_preset__m3_per_day, V_dot_n_ij_preset__m3_per_h, m_dot_ij_preset__kg_per_s, V_dot_n_ij_preset

@@ -18,11 +18,11 @@ function [ GN ] = set_fraction_of_gas_mixture_component( GN, gas_mixture_compone
 %       'x_vol', 'x_mass', 'x_mol'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -47,7 +47,7 @@ if x >= 0 && x < 1
         GN.gasMixAndCompoProp{:,'x_mol'}  = GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'M'}/sum(GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'M'});
         GN.gasMixAndCompoProp{:,'x_vol'} = GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'rho_n'}/sum(GN.gasMixAndCompoProp{:,'x_mass'}./GN.gasMixAndCompoProp{:,'rho_n'});
     else
-        disp('This fraction specification does not exist.')
+        error('This fraction specification does not exist.')
     end
 elseif x == 1
     GN.gasMixAndCompoProp{:,'x_mol'} = 0;
@@ -79,4 +79,9 @@ end
 if isfield(GN,'gasMix')
     GN =  rmfield(GN , 'gasMix');
 end
+
+%% Update AGA8-92DC table
+GN = get_AGA8_92DC_tables(GN);
+
 end
+

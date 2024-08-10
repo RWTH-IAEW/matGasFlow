@@ -1,27 +1,28 @@
-function GN = get_GN_res_valve(GN)
-%GET_GN_RES_VALVE Summary of this function goes here
-%   Detailed explanation goes here
+function GN = get_GN_res_valve(GN, NUMPARAM)
+%GET_GN_RES_VALVE
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% 
-% GN = reset_valves(GN,GN_input);
-% GN = get_p_T_valve(GN);
-GN = get_V_dot_n_ij_valves(GN);
+%%
+GN = get_p_T_valve(GN);
+
+%%
+GN = get_V_dot_n_ij_valves(GN, NUMPARAM);
 
 %% Apply results from branch to valve
 % V_dot_n_ij
 GN.valve.V_dot_n_ij = GN.branch.V_dot_n_ij(GN.valve.i_branch);
 
 % Delta p
-GN.valve.delta_p_ij__bar = GN.branch.delta_p_ij__bar(GN.valve.i_branch);
+GN.valve.Delta_p_ij__bar = GN.branch.Delta_p_ij__bar(GN.valve.i_branch);
 
 %% Calculate additional results
 % Calculate P_th_ij__MW, P_th_ij, V_dot_n_ij__m3_per_day, V_dot_n_ij__m3_per_h or m_dot_ij__kg_per_s

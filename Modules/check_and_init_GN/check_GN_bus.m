@@ -24,11 +24,11 @@ function GN = check_GN_bus(GN)
 %           T_i
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -62,7 +62,7 @@ if ismember('p_i__barg',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.p_i__barg))
         error('GN.bus: p_i__barg must be numeric.')
     elseif any(GN.bus.p_i__barg < 0 | isinf(GN.bus.p_i__barg))
-        error('GN.bus: Pressure values p_i__barg must be positive numeric value.')
+        error('GN.bus: Pressure values p_i__barg must be positive numeric values.')
     end
 else
     error('GN.bus: p_i__barg column is missing.')
@@ -147,8 +147,8 @@ if isfield(GN,'time_series')
     time_series_bus_demand_feed_in = any(ismember(bus_object_quantities, white_list));
 end
 
-if isempty(bus_demand_feed_in) && ~time_series_bus_demand_feed_in
-    error(['GN.bus: information about bus demand or feed is missing. GN.bus or GN.times_series must have at least one of these colums: ',...
+if isempty(bus_demand_feed_in) && ~time_series_bus_demand_feed_in && (isfield(GN,'pipe') || isfield(GN,'comp') || isfield(GN,'prs'))
+    error(['GN.bus: information about bus demand or feed in is missing. GN.bus or GN.times_series must have at least one of these colums: ',...
         'P_th_i__MW, P_th_i, V_dot_n_i__m3_per_day, V_dot_n_i__m3_per_h, m_dot_i__kg_per_s or V_dot_n_i.'])
 end
 
@@ -174,7 +174,7 @@ if ismember('p_i_min__barg',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.p_i_min__barg))
         error('GN.bus: p_i_min__barg must be numeric.')
     elseif any(GN.bus.p_i_min__barg < 0 | isinf(GN.bus.p_i_min__barg))
-        error('GN.bus: Pressure values p_i_min__barg must be positive numeric value.')
+        error('GN.bus: Pressure values p_i_min__barg must be positive numeric values.')
     elseif any(isnan(GN.bus.p_i_min__barg))
         error('GN.bus: If any p_i_min__barg values are available, all busses need p_i_min__barg values.')
     end
@@ -187,7 +187,7 @@ if ismember('p_i_max__barg',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.p_i_max__barg))
         error('GN.bus: p_i_max__barg must be numeric.')
     elseif any(GN.bus.p_i_max__barg < 0 | isinf(GN.bus.p_i_max__barg))
-        error('GN.bus: Pressure values p_i_max__barg must be positive numeric value.')
+        error('GN.bus: Pressure values p_i_max__barg must be positive numeric values.')
     elseif any(isnan(GN.bus.p_i_max__barg))
         error('GN.bus: If any p_i_max__barg values are available, all busses need p_i_max__barg values.')
     end
@@ -208,12 +208,10 @@ if ismember('T_i_min',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.T_i_min))
         error('GN.bus: T_i_min must be numeric.')
     elseif any(GN.bus.T_i_min < 0 | isinf(GN.bus.T_i_min))
-        error('GN.bus: T_i_min [K] must be positive numeric value.')
+        error('GN.bus: T_i_min [K] must be positive numeric values.')
     elseif all(isnan(GN.bus.T_i_min))
         GN.bus.T_i_min(isnan(GN.bus.T_i_min)) = GN.T_env;
     end
-else
-    GN.bus.T_i_min(:) = 0;
 end
 
 % T_i_max
@@ -221,12 +219,10 @@ if ismember('T_i_max',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.T_i_max))
         error('GN.bus: T_i_max must be numeric.')
     elseif any(GN.bus.T_i_max <= 0 | isinf(GN.bus.T_i_max))
-        error('GN.bus: T_i_max [K] must be positive numeric value.')
+        error('GN.bus: T_i_max [K] must be positive numeric values.')
     elseif all(isnan(GN.bus.T_i_max))
         GN.bus.T_i_max(isnan(GN.bus.T_i_max)) = GN.T_env;
     end
-else
-    GN.bus.T_i_max(:) = 1000;
 end
 
 % T_i_min and T_i_max
@@ -279,7 +275,9 @@ if ~GN.isothermal
     
     % Set source_bus of slack_bus true, to initalize T_i_source if
     % necessary
-    GN.bus.source_bus(GN.bus.slack_bus) = true;
+    if ismember('slack_bus',GN.bus.Properties.VariableNames)
+        GN.bus.source_bus(GN.bus.slack_bus) = true;
+    end
 end
 
 %% #######################################################################
@@ -313,7 +311,7 @@ if ismember('T_i',GN.bus.Properties.VariableNames)
     if any(~isnumeric(GN.bus.T_i))
         error('GN.bus: T_i must be numeric.')
     elseif any(GN.bus.T_i <= 0 | isinf(GN.bus.T_i))
-        error('GN.bus: T_i [K] must be positive numeric value.')
+        error('GN.bus: T_i [K] must be positive numeric values.')
     elseif all(isnan(GN.bus.T_i))
         GN.bus.T_i(isnan(GN.bus.T_i)) = GN.T_env;
     end

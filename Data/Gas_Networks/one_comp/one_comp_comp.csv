@@ -1,2 +1,2 @@
-comp_ID;from_bus_ID;to_bus_ID;eta_s;eta_drive;T_controlled;T_ij_out;Q_dot_cooler;eta_cooler;in_service;slack_branch;gas_powered
-1;1;2;0.65;0.35;1;300;NaN;0.5;1;1;0
+comp_ID;branch_ID;from_bus_ID;to_bus_ID;in_service;slack_branch;gas_powered;eta_s;eta_drive;T_controlled;T_ij_out;Q_dot_cooler;eta_cooler;eta_S;eta_m;i_branch
+1;1;1;2;1;1;0;0.8;1;1;300;NaN;0.95;1;1;1

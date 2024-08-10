@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -59,10 +59,10 @@ GN = set_fraction_of_gas_mixture_component(GN, gas_mixture_component, x, 'x_mol'
 NUMPARAM = getDefaultNumericalParameters();
 
 % Change the accuracy of the Newton-Raphson method to 1e-2. Newton-Raphson
-% method will run, until norm(f) < NUMPARAM.epsilon_NR_f. f is the nodal
+% method will run, until norm(f) < NUMPARAM.epsilon_norm_f. f is the nodal
 % equation and results at each bus from the sum of all inflowing and
 % outflowing standard volume flows. 
-NUMPARAM.epsilon_NR_f = 1e-6;
+NUMPARAM.epsilon_norm_f = 1e-6;
 NUMPARAM.maxIter = 10;
 
 

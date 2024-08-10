@@ -16,7 +16,8 @@ function GN = check_GN_comp(GN)
 %           in_service
 %           slack_branch
 %           gas_powered
-%           eta_s
+%           eta_S
+%           eta_mech
 %           eta_drive
 %           P_th_ij_preset__MW, P_th_ij_preset, V_dot_n_ij_preset__m3_per_day,
 %               V_dot_n_ij_preset__m3_per_h, m_dot_ij_preset__kg_per_s,
@@ -24,11 +25,11 @@ function GN = check_GN_comp(GN)
 %           preset
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -97,7 +98,7 @@ end
 %  I N P U T   D A T A   -
 %  O P T I O N A L   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
 %  #######################################################################
-if ~GN.isothermal
+% if ~GN.isothermal % TODO
     %% T_controlled
     if ismember('T_controlled',GN.comp.Properties.VariableNames)
         if any(~islogical(GN.comp.T_controlled) & ~isnumeric(GN.comp.T_controlled))
@@ -155,7 +156,7 @@ if ~GN.isothermal
         % Set default parameter
         GN.comp.eta_cooler(:) = 1;
     end
-end
+% end
 
 %% #######################################################################
 %  I N P U T   D A T A   -   O P T I O N A L
@@ -214,17 +215,30 @@ else
     GN.comp.gas_powered(:) = false;
 end
 
-%% eta_s
-if ismember('eta_s',GN.comp.Properties.VariableNames)
-    if any(~isnumeric(GN.comp.eta_s))
-        error('GN.comp: eta_s must be numeric.')
-    elseif any(GN.comp.eta_s <= 0 | GN.comp.eta_s > 1 | isnan(GN.comp.eta_s))
-        error(['GN.comp: eta_s must be larger than zero and less than or equal to one. Check entries at these compressor IDs: ',...
-            num2str( GN.comp.comp_ID(GN.comp.eta_s <= 0 | GN.comp.eta_s > 1 | isnan(GN.comp.eta_s))' )])
+%% eta_S
+if ismember('eta_S',GN.comp.Properties.VariableNames)
+    if any(~isnumeric(GN.comp.eta_S))
+        error('GN.comp: eta_S must be numeric.')
+    elseif any(GN.comp.eta_S <= 0 | GN.comp.eta_S > 1 | isnan(GN.comp.eta_S))
+        error(['GN.comp: eta_S must be larger than zero and less than or equal to one. Check entries at these compressor IDs: ',...
+            num2str( GN.comp.comp_ID(GN.comp.eta_S <= 0 | GN.comp.eta_S > 1 | isnan(GN.comp.eta_S))' )])
     end
 else
     % Set default parameter
-    GN.comp.eta_s(:) = 1;
+    GN.comp.eta_S(:) = 1;
+end
+
+%% eta_mech
+if ismember('eta_mech',GN.comp.Properties.VariableNames)
+    if any(~isnumeric(GN.comp.eta_mech))
+        error('GN.comp: eta_mech must be numeric.')
+    elseif any(GN.comp.eta_mech < 0 | GN.comp.eta_mech > 1 | isnan(GN.comp.eta_mech))
+        error(['GN.comp: eta_mech must be larger than zero and less than or equal to one. Check entries at these compressor IDs: ',...
+            num2str( GN.comp.comp_ID(GN.comp.eta_mech < 0 | GN.comp.eta_mech > 1 | isnan(GN.comp.eta_mech))' )])
+    end
+else
+    % Set default parameter
+    GN.comp.eta_mech(:) = 1;
 end
 
 %% eta_drive

@@ -1,13 +1,13 @@
 function [GN] = reset_valves(GN,GN_input)
-%RESET_VALVES Summary of this function goes here
-%   Detailed explanation goes here
+%RESET_VALVES
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -39,7 +39,7 @@ GN_input.branch.V_dot_n_ij(i_row)   = GN.branch.V_dot_n_ij;
 % GN_input.branch.connecting_branch = branch_temp.connecting_branch;
 % GN_input.branch.parallel_branch   = branch_temp.parallel_branch;
 
-%% UNDER CONSTRUCTION
+%% TODO
 GN = get_V_dot_n_ij_valves(GN_input);
 disp('...')
 
@@ -137,7 +137,7 @@ disp('...')
 % end
 
 %% valve
-% GN = init_V_dot_n_ij(GN);
+% GN = init_V_dot_n_ij(GN, NUMPARAM);
 % GN = get_V_dot_n_ij_valves(GN);
 
 % i_valve = GN.branch.i_valve(GN.branch.valve_branch);

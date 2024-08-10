@@ -3,11 +3,11 @@ function [GN] = remove_auxiliary_variables(GN)
 %   GN = remove_auxiliary_variables(GN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,6 +46,11 @@ if isfield(GN, 'valve')
     varNames = {'branch_ID', 'i_branch'};
     idx = ismember(GN.valve.Properties.VariableNames,varNames);
     GN.valve(:,idx) = [];
+end
+
+%% Jacobian Matrix
+if isfield(GN,'J')
+    GN = rmfield(GN,'J');
 end
 
 end

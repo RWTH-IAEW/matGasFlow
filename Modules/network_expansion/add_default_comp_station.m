@@ -2,11 +2,11 @@ function GN = add_default_comp_station(GN, bus_IDs)
 %add_default_comp_station
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -56,8 +56,8 @@ for ii = 1:length(bus_IDs)
         GN.bus.V_dot_n_i(i_new_busses) = 0;
     end
     
-    GN.bus.x_coord(i_new_busses)    = GN.bus.x_coord(i_new_busses) + rand(length(i_new_busses),1); % UNDER CONSTRUCTION
-    GN.bus.y_coord(i_new_busses)    = GN.bus.y_coord(i_new_busses) + rand(length(i_new_busses),1); % UNDER CONSTRUCTION
+    GN.bus.x_coord(i_new_busses)    = GN.bus.x_coord(i_new_busses) + rand(length(i_new_busses),1); % TODO
+    GN.bus.y_coord(i_new_busses)    = GN.bus.y_coord(i_new_busses) + rand(length(i_new_busses),1); % TODO
     
     %% Comp
     if isfield(GN,'comp')
