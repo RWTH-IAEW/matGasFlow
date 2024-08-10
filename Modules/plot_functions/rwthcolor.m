@@ -1,4 +1,13 @@
 function [cstruct, cmap100, cmapSchwarz, cmapBlau] = rwthcolor()
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
+%       Digitalization and Energy Economics (IAEW),
+%       RWTH Aachen University, Marcel Kurth
+%   All rights reserved.
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
+%   This script is part of matGasFlow.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 cstruct.blau100 = [0, 84, 159]/255;
 cstruct.blau75 = [64, 127, 183]/255;

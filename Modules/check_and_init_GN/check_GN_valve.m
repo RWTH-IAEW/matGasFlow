@@ -11,11 +11,11 @@ function GN = check_GN_valve(GN)
 %           in_service
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -1,17 +1,17 @@
 function GN_res = merge_GN_into_GN_input(GN, GN_input)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%UNTITLED
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if all(GN_input.branch.in_service) && all(GN.bus.supplied) && ~isfield(GN_input, 'valve') % UNDER CONSTRUCTION Not working for valves
+if all(GN_input.branch.in_service) && all(GN.bus.supplied) && ~isfield(GN_input, 'valve') %TODO Not working for valves
     GN_res = GN;
     return
 end
@@ -25,7 +25,7 @@ GN_input.bus                    = [GN_input.bus, table_missing_columns];
 bus_temp                        = GN_input.bus;
 GN_input.bus(i_row,i_column)    = GN.bus;
 
-% Keep some properties from GN_input.bus % UNDER CONSTRUCTION Bug?!
+% Keep some properties from GN_input.bus % TODO
 if any(GN_input.bus.slack_bus   ~= bus_temp.slack_bus)
     GN_input.bus.slack_bus      = bus_temp.slack_bus;
 end
@@ -113,6 +113,15 @@ end
 if isfield(GN,'CONVERGENCE')
     GN_input.CONVERGENCE = GN.CONVERGENCE;
 end
+
+%% Calculate V_dot_n_i [m^3/s]
+if ismember('V_dot_n_i',GN_input.bus.Properties.VariableNames)
+    GN_temp = get_V_dot_n_i(GN_input);
+    GN_input.bus.V_dot_n_i(isnan(GN_input.bus.V_dot_n_i)) = GN_temp.bus.V_dot_n_i(isnan(GN_input.bus.V_dot_n_i));
+end
+
+%% success
+GN_input.success = GN.success;
 
 %% Return GN_input as result
 GN_res = GN_input;

@@ -10,17 +10,18 @@ function GN = check_GN_pipe(GN)
 %           L_ij
 %           D_ij
 %           k_ij
+%           U_ij
 %       INPUT DATA - OPTIONAL
 %           in_service
 %       INPUT DATA - OPTIONAL FOR NON-ISOTHERMAL SIMULATION
 %           T_env_ij
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -85,7 +86,7 @@ if any(GN.pipe.from_bus_ID == GN.pipe.to_bus_ID)
         num2str(GN.pipe.pipe_ID(GN.pipe.from_bus_ID == GN.pipe.to_bus_ID)')])
 end
 
-%% L_ij
+%% L_ij [m]
 if ismember('L_ij',GN.pipe.Properties.VariableNames)
     if any(~isnumeric(GN.pipe.L_ij))
         error('GN.pipe: L_ij must be numeric.')
@@ -93,11 +94,11 @@ if ismember('L_ij',GN.pipe.Properties.VariableNames)
         error(['GN.pipe: L_ij must be positive. Set L_ij of non-pipes to NaN. Check entries at these pipe IDs: ',...
             num2str( GN.pipe.pipe_ID(GN.pipe.L_ij <= 0 |  isinf(GN.pipe.L_ij) | isnan(GN.pipe.L_ij))' )])
     end
-elseif any(GN.pipe.pipe_pipe)
-    error('GN.pipe: L_ij column is missing. GN.pipe must have at least one pipe.')
+else
+    error('GN.pipe: L_ij column is missing.')
 end
 
-%% D_ij
+%% D_ij [m]
 if ismember('D_ij',GN.pipe.Properties.VariableNames)
     if any(~isnumeric(GN.pipe.D_ij))
         error('GN.pipe: D_ij must be numeric.')
@@ -105,11 +106,11 @@ if ismember('D_ij',GN.pipe.Properties.VariableNames)
         error(['GN.pipe: D_ij must be positive. Check entries at these pipe IDs: ',...
             num2str( GN.pipe.pipe_ID(GN.pipe.D_ij <= 0 | isinf(GN.pipe.D_ij) | isnan(GN.pipe.D_ij))' )])
     end
-elseif any(GN.pipe.pipe_pipe)
-    error('GN.pipe: D_ij column is missing. GN.pipe must have at least one pipe.')
+else
+    error('GN.pipe: D_ij column is missing.')
 end
 
-%% k_ij
+%% k_ij [m]
 if ismember('k_ij',GN.pipe.Properties.VariableNames)
     if any(~isnumeric(GN.pipe.k_ij))
         error('GN.pipe: k_ij must be numeric.')
@@ -117,8 +118,8 @@ if ismember('k_ij',GN.pipe.Properties.VariableNames)
         error(['GN.pipe: k_ij must be greater than or equal to zero. Check entries at these pipe IDs: ',...
             num2str( GN.pipe.pipe_ID(GN.pipe.k_ij < 0 | isinf(GN.pipe.k_ij) | isnan(GN.pipe.k_ij))' )])
     end
-elseif any(GN.pipe.pipe_pipe)
-    error('GN.pipe: k_ij column is missing. GN.pipe must have at least one pipe.')
+else
+    error('GN.pipe: k_ij column is missing.')
 end
 
 %% #######################################################################
@@ -141,26 +142,6 @@ if ismember('in_service',GN.pipe.Properties.VariableNames)
 else
     % Default setting
     GN.pipe.in_service(:) = true;
-end
-
-%% #######################################################################
-%  I N P U T   D A T A   -
-%  O P T I O N A L   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
-%  #######################################################################
-if ~GN.isothermal
-    %% T_env_ij
-    if ismember('T_env_ij',GN.pipe.Properties.VariableNames)
-        if any(~isnumeric(GN.pipe.T_env_ij))
-            error('GN.pipe: T_env_ij must be numeric.')
-        elseif any(GN.pipe.T_env_ij < 0 | isinf(GN.pipe.T_env_ij))
-            error('GN.pipe: T_env_ij must be a positive double value.')
-        end
-    elseif ~ismember('T_env_ij',GN.pipe.Properties.VariableNames) && isfield(GN,'T_env')
-        GN.pipe.T_env_ij = GN.T_env * ones(size(GN.pipe,1),1);
-        warning(['GN.pipe: T_env_ij column for non-isothermal simulation is missing. All T_env_ij entries are set to ' num2str(GN.T_env) ' K.'])
-    else
-        error('GN.pipe: T_env_ij column for non-isothermal simulation as well as GN.T_env are missing.')
-    end
 end
 
 %% P_th_ij_preset__MW, P_th_ij_preset, V_dot_n_ij_preset__m3_per_day, V_dot_n_ij_preset__m3_per_h, m_dot_ij_preset__kg_per_s, V_dot_n_ij_preset
@@ -228,6 +209,41 @@ if length(pipe_flow_type) > 1
     warning(['GN.pipe: ',[temp_text{3:end}],' entries are ignored, as ',char(temp_text(1)),' is preferably used.'])
     GN.pipe(:,pipe_flow_type(2:end)) = [];
 end
+
+%% #######################################################################
+%  I N P U T   D A T A   -
+%  O P T I O N A L   F O R   N O N - I S O T H E R M A L   S I M U L A T I O N
+%  #######################################################################
+if ~GN.isothermal
+    %% T_env_ij
+    if ismember('T_env_ij',GN.pipe.Properties.VariableNames)
+        if any(~isnumeric(GN.pipe.T_env_ij))
+            error('GN.pipe: T_env_ij must be numeric.')
+        elseif any(GN.pipe.T_env_ij < 0 | isinf(GN.pipe.T_env_ij))
+            error('GN.pipe: T_env_ij must be a positive double value.')
+        end
+    elseif ~ismember('T_env_ij',GN.pipe.Properties.VariableNames) && isfield(GN,'T_env')
+        GN.pipe.T_env_ij = GN.T_env * ones(size(GN.pipe,1),1);
+        warning(['GN.pipe: T_env_ij column for non-isothermal simulation is missing. All T_env_ij entries are set to ' num2str(GN.T_env) ' K.'])
+    else
+        error('GN.pipe: T_env_ij column for non-isothermal simulation as well as GN.T_env are missing.')
+    end
+    
+    %% U_ij [W/(m^2*K)] - heat transfer coefficient
+    if ismember('U_ij',GN.pipe.Properties.VariableNames)
+        if any(~isnumeric(GN.pipe.U_ij))
+            error('GN.pipe: U_ij must be numeric.')
+        elseif any(GN.pipe.U_ij < 0 | isinf(GN.pipe.U_ij) | isnan(GN.pipe.U_ij))
+            error(['GN.pipe: U_ij must be greater than or equal to zero. Check entries at these pipe IDs: ',...
+                num2str( GN.pipe.pipe_ID(GN.pipe.U_ij < 0 | isinf(GN.pipe.U_ij) | isnan(GN.pipe.U_ij))' )])
+        end
+    else
+        % Default setting
+        warning('GN.pipe: heat transfer coefficient U_ij is missing. Default value: 2 W/(m^2 K).')
+        GN.pipe.U_ij(:) = 2;
+    end
+end
+
 
 end
 

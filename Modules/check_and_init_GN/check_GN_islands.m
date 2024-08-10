@@ -2,11 +2,11 @@ function [GN] = check_GN_islands(GN)
 %CHECK_GN_ISLANDS Check if the gas network is seperated in two or more parts
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,7 +15,7 @@ function [GN] = check_GN_islands(GN)
 GN_temp = GN;
 GN_temp.branch(~GN_temp.branch.in_service,:) = [];
 GN.bus.supplied = (ismember(1:size(GN_temp.bus,1),[GN_temp.branch.i_from_bus;GN_temp.branch.i_to_bus]))';
-% UNDER CONSTRUCTION
+% TODO
 if ...
         (ismember('P_th_i__MW',GN.bus.Properties.VariableNames)              && any(GN.bus.P_th_i__MW(~GN.bus.supplied) ~= 0)) || ...
         (ismember('P_th_i',GN.bus.Properties.VariableNames)                  && any(GN.bus.P_th_i(~GN.bus.supplied) ~= 0)) || ...

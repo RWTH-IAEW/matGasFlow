@@ -1,13 +1,13 @@
 function [GN, SUCCESS, model, result] = preset_optimization_MILP_LP(GN, opt_model, include_out_of_service_branches, keep_in_service_states, reduce_V_dot_n_ij_bounds, x_hint, x_start, solver, NUMPARAM)
-%PRESET_OPTIMIZATION_PRESSURE_CONSTRAINTS Summary of this function goes here
-%   Detailed explanation goes here
+%PRESET_OPTIMIZATION_PRESSURE_CONSTRAINTS
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 9 || isempty(NUMPARAM)
@@ -161,13 +161,13 @@ if any(model.is_comp_branch)
     GN.comp.V_dot_n_ij          = GN.branch.V_dot_n_ij(GN.comp.i_branch);
     GN.comp.V_dot_n_ij_preset   = GN.comp.V_dot_n_ij;
     GN.comp.in_service          = GN.branch.in_service(GN.comp.i_branch);
-    % GN.comp.V_dot_n_ij(GN.comp.V_dot_n_ij>-1e-4 & GN.comp.V_dot_n_ij<0 & GN.comp.in_service) = 0; % UNDER CONSTRUCTION: Numerical tolerance
+    % GN.comp.V_dot_n_ij(GN.comp.V_dot_n_ij>-1e-4 & GN.comp.V_dot_n_ij<0 & GN.comp.in_service) = 0; % TODO: Numerical tolerance
 end
 if any(model.is_prs_branch)
     GN.prs.V_dot_n_ij           = GN.branch.V_dot_n_ij(GN.prs.i_branch);
     GN.prs.V_dot_n_ij_preset    = GN.prs.V_dot_n_ij;
     GN.prs.in_service           = GN.branch.in_service(GN.prs.i_branch);
-    % GN.prs.V_dot_n_ij(GN.prs.V_dot_n_ij>-1e-4 & GN.prs.V_dot_n_ij<0 & GN.prs.in_service) = 0; % UNDER CONSTRUCTION: Numerical tolerance
+    % GN.prs.V_dot_n_ij(GN.prs.V_dot_n_ij>-1e-4 & GN.prs.V_dot_n_ij<0 & GN.prs.in_service) = 0; % TODO: Numerical tolerance
 end
 
 % p_i

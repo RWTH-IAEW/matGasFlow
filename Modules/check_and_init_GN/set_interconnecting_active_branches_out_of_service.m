@@ -1,17 +1,17 @@
 function [GN] = set_interconnecting_active_branches_out_of_service(GN)
-%SET_INTERCONNECTING_ACTIVE_BRANCHES_OUT_OF_SERVICE Summary of this function goes here
-%   Detailed explanation goes here
+%SET_INTERCONNECTING_ACTIVE_BRANCHES_OUT_OF_SERVICE
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% UNDER CONSTRUCTION: Bypass might be a better idea?!
+% TODO: Bypass might be a better idea?!
 
 %%
 if isfield(GN,'comp')
@@ -34,7 +34,7 @@ if isfield(GN,'prs')
         & GN.branch.prs_branch ...
         & GN.branch.in_service;
     
-    if any(i_prs_branch) % UNDER CONSTRUCTION
+    if any(i_prs_branch) % TODO
         disp(GN.branch(i_prs_branch,:))
         warning('PRS with the same area_ID at from_bus and to_bus have been set out of service.')
         GN.prs.in_service(GN.branch.i_prs(i_prs_branch))        = false;
@@ -48,15 +48,17 @@ if isfield(GN,'prs')
     end
 end
 
-%% UNDER CONSTRUCTION: unsightly solution ...
-% Check and initialize area_ID
-GN = check_and_init_area_ID(GN);
+%% Repeate procedure
+if (isfield(GN,'comp') && any(i_comp_branch)) || (isfield(GN,'prs') && any(i_prs_branch))
+    % Check and initialize area_ID
+    GN = check_and_init_area_ID(GN);
 
-% Check for islands
-GN = check_GN_islands(GN);
+    % Check for islands
+    GN = check_GN_islands(GN);
 
-% System Matrices
-GN = get_GN_MAT(GN);
+    % System Matrices
+    GN = get_GN_MAT(GN);
+end
 
 end
 

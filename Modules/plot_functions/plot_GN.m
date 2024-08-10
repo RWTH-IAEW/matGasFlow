@@ -1,231 +1,392 @@
-function [ h ] = plot_GN( GN )
-% PLOT_GN Summary of this function goes here
-%   Detailed explanation goes here
+function [h,ax_bus,ax_branch,cb_bus,cb_branch,text_bus] = plot_GN(GN, PLOTOPTIONS, h)
+%PLOT_GN_AREA
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2021, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Check y_coord and x_coord
-if ~ismember('y_coord',GN.bus.Properties.VariableNames) || ~ismember('x_coord',GN.bus.Properties.VariableNames)
-    disp('GN.bus: x_coord and/or y_coord are missing')
-    return
+if nargin < 2
+    PLOTOPTIONS = getDefaultPlotGNOptions;
 end
 
-%% Weights
-weights = ones(size(GN.branch,1),1);
-if isfield(GN, 'pipe')
-    i_pipes = GN.branch.i_pipe(GN.branch.pipe_branch);
-    if max(GN.pipe.D_ij(i_pipes)) ~= min(GN.pipe.D_ij(i_pipes))
-        weights_min = 0.5;
-        weights_max = 3;
-        weights(i_pipes) = weights_min + ( GN.pipe.D_ij(i_pipes) - min(GN.pipe.D_ij(i_pipes)) )...
-            * (weights_max - weights_min) /(max(GN.pipe.D_ij(i_pipes)) - min(GN.pipe.D_ij(i_pipes)));
+if nargin < 3
+    if ~isempty(PLOTOPTIONS.FigurePosition)
+        h = figure('units','inch','position',PLOTOPTIONS.FigurePosition);
+    else
+        h = figure;
     end
-end
-
-%% Change coordinates of busses with same coordinates
-A = [GN.bus.x_coord,GN.bus.y_coord];
-[~, b] = unique(A,'row');
-indexToDupes = find(not(ismember(1:size(A,1),b)));
-
-randAlpha = rand(length(indexToDupes),1)*2*pi;
-offset = 0.003*(max(GN.bus.y_coord) - min(GN.bus.y_coord));
-
-GN.bus.y_coord(indexToDupes) = GN.bus.y_coord(indexToDupes) + offset*cos(randAlpha);
-GN.bus.x_coord(indexToDupes) = GN.bus.x_coord(indexToDupes) + offset*sin(randAlpha);
-
-%% EdgeLabel
-edgelabel = strings(size(GN.branch,1),1);
-
-if ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
-    V_dot_n_ij_str = string(abs(round(GN.branch.V_dot_n_ij*100)/100));
-    if isfield(GN,'pipe')
-        Delta_p_ij__barg_str = string(round((GN.bus.p_i__barg(GN.branch.i_from_bus) - GN.bus.p_i__barg(GN.branch.i_to_bus))*1e2)/1e2); % [bar_gauge]
-        L_ij_str = repmat("",size(GN.branch,1),1);
-        L_ij_str(GN.branch.pipe_branch) = string(GN.pipe.L_ij/1000); % [km]
-        D_ij_str = repmat("",size(GN.branch,1),1);
-        D_ij_str(GN.branch.pipe_branch) = string(GN.pipe.D_ij*1000); % [mm]
-        
-        is_pipe = GN.branch.pipe_branch;
-        i_pipe = GN.branch.i_pipe(is_pipe);
-        pipe_ID_str = string(GN.pipe.pipe_ID);
-        edgelabel(is_pipe)   = join([repmat("$$(",sum(is_pipe),1),...
-            pipe_ID_str(i_pipe),  repmat(')\,',sum(is_pipe),1),...
-            V_dot_n_ij_str(is_pipe), repmat('\,m^3/s;\,',sum(is_pipe),1),...
-            Delta_p_ij__barg_str(is_pipe), repmat('\,bar;\,',sum(is_pipe),1),...
-            L_ij_str(is_pipe),       repmat('\,km;\,',sum(is_pipe),1),...
-            D_ij_str(is_pipe),       repmat('\,mm$$',sum(is_pipe),1)],"");
-    end
-    if isfield(GN,'comp')
-        is_comp = GN.branch.comp_branch;
-        i_comp = GN.branch.i_comp(is_comp);
-        comp_ID_str = string(GN.comp.comp_ID);
-        edgelabel(is_comp) = join([  repmat('$$(',sum(is_comp),1),...
-            comp_ID_str(i_comp),  repmat(')\,',sum(is_comp),1),...
-            V_dot_n_ij_str(is_comp), repmat('\,m^3/s$$',sum(is_comp),1)],"");
-    end
-    if isfield(GN,'prs')
-        is_prs = GN.branch.prs_branch;
-        i_prs = GN.branch.i_prs(is_prs);
-        prs_ID_str = string(GN.prs.prs_ID);
-        edgelabel(is_prs) = join([   repmat('$$(',sum(is_prs),1),...
-            prs_ID_str(i_prs),   repmat(')\,',sum(is_prs),1),...
-            V_dot_n_ij_str(is_prs),  repmat('\,m^3/s$$',sum(is_prs),1)],"");
-    end
-    if isfield(GN,'valve')
-        is_valve = GN.branch.valve_branch;
-        i_valve = GN.branch.i_valve(is_valve);
-        valve_ID_str = string(GN.valve.valve_ID);
-        edgelabel(is_valve)  = join([repmat('$$(',sum(is_valve),1),...
-            valve_ID_str(i_valve), repmat(')\,',sum(is_valve),1),...
-            V_dot_n_ij_str(is_valve),repmat('\,m^3/s$$',sum(is_valve),1)],"");
-    end
+    hold on
 else
-    if isfield(GN,'pipe')
-        L_ij_str = repmat("",size(GN.branch,1),1);
-        L_ij_str(GN.branch.pipe_branch) = string(GN.pipe.L_ij/1000); % [km]
-        D_ij_str = repmat("",size(GN.branch,1),1);
-        D_ij_str(GN.branch.pipe_branch) = string(GN.pipe.D_ij*1000); % [mm]
-        is_pipe = GN.branch.pipe_branch;
-        i_pipe = GN.branch.i_pipe(is_pipe);
-        pipe_ID_str = string(GN.pipe.pipe_ID);
-        edgelabel(is_pipe) = join([  repmat("$$(",sum(is_pipe),1),...
-            pipe_ID_str(i_pipe),  repmat(')\,',sum(is_pipe),1),...
-            L_ij_str(is_pipe),       repmat('\,km;\,',sum(is_pipe),1),...
-            D_ij_str(is_pipe),       repmat('\,mm$$',sum(is_pipe),1)],"");
-    end
-    if isfield(GN,'comp')
-        is_comp = GN.branch.comp_branch;
-        i_comp = GN.branch.i_comp(is_comp);
-        comp_ID_str = string(GN.comp.comp_ID);
-        edgelabel(is_comp) = join([  repmat('$$(',sum(is_comp),1),...
-            comp_ID_str(i_comp),  repmat(')$$',sum(is_comp),1)],"");
-    end
-    if isfield(GN,'prs')
-        is_prs = GN.branch.prs_branch;
-        i_prs = GN.branch.i_prs(is_prs);
-        prs_ID_str = string(GN.prs.prs_ID);
-        edgelabel(is_prs) = join([   repmat('$$(',sum(is_prs),1),...
-            prs_ID_str(i_prs),   repmat(')$$',sum(is_prs),1)],"");
-    end
-    if isfield(GN,'valve')
-        is_valve = GN.branch.valve_branch;
-        i_valve = GN.branch.i_valve(is_valve);
-        valve_ID_str = string(GN.valve.valve_ID);
-        edgelabel(is_valve) = join([repmat('$$(',sum(is_valve),1),...
-            valve_ID_str(i_valve),repmat(')$$',sum(is_valve),1)],"");
-    end
+    h = figure(h);
+    hold on
 end
 
-%% NodeLabel
-nodelabel = strings(size(GN.bus,1),1);
-p_i_str   = string(round(GN.bus.p_i__barg*1e4)/1e4);
+%% Initialize
+cb_bus      = [];
+cb_branch   = [];
+text_bus    = [];
 
-entry_exit_columns = {'P_th_i__MW', 'P_th_i', 'V_dot_n_i__m3_per_day', 'V_dot_n_i__m3_per_h', 'm_dot_i__kg_per_s', 'V_dot_n_i'};
-units = {'MW','W','m^3/day','m^3/h','kg/s','m^3/s'};
-idx = ismember(entry_exit_columns,GN.bus.Properties.VariableNames);
-idx = find(idx);
-idx = idx(1);
-entry_exit_column = entry_exit_columns(idx);
-unit = units(idx);
-entry_exit = string(GN.bus{:,entry_exit_column});
-bus_ID_str = string(GN.bus.bus_ID);
+%% %%%%%%%%%%%%%%% TODO
+% PLOTOPTIONS.axis_on = true;
+% PLOTOPTIONS.pipe_show_colorbar =true;
 
-for ii = 1: size(GN.bus.p_i__barg,1)
-    if     ~isnan(GN.bus.p_i__barg(ii)) && ~isnan(GN.bus{ii,entry_exit_column})
-        nodelabel{ii} = ['$$($$',bus_ID_str{ii},'$$)\,$$',p_i_str{ii},'$$\,bar;\,$$',entry_exit{ii},'$$\,',unit{1},'$$'];
-    elseif ~isnan(GN.bus.p_i__barg(ii)) &&  isnan(GN.bus{ii,entry_exit_column})
-        nodelabel{ii} = ['$$($$',bus_ID_str{ii},'$$)\,$$',p_i_str{ii},'$$\,bar;\,$$'                                ];
-    elseif  isnan(GN.bus.p_i__barg(ii)) && ~isnan(GN.bus{ii,entry_exit_column})
-        nodelabel{ii} = ['$$($$',bus_ID_str{ii},'$$)\,$$',                           entry_exit{ii},'$$\,',unit{1},'$$'];
-    elseif  isnan(GN.bus.p_i__barg(ii)) &&  isnan(GN.bus{ii,entry_exit_column})
-        nodelabel{ii} = ['$$($$',bus_ID_str{ii},'$$)$$'                                                             ];
-    end
+%%
+if ~PLOTOPTIONS.axis_on
+    axis off
 end
 
-%% Initialize Graphe
-if ismember('V_dot_n_ij',GN.branch.Properties.VariableNames)
-    i_from_bus = NaN(size(GN.branch,1),1);
-    i_from_bus(GN.branch.V_dot_n_ij >= 0) = GN.branch.i_from_bus(GN.branch.V_dot_n_ij >= 0);
-    i_from_bus(GN.branch.V_dot_n_ij < 0) = GN.branch.i_to_bus(GN.branch.V_dot_n_ij < 0);
+if ischar(GN)
+    GN = load_GN(GN);
+end
+
+n_branch_colorbars = sum([...
+    PLOTOPTIONS.pipe_show_colorbar, ...
+    PLOTOPTIONS.comp_show_colorbar, ...
+    PLOTOPTIONS.prs_show_colorbar, ...
+    PLOTOPTIONS.valve_show_colorbar]);
+if n_branch_colorbars>1
+    error('For pipe, comp, prs and valve only one colorbar can be shown.')
+end
+
+%% x_coord, y_coord
+if any(~ismember({'x_coord','y_coord'}, GN.bus.Properties.VariableNames))
+    error('Missing bus properties: x_coord and/or y_coord.')
+end
+
+%% area_IDs
+if isempty(PLOTOPTIONS.area_IDs)
+    area_IDs = unique(GN.bus.area_ID);
+else
+    area_IDs = PLOTOPTIONS.area_IDs;
+end
+
+%% area_Color
+if strcmp(PLOTOPTIONS.bus_Color, 'area_ID') || strcmp(PLOTOPTIONS.pipe_Color, 'area_ID')
+    col         = rwthcolor;
+    fns         = fieldnames(col);
+    area_Color  = zeros(length(fns),3);
+    for ii = 1:length(fns)
+        area_Color(ii,:) = col.(fns{ii});
+    end
     
-    i_to_bus = NaN(size(GN.branch,1),1);
-    i_to_bus(GN.branch.V_dot_n_ij >= 0) = GN.branch.i_to_bus(GN.branch.V_dot_n_ij >= 0);
-    i_to_bus(GN.branch.V_dot_n_ij < 0)  = GN.branch.i_from_bus(GN.branch.V_dot_n_ij < 0);
+    if length(area_IDs) > size(area_Color,1)
+        area_Color  = [area_Color; rand(3*ceil((length(area_IDs)-length(area_Color))/3),3)];
+        temp        = 1:size(area_Color,1);
+        temp        = reshape(temp, 3, length(temp)/3);
+        temp        = reshape(temp', size(temp,1)*size(temp,2), 1);
+        area_Color  = area_Color(temp,:);
+    else
+        area_Color  = area_Color(floor(1:length(fns)/length(area_IDs):length(fns)),:);
+    end
+end
+
+%% Pipe
+if isfield(GN,'pipe') && PLOTOPTIONS.pipe_show && any(GN.pipe.in_service)
+    
+    x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.pipe.i_branch))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.pipe.i_branch))'];
+    y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.pipe.i_branch))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.pipe.i_branch))'];
+    
+    % Color
+    if strcmp(PLOTOPTIONS.pipe_Color,'default')
+        pipe_Color = zeros(size(GN.pipe,1),3);
+    elseif ismember(PLOTOPTIONS.pipe_Color, GN.pipe.Properties.VariableNames)
+        pipe_Color_values   = GN.pipe.(PLOTOPTIONS.pipe_Color);
+        pipe_Color          = colormap();
+        cmin                = min([pipe_Color_values(:);PLOTOPTIONS.pipe_Color_min_value]);
+        cmax                = max([pipe_Color_values(:);PLOTOPTIONS.pipe_Color_max_value]);
+        m                   = length(pipe_Color);
+        idx                 = fix((pipe_Color_values-cmin)/(cmax-cmin)*(m-1))+1;
+        idx(isnan(idx))     = 1;
+        pipe_Color          = pipe_Color(idx,:);
+    end
+    
+    % LineWidth
+    if strcmp(PLOTOPTIONS.pipe_LineWidth,'default')
+        pipe_LineWidth  = 0.5*ones(size(GN.comp,1),1); % MATLAB default value
+    elseif ismember(PLOTOPTIONS.pipe_LineWidth, GN.pipe.Properties.VariableNames)
+        pipe_LineWidth_values = GN.pipe.(PLOTOPTIONS.pipe_LineWidth);
+        max_LineWidth   = 3;
+        pipe_LineWidth  = ((pipe_LineWidth_values-min(pipe_LineWidth_values))/max(pipe_LineWidth_values-min(pipe_LineWidth_values))*(max_LineWidth-1)+1);
+    end
+    
+    % show_parallel
+    %     pipe_show_parallel  = repmat('-',size(GN.pipe,1),1);
+    %     if strcmp(PLOTOPTIONS.pipe_show_parallel,'on')
+    %         max_bus_ID = max(GN.pipe.from_bus_ID,GN.pipe.to_bus_ID);
+    %         min_bus_ID = min(GN.pipe.from_bus_ID,GN.pipe.to_bus_ID);
+    %         pipe_show_parallel(GN.pipe.parallel)
+    %     end
+    
+    % line plot
+    for ii = 1:sum(GN.pipe.in_service)
+        line(x(:,ii),y(:,ii),'Color',pipe_Color(ii,:),'LineWidth', pipe_LineWidth(ii))
+    end
+    
+    % pipe text
+    % ...
+end
+
+%% Comp
+if isfield(GN,'comp') && PLOTOPTIONS.comp_show && any(GN.comp.in_service)
+    x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.branch.comp_branch & GN.branch.in_service))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.branch.comp_branch & GN.branch.in_service))'];
+    y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.branch.comp_branch & GN.branch.in_service))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.branch.comp_branch & GN.branch.in_service))'];
+    %     ax_comp = axes;
+    %     ax_comp.Visible = 'off';
+    % Color
+    if strcmp(PLOTOPTIONS.comp_Color,'default')
+        comp_Color = zeros(size(GN.comp,1),3);
+    elseif ismember(PLOTOPTIONS.comp_Color, GN.comp.Properties.VariableNames)
+        comp_Color_values   = GN.comp.(PLOTOPTIONS.comp_Color);
+        comp_Color          = colormap();
+        cmin                = min([comp_Color_values(:); PLOTOPTIONS.comp_Color_min_value]);
+        cmax                = max([comp_Color_values(:); PLOTOPTIONS.comp_Color_min_value]);
+        m                   = length(comp_Color);
+        idx                 = fix((comp_Color_values-cmin)/(cmax-cmin)*(m-1))+1; %A
+        comp_Color          = comp_Color(idx,:);
+    end
+    
+    % LineWidth
+    if strcmp(PLOTOPTIONS.comp_LineWidth,'default')
+        comp_LineWidth  = 0.5*ones(size(GN.comp,1),1); % MATLAB default value
+    elseif ismember(PLOTOPTIONS.comp_Color, GN.comp.Properties.VariableNames)
+        comp_LineWidth_values = GN.comp.(PLOTOPTIONS.comp_LineWidth);
+        max_LineWidth   = 4;
+        comp_LineWidth  = ((comp_LineWidth_values-min(comp_LineWidth_values))/max(comp_LineWidth_values-min(comp_LineWidth_values))*(max_LineWidth-1)+1);
+    end
+    
+    % line plot
+    for ii = 1:sum(GN.comp.in_service)
+        line(x(:,ii),y(:,ii),'Color',comp_Color(ii,:),'LineWidth', comp_LineWidth(ii))
+    end
+    
+    %     linkaxes([ax_pipe,ax_comp])
+    
+    % Text - TODO
+    if ~isempty(PLOTOPTIONS.comp_text)
+        text(mean(x), mean(y), PLOTOPTIONS.comp_text, 'Color', PLOTOPTIONS.comp_text_Color)
+    end
+end
+
+%% Prs
+if isfield(GN,'prs') && PLOTOPTIONS.prs_show && any(GN.prs.in_service)
+    x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.branch.prs_branch & GN.branch.in_service))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.branch.prs_branch & GN.branch.in_service))'];
+    y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.branch.prs_branch & GN.branch.in_service))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.branch.prs_branch & GN.branch.in_service))'];
+    
+    % Color
+    if strcmp(PLOTOPTIONS.prs_Color,'default')
+        prs_Color = zeros(size(GN.prs,1),3);
+    elseif ismember(PLOTOPTIONS.prs_Color, GN.prs.Properties.VariableNames)
+        prs_Color_values    = GN.prs.(PLOTOPTIONS.prs_Color);
+        prs_Color           = colormap();
+        cmin                = min([prs_Color_values(:); PLOTOPTIONS.prs_Color_min_value]);
+        cmax                = max([prs_Color_values(:); PLOTOPTIONS.prs_Color_min_value]);
+        m                   = length(prs_Color);
+        idx                 = fix((prs_Color_values-cmin)/(cmax-cmin)*(m-1))+1; %A
+        prs_Color           = prs_Color(idx,:);
+    end
+    
+    % LineWidth
+    if strcmp(PLOTOPTIONS.prs_LineWidth,'default')
+        prs_LineWidth   = 0.5*ones(size(GN.prs,1),1); % MATLAB default value
+    elseif ismember(PLOTOPTIONS.prs_Color, GN.prs.Properties.VariableNames)
+        prs_LineWidth_values = GN.prs.(PLOTOPTIONS.prs_LineWidth);
+        max_LineWidth   = 4;
+        prs_LineWidth   = ((prs_LineWidth_values-min(prs_LineWidth_values))/max(prs_LineWidth_values-min(prs_LineWidth_values))*(max_LineWidth-1)+1);
+    end
+    
+    % line plot
+    for ii = 1:sum(GN.prs.in_service)
+        line(x(:,ii),y(:,ii),'Color',prs_Color(ii,:),'LineWidth', prs_LineWidth(ii))
+    end
+    
+    % Text
+    %     line(x, y, 'Color', 'c')
+    %     text(mean(x), mean(y), 'p', 'Color', 'c')
+    %
+    %     x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.branch.prs_branch & ~GN.branch.in_service))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.branch.prs_branch & ~GN.branch.in_service))'];
+    %     y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.branch.prs_branch & ~GN.branch.in_service))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.branch.prs_branch & ~GN.branch.in_service))'];
+    %     line(x, y, 'Color', 'c')
+    %     text(mean(x), mean(y), 'p', 'Color', 'c', 'LineStyle', '--')
+end
+
+%% Valve
+if isfield(GN,'valve') && PLOTOPTIONS.valve_show && any(GN.valve.in_service)
+    x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.branch.valve_branch & GN.branch.in_service))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.branch.valve_branch & GN.branch.in_service))'];
+    y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.branch.valve_branch & GN.branch.in_service))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.branch.valve_branch & GN.branch.in_service))'];
+    
+    % Color
+    if strcmp(PLOTOPTIONS.valve_Color,'default')
+        valve_Color = zeros(size(GN.valve,1),3);
+    elseif ismember(PLOTOPTIONS.valve_Color, GN.valve.Properties.VariableNames)
+        valve_Color_values   = GN.valve.(PLOTOPTIONS.valve_Color);
+        valve_Color          = colormap();
+        cmin    = min([valve_Color_values(:); PLOTOPTIONS.valve_Color_min_value]);
+        cmax    = max([valve_Color_values(:); PLOTOPTIONS.valve_Color_min_value]);
+        m       = length(valve_Color);
+        idx     = fix((valve_Color_values-cmin)/(cmax-cmin)*(m-1))+1; %A
+        valve_Color    = valve_Color(idx,:);
+    end
+    
+    % LineWidth
+    if strcmp(PLOTOPTIONS.valve_LineWidth,'default')
+        valve_LineWidth = 0.5*ones(size(GN.valve,1),1); % MATLAB default value
+    elseif ismember(PLOTOPTIONS.valve_Color, GN.valve.Properties.VariableNames)
+        valve_LineWidth_values = GN.valve.(PLOTOPTIONS.valve_LineWidth);
+        max_LineWidth   = 4;
+        valve_LineWidth = ((valve_LineWidth_values-min(valve_LineWidth_values))/max(valve_LineWidth_values-min(valve_LineWidth_values))*(max_LineWidth-1)+1);
+    end
+    
+    % line plot
+    for ii = 1:size(GN.valve,1)
+        line(x(:,ii),y(:,ii),'Color',valve_Color(ii,:),'LineWidth', valve_LineWidth(ii))
+    end
+    
+    % Text
+    %     line(x, y, 'Color', 'm')
+    %     text(mean(x), mean(y), 'v', 'Color', 'm')
+    %     x = [GN.bus.x_coord(GN.branch.i_from_bus(GN.branch.valve_branch & ~GN.branch.in_service))'; GN.bus.x_coord(GN.branch.i_to_bus(GN.branch.valve_branch & ~GN.branch.in_service))'];
+    %     y = [GN.bus.y_coord(GN.branch.i_from_bus(GN.branch.valve_branch & ~GN.branch.in_service))'; GN.bus.y_coord(GN.branch.i_to_bus(GN.branch.valve_branch & ~GN.branch.in_service))'];
+    %     line(x, y, 'Color', 'c')
+    %     text(mean(x), mean(y), 'p', 'Color', 'c', 'LineStyle', '--')
+end
+
+
+%% colorbar
+if PLOTOPTIONS.pipe_show_colorbar
+    ax_branch                       = axes;
+    xaxisprop                       = get(ax_branch, 'XAxis');
+    xaxisprop.TickLabelInterpreter  = 'latex';
+    xaxisprop.FontSize              = PLOTOPTIONS.PlotFontSize;
+    yaxisprop                       = get(ax_branch, 'YAxis');
+    yaxisprop.TickLabelInterpreter  = 'latex';
+    yaxisprop.FontSize              = PLOTOPTIONS.PlotFontSize;
+    if ~PLOTOPTIONS.axis_on
+        ax_branch.Visible              = 'off';
+    end
+    ax_branch.CLim      = [...
+        min([pipe_Color_values(:);PLOTOPTIONS.pipe_Color_min_value]), ...
+        max([pipe_Color_values(:);PLOTOPTIONS.pipe_Color_max_value])];
+    
+    if PLOTOPTIONS.bus_show_colorbar && ~strcmp(PLOTOPTIONS.bus_Color,'default')
+        cb_branch = colorbar(ax_branch,'Position',[0.1 0.1095 0.0381 0.8167]);
+    else
+        cb_branch = colorbar(ax_branch,'Position',[0.8298+0.05 0.1095 0.0381 0.8167]);
+    end
+    cb_branch.TickLabelInterpreter  = 'latex';
+    cb_branch.Title.Interpreter     = 'latex';
+    cb_branch.FontSize              = PLOTOPTIONS.PlotFontSize;
+    cb_branch.Title.FontSize        = PLOTOPTIONS.PlotFontSize;
+    if ~isempty(PLOTOPTIONS.pipe_colorbar_text)
+        cb_branch.Title.String = PLOTOPTIONS.pipe_colorbar_text;
+    elseif strcmp(PLOTOPTIONS.pipe_Color,'p_ij__barg')
+        cb_branch.Title.String = '$p_{mean} [bar_g]$';
+    elseif strcmp(PLOTOPTIONS.pipe_Color,'T_ij')
+        cb_branch.Title.String = '$T_{mean} [K]$';
+    elseif strcmp(PLOTOPTIONS.pipe_Color,'v_max_abs')
+        cb_branch.Title.String = '$|v_{max}| [m/s]$';
+    elseif strcmp(PLOTOPTIONS.pipe_Color,'V_dot_n_ij')
+        cb_branch.Title.String = '$\dot{V}_n [m^3/s]$';
+    else
+        cb_branch.Title.String = ['$',PLOTOPTIONS.pipe_Color,'$'];
+    end
+    
+elseif PLOTOPTIONS.comp_show_colorbar
+    
+elseif PLOTOPTIONS.prs_show_colorbar
+    
+elseif PLOTOPTIONS.valve_show_colorbar
+    
 else
-    i_from_bus = GN.branch.i_from_bus;
-    i_to_bus = GN.branch.i_to_bus;
+    ax_branch = [];
 end
 
-EdgeTable = table(...
-    [i_from_bus, i_to_bus],...
-    weights,...
-    edgelabel,...
-    'VariableNames',{'EndNodes' 'Weight' 'edgelabel'});
-
-NodeTable = table(nodelabel,'VariableNames',{'nodelabel'});
-
-figure;
-hold on
-G = digraph(EdgeTable,NodeTable);
-h = plot(G,'XData',GN.bus.x_coord, 'YData',GN.bus.y_coord,'NodeLabel',G.Nodes.nodelabel,'EdgeLabel',G.Edges.edgelabel,'LineWidth',G.Edges.Weight,'Marker', 'none');
-h.Interpreter = 'latex';
-set(gca,'YTickLabel',[]);
-set(gca,'XTickLabel',[]);
-
-if any(~GN.branch.in_service)
-    EdgeTableOutOfService = table(...
-        [i_from_bus(~GN.branch.in_service), i_to_bus(~GN.branch.in_service)],...
-        weights(~GN.branch.in_service),...
-        edgelabel(~GN.branch.in_service),...
-        'VariableNames',{'EndNodes' 'Weight' 'edgelabel'});
-    NodeTableOutOfService = table(nodelabel,'VariableNames',{'nodelabel'});
-    G = digraph(EdgeTableOutOfService,NodeTableOutOfService);
-    h = plot(G,'dr','XData',GN.bus.x_coord, 'YData',GN.bus.y_coord,'NodeLabel',G.Nodes.nodelabel,'EdgeLabel',G.Edges.edgelabel,'LineWidth',G.Edges.Weight,'Marker', 'none');
-    h.Interpreter = 'latex';
-    set(gca,'YTickLabel',[]);
-    set(gca,'XTickLabel',[]);
+%% Bus
+if PLOTOPTIONS.bus_show
+    idx_bus = ismember(GN.bus.area_ID,area_IDs);
+    x       = GN.bus.x_coord(idx_bus);
+    y       = GN.bus.y_coord(idx_bus);
+    
+    % Size
+    if strcmp(PLOTOPTIONS.bus_Size,'default')
+        bus_Size    = 20; % MATLAB default value
+    elseif isnumeric(PLOTOPTIONS.bus_Size)
+        bus_Size    = PLOTOPTIONS.bus_Size;
+    elseif ismember(PLOTOPTIONS.bus_Size, GN.bus.Properties.VariableNames)
+        bus_Size_values = GN.bus.(PLOTOPTIONS.bus_Color);
+        max_Size    = 400;
+        bus_Size    = ((bus_Size_values-min(bus_Size_values))/max(bus_Size_values-min(bus_Size_values))*(max_Size-1)+1);
+    end
+    
+    % Color
+    ax_bus = axes;
+    if strcmp(PLOTOPTIONS.bus_Color,'default')
+        scatter(ax_bus, x, y, bus_Size,   'k', 'filled', 'MarkerEdgeColor', 'k');
+    else
+        value = GN.bus.(PLOTOPTIONS.bus_Color);
+        scatter(ax_bus, x, y, bus_Size, value, 'filled', 'MarkerEdgeColor', 'k');
+        if PLOTOPTIONS.bus_show_colorbar
+            cb_bus = colorbar(ax_bus,'Position',[0.8298+0.05 0.1095 0.0381 0.8167]);
+            if ~isempty(PLOTOPTIONS.bus_Color_min_value) && ~isempty(PLOTOPTIONS.bus_Color_max_value)
+                if PLOTOPTIONS.bus_Color_min_value < PLOTOPTIONS.bus_Color_max_value
+                    caxis([PLOTOPTIONS.bus_Color_min_value,PLOTOPTIONS.bus_Color_max_value])
+                end
+            end
+            cb_bus.TickLabelInterpreter     = 'latex';
+            cb_bus.Title.Interpreter        = 'latex';
+            cb_bus.FontSize                 = PLOTOPTIONS.PlotFontSize;
+            cb_bus.Title.FontSize           = PLOTOPTIONS.PlotFontSize;
+            if ~isempty(PLOTOPTIONS.bus_colorbar_text)
+                cb_bus.Title.String = PLOTOPTIONS.bus_colorbar_text;
+            elseif strcmp(PLOTOPTIONS.bus_Color,'$p_i__barg$')
+                cb_bus.Title.String = '$p_i \,[bar_g]$';
+            elseif strcmp(PLOTOPTIONS.bus_Color,'$T_i$')
+                cb_bus.Title.String = '$T_i \,[K]$';
+            else
+                cb_bus.Title.String = ['$',PLOTOPTIONS.bus_Color,'$'];
+            end
+        end
+    end
+    xaxisprop                       = get(ax_bus, 'XAxis');
+    xaxisprop.TickLabelInterpreter  = 'latex';
+    xaxisprop.FontSize              = PLOTOPTIONS.PlotFontSize;
+    yaxisprop                       = get(ax_bus, 'YAxis');
+    yaxisprop.TickLabelInterpreter  = 'latex';
+    yaxisprop.FontSize              = PLOTOPTIONS.PlotFontSize;
+    if PLOTOPTIONS.grid_on
+        grid on
+    end
+    if ~PLOTOPTIONS.axis_on
+        ax_bus.Visible              = 'off';
+    end
+    
+    % Text
+    if ~isempty(PLOTOPTIONS.bus_text)
+        if ismember(PLOTOPTIONS.bus_text, GN.bus.Properties.VariableNames)
+            if isnumeric(GN.bus.(PLOTOPTIONS.bus_text))
+                x_offset = 0.1*(max(x)-min(x))/7;
+                y_offset = 0.3*(max(x)-min(x))/10;
+                text_bus = text(x+x_offset,y+y_offset,num2str(GN.bus.(PLOTOPTIONS.bus_text)));
+            else
+                text_bus = text(x+0.1,y+0.1,GN.bus.(PLOTOPTIONS.bus_text));
+            end
+        else
+            text_bus = text(x,y,PLOTOPTIONS.bus_text);
+        end
+    end    
+else
+    ax_bus = [];
 end
 
-sz = 50*ones(size(GN.bus,1),1);
-scatter(GN.bus.x_coord,GN.bus.y_coord,sz,'.','black')
+%% further options
+if PLOTOPTIONS.grid_on
+    grid on
+end
 
-i_sink = find(GN.bus{:,entry_exit_column} > 0);
-sz = 50*ones(size(i_sink));
-scatter(GN.bus.x_coord(i_sink),GN.bus.y_coord(i_sink),sz,'v','filled','red')
-i_source = find(GN.bus{:,entry_exit_column} < 0);
-sz = 50*ones(size(i_source));
-scatter(GN.bus.x_coord(i_source),GN.bus.y_coord(i_source),sz,'^','filled','green')
+end
 
-if isfield(GN,'comp')
-    [~,iF_comp] = ismember(GN.branch.from_bus_ID(GN.branch.comp_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iF_comp));
-    s = scatter(GN.bus.x_coord(iF_comp),GN.bus.y_coord(iF_comp),sz,'<','filled','green');
-    s.MarkerEdgeColor = 'k';
-    [~,iT_comp] = ismember(GN.branch.to_bus_ID(GN.branch.comp_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iT_comp));
-    s = scatter(GN.bus.x_coord(iT_comp),GN.bus.y_coord(iT_comp),sz,'>','filled','red');
-    s.MarkerEdgeColor = 'k';
-end
-if isfield(GN,'prs')
-    [~,iF_prs] = ismember(GN.branch.from_bus_ID(GN.branch.prs_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iF_prs));
-    scatter(GN.bus.x_coord(iF_prs),GN.bus.y_coord(iF_prs),sz,'s','filled','green')
-    [~,iT_prs] = ismember(GN.branch.to_bus_ID(GN.branch.prs_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iT_prs));
-    scatter(GN.bus.x_coord(iT_prs),GN.bus.y_coord(iT_prs),sz,'s','filled','red')
-end
-if isfield(GN,'valve')
-    [~,iF_valve] = ismember(GN.branch.from_bus_ID(GN.branch.valve_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iF_valve));
-    scatter(GN.bus.x_coord(iF_valve),GN.bus.y_coord(iF_valve),sz,'x','green')
-    [~,iT_valve] = ismember(GN.branch.to_bus_ID(GN.branch.valve_branch),GN.bus.bus_ID);
-    sz = 100*ones(size(iT_valve));
-    scatter(GN.bus.x_coord(iT_valve),GN.bus.y_coord(iT_valve),sz,'x','red')
-end

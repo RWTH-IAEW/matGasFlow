@@ -1,34 +1,38 @@
-function [GN] = get_gasMixAndCompoProp(GN, gasMix)
+function [GN] = get_gasMixAndCompoProp(GN, gasMix, PHYMOD)
 %GET_GASMIXANDCOMPOPROP
-%   get_gasMixAndCompoProp(GN, gasMix) initializes the gas mixture in the
-%   gas network. The gas mixture can be one of 'gasMix_library.csv' or a
-%   pure gas.
-%   gasMix options from gasMix_library.csv:
-%       H_Gas_NorthSea, H_Gas_Mix, H_Gas_Russia, H_Gas_Holland,
-%       H_Gas_GERG2008, L_Gas_Verbund, L_Gas_WeserEms, TENP_North, or
-%       TENP_South
+%   get_gasMixAndCompoProp(GN, gasMix, PHYMOD) initializes the gas mixture
+%   in the gas network. The gas mixture can be one of 'gasMix_library.csv'
+%   or a pure gas.
 %
-%   Or choose a pure gas for gasMix:
+%   Select a gas mixture from gasMix_library.csv for gasMix:
+%       H_Gas_NorthSea_DVGW, H_Gas_Denmark_DVGW, H_Gas_Russia_DVGW,
+%       L_Gas_Holland_DVGW, L_Gas_Germany_DVGW, H_Gas_NorthSea, H_Gas_Mix,
+%       H_Gas_Russia, H_Gas_Holland, H_Gas_GERG2008, L_Gas_Verbund,
+%       L_Gas_WeserEms, TENP_North, or TENP_South
+%
+%   Or select a pure gas for gasMix:
 %       CH4, C2H6, C3H8, n_C4H10, iso_C4H10, n_C5H12, iso_C5H12, neo_C5H12,
 %       C6H14, CO, H2, H2S, N2 or CO2
 %
-%   matGasFlow allows steady-state gas flow simulation also for non
+%   Hint: matGasFlow allows steady-state gas flow simulation also for non
 %   combustible gases (e.g. N2, CO2).
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin < 2
-    gasMix = GN.gasMix;
-elseif nargin == 2
-    GN.gasMix = gasMix;
+if nargin < 3
+    PHYMOD = getDefaultPhysicalModels;
+    if nargin < 2
+        gasMix = GN.gasMix;
+    end
 end
+GN.gasMix = gasMix;
 
 %% Gas properties
 GN.gasMixAndCompoProp = readtable('pure_gas_properties.csv');
@@ -78,7 +82,10 @@ GN.gasMixAndCompoProp = movevars(GN.gasMixAndCompoProp,'x_mass','After','x_vol')
 GN.gasMixAndCompoProp.Properties.RowNames = GN.gasMixAndCompoProp{:,'gas'};
 
 %% Update gas mixture properties
-GN.gasMixProp = get_gasMixProp(GN.gasMixAndCompoProp);
+GN.gasMixProp = get_gasMixProp(GN.gasMixAndCompoProp, PHYMOD);
+
+%% Read AGA8_92DC_tables.xlsx % TODO: optional
+GN = get_AGA8_92DC_tables(GN);
 
 %% Check the need of a calorific value
 if GN.gasMixProp.H_s_n_avg <= 0 && ...

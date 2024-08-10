@@ -3,14 +3,14 @@ function GN = check_GN_gasMix(GN)
 %   GN = check_GN_gasMix(GN)
 %   Check and initialization of GN.gasMix (Name of gas mixture)
 %       GN.gasMix must be a char
-%       default value: GN.gasMix = 'H_Gas_Mix'
+%       default value: GN.gasMix = 'H_Gas_NorthSea_DVGW'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -23,8 +23,8 @@ if isfield(GN,'gasMix')
 elseif isfield(GN,'gasMixProp') && isfield(GN,'gasMixAndCompoProp')
     return
 else
-    GN.gasMix = 'H_Gas_Mix';
-    warning('GN.gasMix: As the gas network contains no information about the gas mixture, it has been initialized as ''H_Gas_Mix''')
+    GN.gasMix = 'H_Gas_NorthSea_DVGW';
+    warning('GN.gasMix: As the gas network contains no information about the gas mixture, it has been initialized as ''H_Gas_NorthSea_DVGW''')
 end
 
 end

@@ -1,13 +1,13 @@
 function [GN] = remove_valves(GN)
-%REMOVE_VALVES Summary of this function goes here
-%   Detailed explanation goes here
+%REMOVE_VALVES
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,7 +35,10 @@ for ii = 1:length(valve_group_IDs)
     % apply quantities and properties to center bus
     GN.bus.V_dot_n_i(    i_bus_valveStation_center) = sum(GN.bus.V_dot_n_i(     i_bus_valveStation));
     GN.bus.slack_bus(    i_bus_valveStation_center) = any(GN.bus.slack_bus(     i_bus_valveStation));
-    GN.bus.T_i(          i_bus_valveStation_center) = mean(GN.bus.T_i(          i_bus_valveStation));
+    if ~GN.isothermal
+        GN.bus.T_i_source(i_bus_valveStation_center) = mean(GN.bus.T_i_source(  i_bus_valveStation));
+    end
+    
     if ismember('p_i_min__barg', GN.bus.Properties.VariableNames)
         GN.bus.p_i_min__barg(i_bus_valveStation_center) = max(GN.bus.p_i_min__barg( i_bus_valveStation));
     end
@@ -78,7 +81,7 @@ GN.bus(~ismember(GN.bus.bus_ID,[GN.branch.from_bus_ID;GN.branch.to_bus_ID]), :) 
 GN = init_GN_indices(GN);
 
 % Check area restrictions
-GN = check_GN_area_restrictions(GN,keep_slack_properties);
+GN = check_GN_area_restrictions(GN);
 
 end
 

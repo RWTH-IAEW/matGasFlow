@@ -6,11 +6,11 @@ function [GN] = get_connecting_branch(GN)
 %   sets them to true.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -60,14 +60,24 @@ t_array                         = t.Edges.EndNodes;
 iBranch_temp                    = ismember(g_array,t_array,'row');
 connecting_branch_from_to_bus   = g_array(~iBranch_temp,:);
 
-branch_temp.connecting_branch   = ...
+branch_temp.area_connecting_branch   = ...
     ismember([branch_temp.i_from_bus,branch_temp.i_to_bus],connecting_branch_from_to_bus,'rows') | ...
     ismember([branch_temp.i_to_bus,branch_temp.i_from_bus],connecting_branch_from_to_bus,'rows');
 
-[~,idx] = ismember(branch_temp.branch_ID(branch_temp.connecting_branch), GN.branch.branch_ID);
+[~,idx] = ismember(branch_temp.branch_ID(branch_temp.area_connecting_branch), GN.branch.branch_ID);
 GN.branch.area_connecting_branch(:)      = false;
 GN.branch.area_connecting_branch(idx)    = true;
 
+%% GN - connecting branches - TODO: 1) area, 2) active_branch
+% if sum(GN.branch.connecting_branch) == sum(GN.branch.area_connecting_branch)
+%     GN.branch.connecting_branch = GN.branch.area_connecting_branch;
+% else
+%     error('Something went wrong.')
+% end
+
+if any(GN.branch.connecting_branch & GN.branch.parallel_branch)
+    error('Something went wrong.')
+end
 
 end
 

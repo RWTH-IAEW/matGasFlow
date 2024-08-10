@@ -1,15 +1,17 @@
 function [GN] = add_bypass_prs(GN, branch_object_to_be_bypassed, object_ID_to_be_bypassed, bypass_type, apply_check_and_init_GN)
-%ADD_BYPASS_PRS Summary of this function goes here
-%   Detailed explanation goes here
+%ADD_BYPASS_PRS
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO
 
 if ~isfield(GN, 'prs')
     warning('GN has no prs.')    

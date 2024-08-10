@@ -1,13 +1,13 @@
 function [GN_output, SUCCESS, convergence] = preset_optimization_MILP_LP_loop(GN)
-%PRESET_OPTIMIZATION_MILP_LP_LOOP Summary of this function goes here
-%   Detailed explanation goes here
+%PRESET_OPTIMIZATION_MILP_LP_LOOP
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Copyright (c) 2020-2022, High Voltage Equipment and Grids,
+%   Copyright (c) 2020-2024, High Voltage Equipment and Grids,
 %       Digitalization and Energy Economics (IAEW),
 %       RWTH Aachen University, Marcel Kurth
 %   All rights reserved.
-%   Contact: Marcel Kurth (m.kurth@iaew.rwth-aachen.de)
+%   Contact: Marcel Kurth (marcel.kurth@rwth-aachen.de)
 %   This script is part of matGasFlow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,8 +15,8 @@ GN_input_0  = GN;
 
 %%
 NUMPARAM = getDefaultNumericalParameters;
-NUMPARAM.epsilon_NR_f = 1e-6;
-NUMPARAM.omega_adaption_NR = 0.5;
+NUMPARAM.epsilon_norm_f = 1e-6;
+NUMPARAM.omega_adaption_DR = 0.5;
 [GN_input_1,SUCCESS]  = rungf_time_step(GN_input_0, NUMPARAM);
 if SUCCESS < 0
     GN_output = GN_input_1;
@@ -41,7 +41,7 @@ convergence.SUCCESS_opt         = [];
 convergence.result_opt          = [];
 convergence.bin_sitches         = [];
 convergence.max_Delta_p_i       = [];
-convergence.norm_delta_p_prs    = [];
+convergence.norm_Delta_p_prs    = [];
 convergence.SUCCESS_rungf       = [];
 convergence.GN_res              = [];
 GN_temp                         = [];
@@ -87,15 +87,15 @@ while 1
                 GN_res = rmfield(GN_res,'time_series');
             end
             convergence.GN_res{iter}        = {GN_res};
-            idx                             = GN_res.prs.delta_p_ij__bar < 0 & GN_res.prs.in_service;
-            convergence.norm_delta_p_prs    = [convergence.norm_delta_p_prs, norm(GN_res.prs.delta_p_ij__bar(idx))];
+            idx                             = GN_res.prs.Delta_p_ij__bar < 0 & GN_res.prs.in_service;
+            convergence.norm_Delta_p_prs    = [convergence.norm_Delta_p_prs, norm(GN_res.prs.Delta_p_ij__bar(idx))];
             reduce_V_dot_n_ij_bounds        = true;
-            if convergence.norm_delta_p_prs(end) < 1 || sum(~isnan(convergence.norm_delta_p_prs)) >= 10
+            if convergence.norm_Delta_p_prs(end) < 1 || sum(~isnan(convergence.norm_Delta_p_prs)) >= 10
                 break
             end
             
         else
-            convergence.norm_delta_p_prs = [convergence.norm_delta_p_prs, NaN];
+            convergence.norm_Delta_p_prs = [convergence.norm_Delta_p_prs, NaN];
         end
         
     else
@@ -118,8 +118,8 @@ while 1
     end
     
 end
-if ~isempty(convergence.norm_delta_p_prs) && any(~isnan(convergence.norm_delta_p_prs))
-    idx = find(convergence.norm_delta_p_prs == min(convergence.norm_delta_p_prs));
+if ~isempty(convergence.norm_Delta_p_prs) && any(~isnan(convergence.norm_Delta_p_prs))
+    idx = find(convergence.norm_Delta_p_prs == min(convergence.norm_Delta_p_prs));
     GN_output = convergence.GN_res{idx(1)};
     GN_output = GN_output{1,1};
 else
